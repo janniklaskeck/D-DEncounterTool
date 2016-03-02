@@ -49,7 +49,7 @@ public class MainController {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
-	entryAmountText.setText("Number of entries: " + libEntries);
+	entryAmountText.setText("#Entries: " + libEntries);
     }
 
     private void fillLibrary() {
