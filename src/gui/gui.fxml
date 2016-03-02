@@ -53,12 +53,12 @@
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 									<children>
-										<ListView fx:id="libraryList" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="35.0" />
+										<ListView fx:id="libraryList" layoutX="14.0" layoutY="14.0" maxWidth="800.0" minWidth="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="35.0" />
 										<ToolBar layoutY="7.0" maxHeight="30.0" prefHeight="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 											<items>
 												<Text fx:id="entryAmountText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="100.0">
 													<font>
-														<Font size="14.0" />
+														<Font size="16.0" />
 													</font>
 												</Text>
 												<TextField fx:id="filterTextField" prefWidth="1050.0" promptText="Filter entries" />
