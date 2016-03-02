@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<fx:root type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+   <children>
+      <HBox maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="400.0">
+         <children>
+            <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textOrigin="CENTER" wrappingWidth="200.0" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Text>
+            <Separator fx:id="midSeparator" maxHeight="30.0" maxWidth="200.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" />
+            <Button fx:id="openImageButton" maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#openImage" prefWidth="100.0" text="Open Image" HBox.hgrow="NEVER">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</fx:root>

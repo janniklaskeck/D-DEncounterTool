@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <children>
+        <Label alignment="CENTER" layoutX="155.0" layoutY="177.0" style="&#10;" text="Drag components from Library here…" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
+          <font>
+            <Font size="18.0" />
+          </font>
+        </Label>
+            <TabPane layoutX="7.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <tabs>
+                <Tab text="Encounter">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ToolBar layoutX="8.0" layoutY="7.0" prefHeight="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <items>
+                                  <Button mnemonicParsing="false" onAction="#newEncounter" text="New" />
+                                    <Button mnemonicParsing="false" onAction="#loadEncounter" text="Load" />
+                                    <Button mnemonicParsing="false" onAction="#saveEncounter" text="Save" />
+                                </items>
+                              </ToolBar>
+                              <ToolBar layoutX="6.0" layoutY="40.0" prefHeight="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+                                <items>
+                                    <HBox>
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#addNPC" text="Add NPC" />
+                                          <Button mnemonicParsing="false" onAction="#addPlayer" text="Add Player" />
+                                          <Button mnemonicParsing="false" onAction="#deleteSelected" text="Delete" />
+                                        <Button mnemonicParsing="false" onAction="#copySelected" text="Copy" />
+                                       </children>
+                                    </HBox>
+                                    <Separator prefWidth="400.0" />
+                                    <HBox>
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#sortEncounter" text="Sort" />
+                                          <Button mnemonicParsing="false" onAction="#nextTurn" text="Next" />
+                                          <Button mnemonicParsing="false" onAction="#previousTurn" text="Previous" />
+                                       </children>
+                                    </HBox>
+                                </items>
+                              </ToolBar>
+                              <ListView layoutY="60.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="Library">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView fx:id="libraryList" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ToolBar layoutY="7.0" prefHeight="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <items>
+                                    <Text fx:id="entryAmountText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="100.0">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Text>
+                                    <TextField fx:id="filterTextField" prefWidth="1050.0" promptText="Filter entries" />
+                                  <Button mnemonicParsing="false" onAction="#addNewLibraryEntry" text="Add New" />
+                                </items>
+                              </ToolBar>
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                  <Tab text="Settings">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>
