@@ -1,5 +1,8 @@
 package gui;
 
+import java.util.ArrayList;
+
+import entity.Creature;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,7 +11,10 @@ import javafx.stage.Stage;
 
 public class MainGUI extends Application {
 
+    public static ArrayList<Creature> creatureList;
+
     public static void main(String[] args) {
+	creatureList = new ArrayList<Creature>();
 	launch(args);
     }
 
@@ -16,6 +22,7 @@ public class MainGUI extends Application {
     public void start(Stage primaryStage) throws Exception {
 	Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
 	Scene scene = new Scene(root, 1280, 720);
+
 	primaryStage.setTitle("D&D Encounter Tool v2.0");
 	primaryStage.setScene(scene);
 	primaryStage.show();
