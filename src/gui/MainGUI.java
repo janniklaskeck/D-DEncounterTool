@@ -11,7 +11,10 @@ import javafx.stage.Stage;
 
 public class MainGUI extends Application {
 
+    public static final String IMAGEFOLDER = System.getProperty("user.dir") + "\\images\\";
+
     public static ArrayList<Creature> creatureList;
+    public static Stage mainStage;
 
     public static void main(String[] args) {
 	creatureList = new ArrayList<Creature>();
@@ -22,6 +25,7 @@ public class MainGUI extends Application {
     public void start(Stage primaryStage) throws Exception {
 	Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
 	Scene scene = new Scene(root, 1280, 720);
+	mainStage = primaryStage;
 
 	primaryStage.setTitle("D&D Encounter Tool v2.0");
 	primaryStage.setScene(scene);

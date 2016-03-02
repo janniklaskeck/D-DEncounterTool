@@ -41,8 +41,8 @@ public class MainController {
 		    String[] filePathSplitBackslash = filePathString.split("\\\\");
 		    String[] fileNameSplitDot = filePathSplitBackslash[filePathSplitBackslash.length - 1].split("\\.");
 		    String creatureName = fileNameSplitDot[0];
-		    MainGUI.creatureList
-			    .add(new Monster(creatureName, filePathSplitBackslash[filePathSplitBackslash.length - 1]));
+		    Monster m = new Monster(creatureName, filePathSplitBackslash[filePathSplitBackslash.length - 1]);
+		    MainGUI.creatureList.add(m);
 		    libEntries++;
 		}
 	    });

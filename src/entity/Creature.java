@@ -1,14 +1,14 @@
 package entity;
 
-import java.awt.image.BufferedImage;
-
 import com.google.gson.JsonObject;
+
+import javafx.scene.image.Image;
 
 public class Creature {
 
     private String Name;
     private String ImagePath;
-    private BufferedImage image = null;
+    private Image image = null;
     private float initiative = 0;
     private int health = 0;
     private int armorClass = 0;
@@ -75,7 +75,7 @@ public class Creature {
     /**
      * @return the image
      */
-    public BufferedImage getImage() {
+    public Image getImage() {
 	return image;
     }
 
@@ -83,7 +83,7 @@ public class Creature {
      * @param image
      *            the image to set
      */
-    public void setImage(BufferedImage image) {
+    public void setImage(Image image) {
 	this.image = image;
     }
 
