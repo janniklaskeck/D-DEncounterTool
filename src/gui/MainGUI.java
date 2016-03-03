@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class MainGUI extends Application {
@@ -27,6 +28,7 @@ public class MainGUI extends Application {
 	Scene scene = new Scene(root, 1280, 720);
 	mainStage = primaryStage;
 
+	primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
 	primaryStage.setTitle("D&D Encounter Tool v2.0");
 	primaryStage.setScene(scene);
 	primaryStage.show();
