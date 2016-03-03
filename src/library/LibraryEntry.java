@@ -70,4 +70,7 @@ public class LibraryEntry extends AnchorPane {
 	myDialog.show();
     }
 
+    public Creature getCreature() {
+	return creature;
+    }
 }
