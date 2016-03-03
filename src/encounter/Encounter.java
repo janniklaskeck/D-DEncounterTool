@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -33,6 +34,15 @@ public class Encounter {
 
     public void addCreature(Creature creature) {
 	creatureList.add(creature);
+	for (Creature c : getCreatureList()) {
+	    c.setSelected(false);
+	}
+	if (getCreatureList().size() - 1 >= getCurrentIndex()) {
+	    getCreatureList().get(getCurrentIndex()).setSelected(true);
+	} else {
+	    getCreatureList().get(0).setSelected(true);
+	    setCurrentIndex(0);
+	}
     }
 
     public void addCreature(String name) {
@@ -41,6 +51,15 @@ public class Encounter {
 		creatureList.add(new Creature(c));
 		break;
 	    }
+	}
+	for (Creature c : getCreatureList()) {
+	    c.setSelected(false);
+	}
+	if (getCreatureList().size() - 1 >= getCurrentIndex()) {
+	    getCreatureList().get(getCurrentIndex()).setSelected(true);
+	} else {
+	    getCreatureList().get(0).setSelected(true);
+	    setCurrentIndex(0);
 	}
     }
 
@@ -63,6 +82,29 @@ public class Encounter {
 	return FXCollections.observableArrayList(eeList);
     }
 
+    private void updateIndex() {
+	for (int i = 0; i < getCreatureList().size(); i++) {
+	    if (getCreatureList().get(i).isSelected()) {
+		setCurrentIndex(i);
+	    }
+	}
+    }
+
+    public void sort() {
+	getCreatureList().sort(new Comparator<Creature>() {
+	    @Override
+	    public int compare(Creature o1, Creature o2) {
+		if (o1.getInitiative() < o2.getInitiative()) {
+		    return 1;
+		} else if (o1.getInitiative() > o2.getInitiative()) {
+		    return -1;
+		}
+		return 0;
+	    }
+	});
+	updateIndex();
+    }
+
     /**
      * @return the currentIndex
      */
@@ -76,6 +118,10 @@ public class Encounter {
      */
     public void setCurrentIndex(int currentIndex) {
 	this.currentIndex = currentIndex;
+	for (Creature c : getCreatureList()) {
+	    c.setSelected(false);
+	}
+	getCreatureList().get(getCurrentIndex()).setSelected(true);
     }
 
     public void setNextIndex() {
@@ -84,6 +130,10 @@ public class Encounter {
 	} else {
 	    currentIndex++;
 	}
+	for (Creature c : getCreatureList()) {
+	    c.setSelected(false);
+	}
+	getCreatureList().get(getCurrentIndex()).setSelected(true);
     }
 
     public void setLastIndex() {
@@ -92,6 +142,10 @@ public class Encounter {
 	} else {
 	    currentIndex--;
 	}
+	for (Creature c : getCreatureList()) {
+	    c.setSelected(false);
+	}
+	getCreatureList().get(getCurrentIndex()).setSelected(true);
     }
 
     public void saveToFile(File file) {
