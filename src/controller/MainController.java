@@ -1,15 +1,18 @@
 package controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import encounter.Encounter;
 import encounter.EncounterEntry;
 import entity.Creature;
 import entity.Monster;
+import entity.Player;
 import gui.MainGUI;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,10 +20,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.Callback;
 import library.LibraryEntry;
 
 public class MainController {
@@ -49,11 +62,6 @@ public class MainController {
 	addLibraryTextFieldFilter();
 
 	encounter = new Encounter();
-	encounter.addCreature(MainGUI.creatureList.get(0));
-	encounter.addCreature(MainGUI.creatureList.get(1));
-	encounter.addCreature(MainGUI.creatureList.get(2));
-	encounter.addCreature(MainGUI.creatureList.get(3));
-	encounter.addCreature(MainGUI.creatureList.get(4));
 
 	encounterEntryList = encounter.getObsList();
 	encounterList.setItems(encounterEntryList);
@@ -111,27 +119,142 @@ public class MainController {
 
     @FXML
     protected void newEncounter(ActionEvent event) {
-	System.out.println("new");
+	encounter.reset();
+	encounterList.setItems(encounter.getObsList());
     }
 
     @FXML
     protected void loadEncounter(ActionEvent event) {
-	System.out.println("load");
+	final FileChooser fc = new FileChooser();
+	fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+	fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
+	File file = fc.showOpenDialog(MainGUI.mainStage);
+	if (file != null) {
+	    encounter.readFromFile(file);
+	}
+	encounterList.setItems(encounter.getObsList());
     }
 
     @FXML
     protected void saveEncounter(ActionEvent event) {
-	System.out.println("save");
+	final FileChooser fc = new FileChooser();
+	fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+	fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
+	File file = fc.showSaveDialog(MainGUI.mainStage);
+	if (file != null) {
+	    encounter.saveToFile(file);
+	}
     }
 
     @FXML
     protected void addNPC(ActionEvent event) {
-	System.out.println("npc");
+	Dialog<String> d = new Dialog<String>();
+	d.setTitle("Enter Player Name");
+	d.setResizable(false);
+	Label name = new Label("Filter: ");
+	TextField filterTF = new TextField();
+	ListView<String> lv = new ListView<String>();
+	lv.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+	    @Override
+	    public void handle(MouseEvent event) {
+		if (event.getClickCount() == 2) {
+		    d.resultProperty().set(lv.getSelectionModel().getSelectedItem());
+		}
+	    }
+	});
+	ArrayList<String> names = new ArrayList<String>();
+	for (LibraryEntry le : libEntryList) {
+	    names.add(le.getCreature().getName());
+	}
+	ObservableList<String> ol = FXCollections.observableArrayList(names);
+	lv.setItems(ol);
+	FilteredList<String> fData = new FilteredList<String>(ol, p -> true);
+	filterTF.textProperty().addListener(new ChangeListener<String>() {
+	    @Override
+	    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+		fData.setPredicate(new Predicate<String>() {
+		    @Override
+		    public boolean test(String t) {
+			if (newValue == null || newValue.isEmpty()) {
+			    return true;
+			}
+			if (t.toLowerCase().contains(newValue.toLowerCase())) {
+			    return true;
+			}
+			return false;
+		    }
+		});
+		lv.setItems(fData);
+	    }
+	});
+
+	GridPane grid = new GridPane();
+	grid.add(name, 0, 0);
+	grid.add(filterTF, 1, 0);
+	grid.add(lv, 0, 1, 2, 1);
+	d.getDialogPane().setContent(grid);
+
+	ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
+	ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+	d.getDialogPane().getButtonTypes().add(okButton);
+	d.getDialogPane().getButtonTypes().add(cancelButton);
+	d.setResultConverter(new Callback<ButtonType, String>() {
+
+	    @Override
+	    public String call(ButtonType param) {
+		if (param == okButton) {
+		    return lv.getSelectionModel().getSelectedItem();
+		}
+		if (param == cancelButton) {
+		    return null;
+		}
+		return null;
+	    }
+	});
+
+	Optional<String> a = d.showAndWait();
+	if (a.isPresent()) {
+	    encounter.addCreature(a.get());
+	    encounterList.setItems(encounter.getObsList());
+	}
     }
 
     @FXML
     protected void addPlayer(ActionEvent event) {
-	System.out.println("player");
+	Dialog<String> d = new Dialog<String>();
+	d.setTitle("Enter Player Name");
+	d.setResizable(false);
+	Label name = new Label("Name: ");
+	TextField tf = new TextField();
+
+	GridPane grid = new GridPane();
+	grid.add(name, 0, 0);
+	grid.add(tf, 1, 0);
+	d.getDialogPane().setContent(grid);
+	ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
+	ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+	d.getDialogPane().getButtonTypes().add(okButton);
+	d.getDialogPane().getButtonTypes().add(cancelButton);
+	d.setResultConverter(new Callback<ButtonType, String>() {
+
+	    @Override
+	    public String call(ButtonType param) {
+		if (param == okButton) {
+		    return tf.getText();
+		}
+		if (param == cancelButton) {
+		    return null;
+		}
+		return null;
+	    }
+	});
+
+	Optional<String> a = d.showAndWait();
+	if (a.isPresent()) {
+	    encounter.addCreature(new Player(tf.getText(), ""));
+	    encounterList.setItems(encounter.getObsList());
+	}
     }
 
     @FXML
@@ -150,17 +273,23 @@ public class MainController {
 
     @FXML
     protected void sortEncounter(ActionEvent event) {
-	System.out.println("sort");
+	encounter.sort();
+	encounterList.setItems(encounter.getObsList());
     }
 
     @FXML
     protected void nextTurn(ActionEvent event) {
-	System.out.println("next");
+	encounter.setNextIndex();
+	encounterList.setItems(encounter.getObsList());
+	encounterList.scrollTo(encounter.getCurrentIndex());
+	System.out.println(encounter.getCreatureList().get(encounter.getCurrentIndex()).getStatusNotes());
     }
 
     @FXML
     protected void previousTurn(ActionEvent event) {
-	System.out.println("prev");
+	encounter.setLastIndex();
+	encounterList.setItems(encounter.getObsList());
+	encounterList.scrollTo(encounter.getCurrentIndex());
     }
 
     @FXML
