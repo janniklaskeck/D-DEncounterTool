@@ -25,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -59,6 +60,9 @@ public class MainController {
 
     @FXML
     private TextField encounterNameTextField;
+
+    @FXML
+    private CheckBox autoSaveCheckBox;
 
     @FXML
     public void initialize() {
@@ -273,16 +277,20 @@ public class MainController {
 
     @FXML
     protected void deleteSelected(ActionEvent event) {
-	if (encounter.getCreatureList().size() > 0) {
-	    encounter.getCreatureList().remove(encounterList.getSelectionModel().getSelectedIndex());
-	    encounterList.setItems(encounter.getObsList());
+	if (!encounterList.getSelectionModel().isEmpty()) {
+	    if (encounter.getCreatureList().size() > 0) {
+		encounter.getCreatureList().remove(encounterList.getSelectionModel().getSelectedIndex());
+		encounterList.setItems(encounter.getObsList());
+	    }
 	}
     }
 
     @FXML
     protected void copySelected(ActionEvent event) {
-	encounter.copy(encounterList.getSelectionModel().getSelectedIndex());
-	encounterList.setItems(encounter.getObsList());
+	if (!encounterList.getSelectionModel().isEmpty()) {
+	    encounter.copy(encounterList.getSelectionModel().getSelectedIndex());
+	    encounterList.setItems(encounter.getObsList());
+	}
     }
 
     @FXML
@@ -361,5 +369,10 @@ public class MainController {
 	if (a.isPresent()) {
 	    MainGUI.creatureList.add(a.get());
 	}
+    }
+
+    @FXML
+    public void autoSaveChanged() {
+	MainGUI.autosave = autoSaveCheckBox.isSelected();
     }
 }
