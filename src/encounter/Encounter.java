@@ -229,6 +229,7 @@ public class Encounter {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
+	setCurrentIndex(0);
     }
 
     /**
