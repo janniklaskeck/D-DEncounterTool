@@ -21,7 +21,7 @@ public class MainGUI extends Application {
 
     private static Thread autoSaveThread;
     private static final int AUTOSAVEINTERVAL = 60000;
-    private static boolean autosave = false;
+    private static boolean autosave = true;
 
     public static void main(String[] args) {
 	creatureList = new ArrayList<Creature>();
