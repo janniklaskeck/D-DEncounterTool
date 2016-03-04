@@ -34,7 +34,7 @@
 														<Button mnemonicParsing="false" onAction="#copySelected" text="Copy" />
 													</children>
 												</HBox>
-												<Separator prefWidth="400.0" />
+                                    <TextField fx:id="encounterNameTextField" alignment="TOP_CENTER" maxHeight="25.0" maxWidth="1000.0" minHeight="25.0" minWidth="400.0" prefWidth="600.0" promptText="Enter Encounter Name" />
 												<HBox>
 													<children>
 														<Button mnemonicParsing="false" onAction="#sortEncounter" text="Sort" />

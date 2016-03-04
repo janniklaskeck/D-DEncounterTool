@@ -22,6 +22,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -41,6 +42,7 @@ public class MainController {
     private static int libEntries = 0;
     private ObservableList<LibraryEntry> libEntryList;
     private ObservableList<EncounterEntry> encounterEntryList;
+
     private Encounter encounter;
 
     @FXML
@@ -56,12 +58,24 @@ public class MainController {
     private TextField filterTextField;
 
     @FXML
+    private TextField encounterNameTextField;
+
+    @FXML
     public void initialize() {
 	loadData();
 	fillLibrary();
 	addLibraryTextFieldFilter();
+	MainGUI.encounter = new Encounter("Unnamed Encounter");
+	encounter = MainGUI.encounter;
 
-	encounter = new Encounter();
+	encounterNameTextField.setText(encounter.getEncounterName());
+	encounterNameTextField.textProperty().bindBidirectional(encounter.encounterNameProperty);
+	encounterNameTextField.textProperty().addListener(new ChangeListener<String>() {
+	    @Override
+	    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+		encounter.setEncounterName(newValue);
+	    }
+	});
 
 	encounterEntryList = encounter.getObsList();
 	encounterList.setItems(encounterEntryList);
@@ -282,7 +296,6 @@ public class MainController {
 	encounter.setNextIndex();
 	encounterList.setItems(encounter.getObsList());
 	encounterList.scrollTo(encounter.getCurrentIndex());
-	System.out.println(encounter.getCreatureList().get(encounter.getCurrentIndex()).getStatusNotes());
     }
 
     @FXML
@@ -292,8 +305,61 @@ public class MainController {
 	encounterList.scrollTo(encounter.getCurrentIndex());
     }
 
+    private File imageFile = null;
+
     @FXML
     protected void addNewLibraryEntry(ActionEvent event) {
-	System.out.println("newlib");
+	Dialog<Creature> d = new Dialog<Creature>();
+	d.setTitle("Enter Player Name");
+	d.setResizable(false);
+	Label name = new Label("Name: ");
+	TextField tfName = new TextField();
+	Label image = new Label("Name: ");
+	TextField imageName = new TextField();
+	imageName.setEditable(false);
+	Button chooseImage = new Button("Select Image");
+	chooseImage.setOnAction(new EventHandler<ActionEvent>() {
+	    @Override
+	    public void handle(ActionEvent event) {
+		final FileChooser fc = new FileChooser();
+		fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+		fc.getExtensionFilters().add(new ExtensionFilter("Image File", "*.png", "*.jpeg", "*.bmp"));
+		File file = fc.showOpenDialog(MainGUI.mainStage);
+		if (file != null) {
+		    imageFile = file;
+		    imageName.setText(file.getName());
+		}
+	    }
+	});
+
+	GridPane grid = new GridPane();
+	grid.add(name, 0, 0);
+	grid.add(tfName, 1, 0);
+	grid.add(image, 0, 1);
+	grid.add(imageName, 1, 1);
+	grid.add(chooseImage, 2, 1);
+	d.getDialogPane().setContent(grid);
+	ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
+	ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+	d.getDialogPane().getButtonTypes().add(okButton);
+	d.getDialogPane().getButtonTypes().add(cancelButton);
+	d.setResultConverter(new Callback<ButtonType, Creature>() {
+
+	    @Override
+	    public Creature call(ButtonType param) {
+		if (param == okButton) {
+		    return new Creature(tfName.getText(), imageFile.getName());
+		}
+		if (param == cancelButton) {
+		    return null;
+		}
+		return null;
+	    }
+	});
+
+	Optional<Creature> a = d.showAndWait();
+	if (a.isPresent()) {
+	    MainGUI.creatureList.add(a.get());
+	}
     }
 }
