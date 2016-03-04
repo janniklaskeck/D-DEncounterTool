@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -17,14 +19,21 @@ import com.google.gson.stream.JsonWriter;
 
 import entity.Creature;
 import gui.MainGUI;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class Encounter {
     private ArrayList<Creature> creatureList;
     private int currentIndex = 0;
+    private File file;
+    private String encounterName;
+    public StringProperty encounterNameProperty;
 
-    public Encounter() {
+    public Encounter(String name) {
+	encounterName = name;
+	encounterNameProperty = new SimpleStringProperty(encounterName);
 	creatureList = new ArrayList<Creature>();
     }
 
@@ -154,6 +163,11 @@ public class Encounter {
 	    jsonWriter = new JsonWriter(new FileWriter(file));
 	    jsonWriter.setIndent("  ");
 	    jsonWriter.beginArray();
+	    jsonWriter.beginObject();
+	    jsonWriter.name("encounterName")
+		    .value(getEncounterName().equals("") ? "Unnamed Encounter" : getEncounterName());
+	    jsonWriter.endObject();
+	    jsonWriter.beginArray();
 	    for (Creature c : getCreatureList()) {
 		jsonWriter.beginObject();
 		jsonWriter.name("name").value(c.getName());
@@ -166,10 +180,27 @@ public class Encounter {
 		jsonWriter.endObject();
 	    }
 	    jsonWriter.endArray();
+	    jsonWriter.endArray();
 	    jsonWriter.close();
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
+    }
+
+    public void autoSave() {
+	if (file != null) {
+	    file.delete();
+	}
+	String date = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	file = new File(System.getProperty("user.dir") + "\\saves\\" + encounterName + "-" + date.replace(":", ".")
+		+ ".ddesav");
+	file.getParentFile().mkdirs();
+	try {
+	    file.createNewFile();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	saveToFile(file);
     }
 
     public void readFromFile(File file) {
@@ -187,7 +218,10 @@ public class Encounter {
 	    bufferedReader.close();
 	    Gson g = new Gson();
 	    JsonArray jArray = g.fromJson(sb.toString(), JsonArray.class);
-	    for (JsonElement je : jArray) {
+	    setEncounterName(jArray.get(0).getAsJsonObject().get("encounterName").getAsString());
+
+	    JsonArray creatureArray = jArray.get(1).getAsJsonArray();
+	    for (JsonElement je : creatureArray) {
 		JsonObject jo = je.getAsJsonObject();
 		Creature c = new Creature(jo);
 		getCreatureList().add(c);
@@ -195,5 +229,21 @@ public class Encounter {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
+    }
+
+    /**
+     * @return the encounterName
+     */
+    public String getEncounterName() {
+	return encounterName;
+    }
+
+    /**
+     * @param encounterName
+     *            the encounterName to set
+     */
+    public void setEncounterName(String encounterName) {
+	this.encounterName = encounterName;
+	encounterNameProperty.set(encounterName);
     }
 }
