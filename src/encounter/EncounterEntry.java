@@ -3,6 +3,7 @@ package encounter;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
+import java.util.zip.ZipEntry;
 
 import entity.Creature;
 import entity.Player;
@@ -26,6 +27,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -172,16 +174,28 @@ public class EncounterEntry extends GridPane {
 	myDialog.initModality(Modality.WINDOW_MODAL);
 
 	if (creature.getImage() == null) {
-	    try {
-		creature.setImage(
-			new Image(new File(MainGUI.IMAGEFOLDER + creature.getImagePath()).toURI().toString()));
-	    } catch (Exception e) {
-		e.printStackTrace();
+	    if (MainGUI.imageZipFile == null) {
+		try {
+		    creature.setImage(
+			    new Image(new File(MainGUI.IMAGEFOLDER + creature.getImagePath()).toURI().toString()));
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+	    } else {
+		ZipEntry ze = MainGUI.imageZipFile.getEntry(creature.getImagePath());
+		Image img;
+		try {
+		    img = new Image(MainGUI.imageZipFile.getInputStream(ze));
+		    creature.setImage(img);
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+
 	    }
 	}
 
 	ImageView iv = new ImageView(creature.getImage());
-	VBox vbox = new VBox(iv);
+	VBox vbox = new VBox(new Text(creature.getName()), iv);
 	vbox.setAlignment(Pos.CENTER);
 	vbox.setPadding(new Insets(10));
 
