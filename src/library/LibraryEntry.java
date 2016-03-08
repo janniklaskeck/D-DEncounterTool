@@ -22,70 +22,69 @@ import javafx.stage.Stage;
 
 public class LibraryEntry extends AnchorPane {
 
-	private Creature creature;
-	FXMLLoader loader;
+    private Creature creature;
+    FXMLLoader loader;
 
-	@FXML
-	private Text nameText;
+    @FXML
+    private Text nameText;
 
-	public LibraryEntry(Creature creature) {
-		this.creature = creature;
-		loader = new FXMLLoader(getClass().getResource("LibraryEntry.fxml"));
-		loader.setRoot(this);
-		loader.setController(this);
+    public LibraryEntry(Creature creature) {
+	this.creature = creature;
+	loader = new FXMLLoader(getClass().getResource("LibraryEntry.fxml"));
+	loader.setRoot(this);
+	loader.setController(this);
 
+	try {
+	    loader.load();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @FXML
+    private void initialize() {
+	nameText.setText(creature.getName());
+    }
+
+    @FXML
+    protected void openImage(ActionEvent event) {
+	final Stage myDialog = new Stage();
+	myDialog.initModality(Modality.WINDOW_MODAL);
+
+	if (creature.getImage() == null) {
+	    if (MainGUI.imageZipFile == null) {
 		try {
-			loader.load();
+		    creature.setImage(
+			    new Image(new File(MainGUI.IMAGEFOLDER + creature.getImagePath()).toURI().toString()));
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+	    } else {
+		ZipEntry ze = MainGUI.imageZipFile.getEntry(creature.getImagePath());
+		Image img;
+		try {
+		    img = new Image(MainGUI.imageZipFile.getInputStream(ze));
+		    creature.setImage(img);
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@FXML
-	private void initialize() {
-		nameText.setText(creature.getName());
-	}
-
-	@FXML
-	protected void openImage(ActionEvent event) {
-		final Stage myDialog = new Stage();
-		myDialog.initModality(Modality.WINDOW_MODAL);
-
-		if (creature.getImage() == null) {
-			if (MainGUI.imageZipFile == null) {
-				try {
-					creature.setImage(
-							new Image(new File(MainGUI.IMAGEFOLDER + creature.getImagePath()).toURI().toString()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else {
-				System.out.println(creature.getImagePath());
-				ZipEntry ze = MainGUI.imageZipFile.getEntry(creature.getImagePath());
-				Image img;
-				try {
-					img = new Image(MainGUI.imageZipFile.getInputStream(ze));
-					creature.setImage(img);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			}
+		    e.printStackTrace();
 		}
 
-		ImageView iv = new ImageView(creature.getImage());
-		VBox vbox = new VBox(new Text(creature.getName()), iv);
-		vbox.setAlignment(Pos.CENTER);
-		vbox.setPadding(new Insets(10));
-
-		Scene myDialogScene = new Scene(vbox);
-
-		myDialog.setScene(myDialogScene);
-		myDialog.show();
+	    }
 	}
 
-	public Creature getCreature() {
-		return creature;
-	}
+	ImageView iv = new ImageView(creature.getImage());
+	VBox vbox = new VBox(new Text(creature.getName()), iv);
+	vbox.setAlignment(Pos.CENTER);
+	vbox.setPadding(new Insets(10));
+
+	Scene myDialogScene = new Scene(vbox);
+
+	myDialog.setScene(myDialogScene);
+	myDialog.show();
+    }
+
+    public Creature getCreature() {
+	return creature;
+    }
 
 }
