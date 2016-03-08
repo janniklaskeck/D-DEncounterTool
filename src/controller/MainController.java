@@ -44,7 +44,6 @@ public class MainController {
 
     private static int libEntries = 0;
     private ObservableList<LibraryEntry> libEntryList;
-    private ObservableList<EncounterEntry> encounterEntryList;
 
     private Encounter encounter;
 
@@ -68,9 +67,20 @@ public class MainController {
 
     @FXML
     public void initialize() {
-	loadData();
-	fillLibrary();
-	addLibraryTextFieldFilter();
+	new Thread(new Runnable() {
+
+	    @Override
+	    public void run() {
+		loadData();
+		fillLibrary();
+		addLibraryTextFieldFilter();
+	    }
+	}).start();
+
+	initEncounter();
+    }
+
+    private void initEncounter() {
 	MainGUI.encounter = new Encounter("Unnamed Encounter");
 	encounter = MainGUI.encounter;
 
@@ -82,9 +92,6 @@ public class MainController {
 		encounter.setEncounterName(newValue);
 	    }
 	});
-
-	encounterEntryList = encounter.getObsList();
-	encounterList.setItems(encounterEntryList);
     }
 
     private void addLibraryTextFieldFilter() {
