@@ -18,16 +18,26 @@
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 									<children>
-										<ToolBar layoutX="8.0" layoutY="7.0" prefHeight="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-											<items>
-												<Button mnemonicParsing="false" onAction="#newEncounter" text="New" />
-												<Button mnemonicParsing="false" onAction="#loadEncounter" text="Load" />
-												<Button mnemonicParsing="false" onAction="#saveEncounter" text="Save" />
-											</items>
-										</ToolBar>
-										<ToolBar layoutX="6.0" layoutY="40.0" prefHeight="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-											<items>
-												<HBox>
+                              <BorderPane style="-fx-background-color: lightgray;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <left>
+                                    <HBox spacing="5.0" BorderPane.alignment="CENTER">
+                                       <children>
+      												<Button mnemonicParsing="false" onAction="#newEncounter" text="New" />
+      												<Button mnemonicParsing="false" onAction="#loadEncounter" text="Load" />
+      												<Button mnemonicParsing="false" onAction="#saveEncounter" text="Save" />
+                                       </children>
+                                       <BorderPane.margin>
+                                          <Insets />
+                                       </BorderPane.margin>
+                                    </HBox>
+                                 </left>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </BorderPane>
+                              <BorderPane prefHeight="35.0" style="-fx-background-color: lightgray;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+                                 <left>
+												<HBox spacing="5.0" BorderPane.alignment="CENTER">
 													<children>
 														<Button mnemonicParsing="false" onAction="#addNPC" text="Add NPC" />
 														<Button mnemonicParsing="false" onAction="#addPlayer" text="Add Player" />
@@ -35,17 +45,24 @@
 														<Button mnemonicParsing="false" onAction="#copySelected" text="Copy" />
 													</children>
 												</HBox>
-                                    <TextField fx:id="encounterNameTextField" alignment="TOP_CENTER" maxHeight="25.0" maxWidth="1000.0" minHeight="25.0" minWidth="400.0" prefWidth="600.0" promptText="Enter Encounter Name" />
-												<HBox>
+                                 </left>
+                                 <center>
+                                    <TextField fx:id="encounterNameTextField" alignment="TOP_CENTER" minWidth="400.0" promptText="Enter Encounter Name" BorderPane.alignment="CENTER" />
+                                 </center>
+                                 <right>
+												<HBox spacing="5.0" BorderPane.alignment="CENTER">
 													<children>
 														<Button mnemonicParsing="false" onAction="#sortEncounter" text="Sort" />
 														<Button mnemonicParsing="false" onAction="#nextTurn" text="Next" />
 														<Button mnemonicParsing="false" onAction="#previousTurn" text="Previous" />
 													</children>
 												</HBox>
-											</items>
-										</ToolBar>
-										<ListView fx:id="encounterList" layoutY="60.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
+                                 </right>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </BorderPane>
+										<ListView fx:id="encounterList" layoutY="60.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
 									</children>
 								</AnchorPane>
 							</content>
@@ -54,18 +71,22 @@
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 									<children>
-										<ListView fx:id="libraryList" layoutX="14.0" layoutY="14.0" maxWidth="800.0" minWidth="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="35.0" />
-										<ToolBar layoutY="7.0" maxHeight="30.0" prefHeight="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-											<items>
-												<Text fx:id="entryAmountText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="100.0">
+										<ListView fx:id="libraryList" layoutX="14.0" layoutY="14.0" maxWidth="800.0" minWidth="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                              <BorderPane style="-fx-background-color: lightgray;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <right>
+												<Button mnemonicParsing="false" onAction="#addNewLibraryEntry" text="Add New" BorderPane.alignment="CENTER" />
+                                 </right>
+                                 <center>
+												<TextField fx:id="filterTextField" promptText="Filter entries" BorderPane.alignment="CENTER" />
+                                 </center>
+                                 <left>
+												<Text fx:id="entryAmountText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="100.0" BorderPane.alignment="CENTER">
 													<font>
 														<Font size="16.0" />
 													</font>
 												</Text>
-												<TextField fx:id="filterTextField" prefWidth="1050.0" promptText="Filter entries" />
-												<Button mnemonicParsing="false" onAction="#addNewLibraryEntry" text="Add New" />
-											</items>
-										</ToolBar>
+                                 </left>
+                              </BorderPane>
 									</children>
 								</AnchorPane>
 							</content>

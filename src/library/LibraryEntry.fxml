@@ -7,24 +7,23 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<fx:root maxHeight="30.0" maxWidth="600.0" minHeight="30.0" minWidth="600.0" prefHeight="30.0" prefWidth="600.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="30.0" maxWidth="600.0" minHeight="30.0" minWidth="400.0" prefHeight="30.0" prefWidth="600.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="400.0">
-         <children>
-            <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textOrigin="CENTER" wrappingWidth="500.0" HBox.hgrow="NEVER">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Text>
-            <Button fx:id="openImageButton" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" onAction="#openImage" prefHeight="30.0" prefWidth="100.0" text="Open Image" HBox.hgrow="NEVER">
+      <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <right>
+            <Button fx:id="openImageButton" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" onAction="#openImage" prefHeight="30.0" prefWidth="100.0" text="Open Image" BorderPane.alignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-         </children>
-      </HBox>
+         </right>
+         <left>
+            <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textOrigin="CENTER" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Text>
+         </left>
+      </BorderPane>
    </children>
 </fx:root>
