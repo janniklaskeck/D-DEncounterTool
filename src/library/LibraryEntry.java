@@ -1,10 +1,11 @@
 package library;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import entity.Creature;
+import gui.MainGUI;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,12 +52,25 @@ public class LibraryEntry extends AnchorPane {
 		myDialog.initModality(Modality.WINDOW_MODAL);
 
 		if (creature.getImage() == null) {
-			/*
-			 * try { creature.setImage( new Image(new File(MainGUI.IMAGEFOLDER +
-			 * creature.getImagePath()).toURI().toString())); } catch (Exception
-			 * e) { e.printStackTrace(); }
-			 */
-			setImage();
+			if (MainGUI.imageZipFile == null) {
+				try {
+					creature.setImage(
+							new Image(new File(MainGUI.IMAGEFOLDER + creature.getImagePath()).toURI().toString()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println(creature.getImagePath());
+				ZipEntry ze = MainGUI.imageZipFile.getEntry(creature.getImagePath());
+				Image img;
+				try {
+					img = new Image(MainGUI.imageZipFile.getInputStream(ze));
+					creature.setImage(img);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
 		}
 
 		ImageView iv = new ImageView(creature.getImage());
@@ -74,14 +88,4 @@ public class LibraryEntry extends AnchorPane {
 		return creature;
 	}
 
-	private void setImage() {
-		try {
-			ZipFile zf = new ZipFile(System.getProperty("user.dir") + "\\image.zip");
-			ZipEntry ze = zf.getEntry(creature.getImagePath());
-			creature.setImage(new Image(zf.getInputStream(ze)));
-			zf.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 }
