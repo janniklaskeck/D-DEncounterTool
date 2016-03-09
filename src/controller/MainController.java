@@ -37,6 +37,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -44,9 +46,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 import library.LibraryEntry;
 
-public class MainController {
-
-    private static int libEntries = 0;
+public class MainController {    private static int libEntries = 0;
     private ObservableList<LibraryEntry> libEntryList;
 
     private Encounter encounter;
