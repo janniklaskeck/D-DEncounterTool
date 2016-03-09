@@ -33,7 +33,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </BorderPane>
-                        <BorderPane prefHeight="35.0" style="-fx-background-color: lightgray;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+                        <BorderPane prefHeight="30.0" style="-fx-background-color: lightgray;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                            <left>
 												<HBox spacing="5.0" BorderPane.alignment="CENTER">
 													<children>
@@ -42,6 +42,9 @@
 														<Button mnemonicParsing="false" onAction="#deleteSelected" text="Delete" />
 														<Button mnemonicParsing="false" onAction="#copySelected" text="Copy" />
 													</children>
+                                 <padding>
+                                    <Insets right="5.0" />
+                                 </padding>
 												</HBox>
                            </left>
                            <padding>
@@ -58,7 +61,7 @@
       														<Button mnemonicParsing="false" onAction="#previousTurn" text="Previous" />
       													</children>
                                  <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    <Insets left="5.0" />
                                  </padding>
       												</HBox>
                            </right>
@@ -135,7 +138,7 @@
    <bottom>
 		<AnchorPane fx:id="progressAnchorPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
 			<children>
-            <Label fx:id="loadingProgressLabel" text="Loading Progress: " textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Label fx:id="loadingProgressLabel" alignment="CENTER" contentDisplay="CENTER" text="Loading Progress: " textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font size="24.0" />
                </font>
