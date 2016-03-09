@@ -45,7 +45,7 @@ public class MainGUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 	Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
-	Scene scene = new Scene(root, 1280, 720);
+	Scene scene = new Scene(root);
 	scene.getStylesheets().add(getClass().getResource("customstyle.css").toString());
 
 	mainStage = primaryStage;
