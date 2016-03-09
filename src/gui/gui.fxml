@@ -129,6 +129,12 @@
 						</Tab>
 					</tabs>
 				</TabPane>
+            <Label fx:id="loadingProgressLabel" text="Loading Progress: " textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="330.0">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <ProgressBar fx:id="loadingProgressBar" progress="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="300.0" />
 			</children>
 		</AnchorPane>
 	</children>
