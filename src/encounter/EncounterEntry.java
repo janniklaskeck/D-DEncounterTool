@@ -7,6 +7,7 @@ import entity.Creature;
 import entity.Player;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -14,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -88,17 +91,39 @@ public class EncounterEntry extends GridPane {
 				}
 			}
 		});
+		healthTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				if (arg2 == false) {
+					int health = 0;
+					try {
+						health = Integer.parseInt(healthTextField.getText());
+					} catch (Exception e1) {
+						health = 0;
+					}
+					creature.setHealth(health);
+				}
+			}
+		});
+		healthTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent kev) {
+				if (kev.getCode().equals(KeyCode.ENTER)) {
+					int health = 0;
+					try {
+						health = Integer.parseInt(healthTextField.getText());
+					} catch (Exception e1) {
+						health = 0;
+					}
+					creature.setHealth(health);
+				}
+			}
+		});
 		healthTextField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				int health = 0;
-				try {
-					health = Integer.parseInt(newValue);
-				} catch (Exception e1) {
-					health = 0;
-				}
-				creature.setHealth(health);
 				if (newValue.length() > MAXIMUMNUMBERS) {
 					EventQueue.invokeLater(new Runnable() {
 						@Override
