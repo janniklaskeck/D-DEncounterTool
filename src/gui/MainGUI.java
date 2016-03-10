@@ -19,6 +19,7 @@ import javafx.stage.WindowEvent;
 public class MainGUI extends Application {
 
 	public static final String IMAGEFOLDER = System.getProperty("user.dir") + "\\images\\";
+	public static Image IMAGEICON;
 	public static ZipFile imageZipFile;
 
 	public static ArrayList<Creature> creatureList;
@@ -44,6 +45,7 @@ public class MainGUI extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		IMAGEICON = new Image(getClass().getResourceAsStream("icon.png"));
 		Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
 		Scene scene = new Scene(root);
 		scene.getStylesheets().add(getClass().getResource("customstyle.css").toString());
@@ -77,7 +79,7 @@ public class MainGUI extends Application {
 				autosaveThread = false;
 			}
 		});
-		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
+		primaryStage.getIcons().add(IMAGEICON);
 		primaryStage.setTitle("D&D Encounter Tool v2.0");
 		primaryStage.setScene(scene);
 		primaryStage.show();
