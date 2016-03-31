@@ -34,12 +34,12 @@ public class Creature {
 
     public Creature(JsonObject jo) {
 	this.Name = jo.get("name").toString().replace("\"", "");
-	this.ImagePath = jo.get("imagePath").toString();
+	this.ImagePath = jo.get("imagePath").toString().replace("\"", "");
 	this.initiative = jo.get("initiative").getAsFloat();
 	this.health = jo.get("health").getAsInt();
 	this.armorClass = jo.get("armorClass").getAsInt();
-	this.statusNotes = jo.get("statusNotes").getAsString();
-	this.miscNotes = jo.get("miscNotes").getAsString();
+	this.statusNotes = jo.get("statusNotes").getAsString().replace("\"", "");
+	this.miscNotes = jo.get("miscNotes").getAsString().replace("\"", "");
     }
 
     /**
