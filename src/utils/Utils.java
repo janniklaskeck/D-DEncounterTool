@@ -1,5 +1,7 @@
 package utils;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +31,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -45,9 +46,15 @@ public class Utils {
 
 	public static void showImageFrame(Creature creature) {
 		Image img = null;
-		final Stage myDialog = new Stage();
-		myDialog.getIcons().add(MainGUI.IMAGEICON);
-		myDialog.initModality(Modality.WINDOW_MODAL);
+		final Stage imgFrame = new Stage();
+		imgFrame.getIcons().add(MainGUI.IMAGEICON);
+		imgFrame.initModality(Modality.WINDOW_MODAL);
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int width = gd.getDisplayMode().getWidth();
+		int height = gd.getDisplayMode().getHeight();
+
+		imgFrame.setWidth(width * 0.8);
+		imgFrame.setHeight(height * 0.8);
 
 		if (creature.getImage() == null) {
 			if (MainGUI.imageZipFile == null) {
@@ -67,15 +74,15 @@ public class Utils {
 			creature.setImage(img);
 		}
 
-		ImageView iv = new ImageView(creature.getImage());
+		WrappedImageView iv = new WrappedImageView(creature.getImage());
 		VBox vbox = new VBox(iv);
 		vbox.setAlignment(Pos.CENTER);
 		vbox.setPadding(new Insets(10));
 
 		Scene myDialogScene = new Scene(vbox);
 
-		myDialog.setScene(myDialogScene);
-		myDialog.show();
+		imgFrame.setScene(myDialogScene);
+		imgFrame.show();
 	}
 
 	public static void newLibraryEntryWindow() {
