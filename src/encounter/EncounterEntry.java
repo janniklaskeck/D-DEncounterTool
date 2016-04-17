@@ -1,13 +1,9 @@
 package encounter;
 
-import java.awt.EventQueue;
 import java.io.IOException;
 
 import entity.Creature;
 import entity.Player;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -16,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -26,167 +21,135 @@ import utils.Utils;
 
 public class EncounterEntry extends GridPane {
 
-	private static final int MAXIMUMNUMBERS = 5;
-	private Creature creature;
-	private FXMLLoader loader;
+    private static final int MAXIMUMNUMBERS = 5;
+    private Creature creature;
+    private FXMLLoader loader;
 
-	@FXML
-	private Label name;
+    @FXML
+    private Label name;
 
-	@FXML
-	private TextField initiativeTextField;
+    @FXML
+    private TextField initiativeTextField;
 
-	@FXML
-	private TextField healthTextField;
+    @FXML
+    private TextField healthTextField;
 
-	@FXML
-	private TextField armorClassTextField;
+    @FXML
+    private TextField armorClassTextField;
 
-	@FXML
-	private TextArea statusTextArea;
+    @FXML
+    private TextArea statusTextArea;
 
-	@FXML
-	private TextArea miscTextArea;
+    @FXML
+    private TextArea miscTextArea;
 
-	@FXML
-	private Button openImageButton;
+    @FXML
+    private Button openImageButton;
 
-	public EncounterEntry(Creature c) {
-		this.creature = c;
-		loader = new FXMLLoader(getClass().getResource("EncounterEntry.fxml"));
-		loader.setRoot(this);
-		loader.setController(this);
-		try {
-			loader.load();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (creature.isSelected()) {
-			setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
-		}
+    public EncounterEntry(Creature c) {
+        this.creature = c;
+        loader = new FXMLLoader(getClass().getResource("EncounterEntry.fxml"));
+        loader.setRoot(this);
+        loader.setController(this);
+        try {
+            loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        setupCreature();
+    }
 
-		initiativeTextField.setText(creature.getInitiative() + "");
-		healthTextField.setText(creature.getHealth() + "");
-		armorClassTextField.setText(creature.getArmorClass() + "");
-		statusTextArea.setText(creature.getStatusNotes());
-		miscTextArea.setText(creature.getMiscNotes());
+    private void setupCreature() {
+        if (creature.isSelected()) {
+            setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+        }
+        if (creature.getClass().equals(Player.class)) {
+            openImageButton.setDisable(true);
+        }
 
-		initiativeTextField.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				float initiative = 0;
-				try {
-					initiative = Float.parseFloat(newValue);
-				} catch (Exception e1) {
-					initiative = 0;
-				}
-				creature.setInitiative(initiative);
-				if (newValue.length() > MAXIMUMNUMBERS) {
-					EventQueue.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							initiativeTextField.setText(initiativeTextField.getText(0, MAXIMUMNUMBERS));
-						}
-					});
-				}
-			}
-		});
-		healthTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+        initiativeTextField.setText(Float.toString(creature.getInitiative()));
+        healthTextField.setText(Integer.toString(creature.getHealth()));
+        armorClassTextField.setText(Integer.toString(creature.getArmorClass()));
+        statusTextArea.setText(creature.getStatusNotes());
+        miscTextArea.setText(creature.getMiscNotes());
 
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-				if (arg2 == false) {
-					int health = 0;
-					try {
-						health = Integer.parseInt(healthTextField.getText());
-					} catch (Exception e1) {
-						health = 0;
-					}
-					creature.setHealth(health);
-				}
-			}
-		});
-		healthTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        addListeners();
+    }
 
-			@Override
-			public void handle(KeyEvent kev) {
-				if (kev.getCode().equals(KeyCode.ENTER)) {
-					int health = 0;
-					try {
-						health = Integer.parseInt(healthTextField.getText());
-					} catch (Exception e1) {
-						health = 0;
-					}
-					creature.setHealth(health);
-				}
-			}
-		});
-		healthTextField.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (newValue.length() > MAXIMUMNUMBERS) {
-					EventQueue.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							healthTextField.setText(healthTextField.getText(0, MAXIMUMNUMBERS));
-						}
-					});
-				}
-			}
-		});
+    private void addListeners() {
+        initiativeTextField.textProperty().addListener((obs, oldValue, newValue) -> {
+            float initiative = 0;
+            try {
+                initiative = Float.parseFloat(newValue);
+            } catch (Exception e1) {
+                initiative = 0;
+            }
+            creature.setInitiative(initiative);
+            if (newValue.length() > MAXIMUMNUMBERS) {
+                initiativeTextField.setText(initiativeTextField.getText(0, MAXIMUMNUMBERS));
+            }
+        });
+        healthTextField.focusedProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue) {
+                int health = 0;
+                try {
+                    health = Integer.parseInt(healthTextField.getText());
+                } catch (Exception e1) {
+                    health = 0;
+                    e1.printStackTrace();
+                }
+                creature.setHealth(health);
+            }
 
-		armorClassTextField.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				int armorClass = 0;
-				try {
-					armorClass = Integer.parseInt(newValue);
-				} catch (Exception e1) {
-					armorClass = 0;
-				}
-				creature.setArmorClass(armorClass);
-				if (newValue.length() > MAXIMUMNUMBERS) {
-					EventQueue.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							armorClassTextField.setText(armorClassTextField.getText(0, MAXIMUMNUMBERS));
-						}
-					});
-				}
-			}
-		});
+        });
+        healthTextField.setOnKeyPressed(key -> {
+            if (key.getCode().equals(KeyCode.ENTER)) {
+                int health = 0;
+                try {
+                    health = Integer.parseInt(healthTextField.getText());
+                } catch (Exception e1) {
+                    health = 0;
+                }
+                creature.setHealth(health);
 
-		statusTextArea.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				creature.setStatusNotes(newValue);
-			}
-		});
+            }
+        });
+        healthTextField.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue.length() > MAXIMUMNUMBERS) {
+                healthTextField.setText(healthTextField.getText(0, MAXIMUMNUMBERS));
+            }
+        });
 
-		miscTextArea.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				creature.setMiscNotes(newValue);
-			}
-		});
+        armorClassTextField.textProperty().addListener((obs, oldValue, newValue) -> {
+            int armorClass = 0;
+            try {
+                armorClass = Integer.parseInt(newValue);
+            } catch (Exception e1) {
+                armorClass = 0;
+            }
+            creature.setArmorClass(armorClass);
+            if (newValue.length() > MAXIMUMNUMBERS) {
+                armorClassTextField.setText(armorClassTextField.getText(0, MAXIMUMNUMBERS));
+            }
+        });
 
-		if (creature.getClass().equals(Player.class)) {
-			openImageButton.setDisable(true);
-		}
-	}
+        statusTextArea.textProperty().addListener((obs, oldValue, newValue) -> creature.setStatusNotes(newValue));
 
-	@FXML
-	private void initialize() {
-		name.setText(creature.getName());
-	}
+        miscTextArea.textProperty().addListener((obs, oldValue, newValue) -> creature.setMiscNotes(newValue));
+    }
 
-	@FXML
-	private void openImage() {
-		Utils.showImageFrame(getCreature());
-	}
+    @FXML
+    private void initialize() {
+        name.setText(creature.getName());
+    }
 
-	public Creature getCreature() {
-		return creature;
-	}
+    @FXML
+    private void openImage() {
+        Utils.showImageFrame(getCreature());
+    }
+
+    public Creature getCreature() {
+        return creature;
+    }
 
 }

@@ -21,10 +21,10 @@ public class WrappedImageView extends ImageView {
 
     @Override
     public double prefWidth(double height) {
-        Image I = getImage();
-        if (I == null)
+        Image img = getImage();
+        if (img == null)
             return minWidth(height);
-        return I.getWidth();
+        return img.getWidth();
     }
 
     @Override
@@ -39,10 +39,10 @@ public class WrappedImageView extends ImageView {
 
     @Override
     public double prefHeight(double width) {
-        Image I = getImage();
-        if (I == null)
+        Image img = getImage();
+        if (img == null)
             return minHeight(width);
-        return I.getHeight();
+        return img.getHeight();
     }
 
     @Override
