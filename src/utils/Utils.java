@@ -49,31 +49,22 @@ public class Utils {
         final Stage imgFrame = new Stage();
         imgFrame.getIcons().add(MainGUI.IMAGEICON);
         imgFrame.initModality(Modality.WINDOW_MODAL);
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        int width = gd.getDisplayMode().getWidth();
-        int height = gd.getDisplayMode().getHeight();
-
-        imgFrame.setWidth(width * 0.7);
-        imgFrame.setHeight(height * 0.7);
-        imgFrame.setX(160);
-        imgFrame.setY(90);
 
         if (creature.getImage() == null) {
             if (MainGUI.imageZipFile == null) {
-                try {
-                    img = new Image(new File(MainGUI.IMAGEFOLDER + creature.getImagePath()).toURI().toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                img = new Image(new File(MainGUI.IMAGEFOLDER + creature.getImagePath()).toURI().toString());
             } else {
                 ZipEntry ze = MainGUI.imageZipFile.getEntry(creature.getImagePath());
                 try {
                     img = new Image(MainGUI.imageZipFile.getInputStream(ze));
                 } catch (IOException e) {
                     e.printStackTrace();
+                    img = new Image(MainGUI.class.getResourceAsStream("icon.png"));
                 }
             }
             creature.setImage(img);
+        } else {
+            img = creature.getImage();
         }
 
         WrappedImageView iv = new WrappedImageView(creature.getImage());
@@ -82,6 +73,19 @@ public class Utils {
         vbox.setPadding(new Insets(10));
 
         Scene myDialogScene = new Scene(vbox);
+
+        final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        final double width = img.getWidth() >= gd.getDisplayMode().getWidth() * 0.8
+                ? gd.getDisplayMode().getWidth() * 0.8 : img.getWidth();
+        final double height = img.getHeight() >= gd.getDisplayMode().getHeight() * 0.8
+                ? gd.getDisplayMode().getHeight() * 0.8 : img.getHeight();
+        final double windowXPos = 80;
+        final double windowYPos = 45;
+
+        imgFrame.setWidth(width);
+        imgFrame.setHeight(height);
+        imgFrame.setX(windowXPos);
+        imgFrame.setY(windowYPos);
 
         imgFrame.setScene(myDialogScene);
         imgFrame.show();
