@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -19,6 +18,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,7 +35,7 @@ import library.LibraryEntry;
 import utils.Utils;
 
 public class MainController {
-    
+
     private Encounter encounter;
 
     @FXML
@@ -73,13 +73,17 @@ public class MainController {
     @FXML
     public void initialize() {
         initProgressDisplay();
-        new Thread(() -> {
+        Thread t = new Thread(() -> {
             loadData();
             fillLibrary();
             addLibraryTextFieldFilter();
             Platform.runLater(() -> rootBorderPane.setBottom(null));
-        }).start();
+            System.out.println("amount: " + amountToLoad + " progress: " + progress);
+        });
+        t.setDaemon(true);
+        t.start();
         initEncounter();
+
     }
 
     private void initProgressDisplay() {
@@ -99,13 +103,9 @@ public class MainController {
     }
 
     private void addLibraryTextFieldFilter() {
-        ArrayList<LibraryEntry> leList = new ArrayList<>();
-        for (Creature c : MainGUI.creatureList) {
-            leList.add(new LibraryEntry(c));
-        }
-        FilteredList<LibraryEntry> fData = new FilteredList<>(FXCollections.observableArrayList(leList), p -> true);
+        FilteredList<LibraryEntry> fData = new FilteredList<>(libraryList.getItems(), p -> true);
         filterTextField.textProperty().addListener((obs, oldValue, newValue) -> {
-            fData.setPredicate((t) -> {
+            fData.setPredicate(t -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
@@ -116,13 +116,19 @@ public class MainController {
             });
             libraryList.setItems(fData);
         });
-        progress++;
+        incProgress();
 
-        setProgressTextAndBar(progress / (amountToLoad * 2 + 1));
+        setProgressTextAndBar(progress / amountToLoad);
+    }
+
+    private void incProgress() {
+        // System.out.println(progress);
+        progress++;
     }
 
     private void loadData() {
         if (MainGUI.imageZipFile == null) {
+
             String userDir = System.getProperty("user.dir");
             Stream<Path> str = null;
             try {
@@ -142,9 +148,10 @@ public class MainController {
                         Monster m = new Monster(creatureName,
                                 filePathSplitBackslash[filePathSplitBackslash.length - 1]);
                         MainGUI.creatureList.add(m);
-                        progress++;
-                        setProgressTextAndBar(progress / (amountToLoad * 2 + 1));
+
                     }
+                    incProgress();
+                    setProgressTextAndBar(progress / (amountToLoad));
                 });
 
             } catch (IOException e) {
@@ -166,21 +173,23 @@ public class MainController {
                 String name = ne.getName().split("\\.")[0];
                 Monster m = new Monster(name, ne.getName());
                 MainGUI.creatureList.add(m);
-                progress++;
-                setProgressTextAndBar(progress / (amountToLoad * 2 + 1));
+
             }
+            incProgress();
+            setProgressTextAndBar(progress / amountToLoad);
         }
         entryAmountText.setText("#Entries: " + (int) amountToLoad);
     }
 
     private void fillLibrary() {
-        ArrayList<LibraryEntry> leList = new ArrayList<>();
+        ObservableList<LibraryEntry> leList = FXCollections.observableArrayList();
         for (Creature c : MainGUI.creatureList) {
-            progress++;
-            setProgressTextAndBar(progress / (amountToLoad * 2 + 1));
             leList.add(new LibraryEntry(c));
+            incProgress();
+            setProgressTextAndBar(progress / (amountToLoad));
         }
-        libraryList.setItems(FXCollections.observableArrayList(leList));
+
+        libraryList.setItems(leList);
     }
 
     @FXML
