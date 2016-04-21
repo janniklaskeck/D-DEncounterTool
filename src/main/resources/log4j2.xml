@@ -1,0 +1,30 @@
+<Configuration status="WARN" name="danddtool">
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                pattern="%d{HH:mm:ss.SSS} %-5level [%t] %logger - %msg%n" />
+        </Console>
+        <RollingFile name="RollingFile"
+            fileName="${sys:user.home}/.dndtool/lsgui.log" filePattern="${sys:user.home}/.dndtool/lsgui_%i.log">
+            <PatternLayout
+                pattern="%d{HH:mm:ss.SSS} %-5level [%t] %logger - %msg%n" />
+            <Policies>
+                <OnStartupTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy max="1" />
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="WARN">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="RollingFile" />
+        </Root>
+        <Logger name="app.bvk" level="ALL" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="RollingFile" />
+        </Logger>
+    </Loggers>
+
+</Configuration>
