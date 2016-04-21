@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import app.bvk.encounter.Encounter;
 import app.bvk.entity.Creature;
 import app.bvk.entity.Player;
@@ -35,6 +38,7 @@ import javafx.stage.Stage;
 
 public class Utils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
     private static File imageFile = null;
     private static final String NAMESTRING = "Name: ";
     private static final String CANCELSTRING = "Cancel";
@@ -45,7 +49,7 @@ public class Utils {
     }
 
     public static void showImageFrame(Creature creature) {
-        Image img = null;
+        Image img;
         final Stage imgFrame = new Stage();
         imgFrame.getIcons().add(MainGUI.IMAGEICON);
         imgFrame.initModality(Modality.WINDOW_MODAL);
@@ -58,7 +62,7 @@ public class Utils {
                 try {
                     img = new Image(MainGUI.imageZipFile.getInputStream(ze));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.error("ERROR while loading image, using icon instead", e);
                     img = new Image(MainGUI.class.getResourceAsStream("icon.png"));
                 }
             }

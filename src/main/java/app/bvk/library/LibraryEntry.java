@@ -2,6 +2,9 @@ package app.bvk.library;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import app.bvk.entity.Creature;
 import app.bvk.utils.Utils;
 import javafx.event.ActionEvent;
@@ -11,6 +14,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 public class LibraryEntry extends AnchorPane {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(LibraryEntry.class);
 
     private Creature creature;
     FXMLLoader loader;
@@ -27,7 +32,7 @@ public class LibraryEntry extends AnchorPane {
         try {
             loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("ERROR while loadgin libraryentry fxml", e);
         }
     }
 
