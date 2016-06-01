@@ -25,8 +25,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -40,6 +40,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+    private static final String USERDIR = "user.dir";
 
     private Encounter encounter;
 
@@ -70,6 +71,29 @@ public class MainController {
     @FXML
     private Label loadingProgressLabel;
 
+    @FXML
+    private Button addNpcButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
+    private Button newEncounterButton;
+    @FXML
+    private Button loadEncounterButton;
+    @FXML
+    private Button saveEncounterButton;
+    @FXML
+    private Button previousButton;
+    @FXML
+    private Button copyButton;
+    @FXML
+    private Button nextButton;
+    @FXML
+    private Button sortButton;
+    @FXML
+    private Button addPlayerButton;
+    @FXML
+    private Button addLibraryEntryButton;
+
     private SimpleDoubleProperty barProgress;
     private SimpleStringProperty progressText;
     private float progress = 0.0f;
@@ -87,7 +111,22 @@ public class MainController {
         t.setDaemon(true);
         t.start();
         initEncounter();
+        setupButtons();
+    }
 
+    private void setupButtons() {
+        addNpcButton.setOnAction(event -> addNPC());
+        deleteButton.setOnAction(event -> deleteSelected());
+        newEncounterButton.setOnAction(event -> newEncounter());
+        loadEncounterButton.setOnAction(event -> loadEncounter());
+        saveEncounterButton.setOnAction(event -> saveEncounter());
+        previousButton.setOnAction(event -> previousTurn());
+        copyButton.setOnAction(event -> copySelected());
+        nextButton.setOnAction(event -> nextTurn());
+        sortButton.setOnAction(event -> sortEncounter());
+        addPlayerButton.setOnAction(event -> addPlayer());
+        addLibraryEntryButton.setOnAction(event -> addNewLibraryEntry());
+        autoSaveCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> autoSaveChanged(newValue));
     }
 
     private void initProgressDisplay() {
@@ -132,7 +171,7 @@ public class MainController {
     private void loadData() {
         if (MainGUI.imageZipFile == null) {
 
-            String userDir = System.getProperty("user.dir");
+            String userDir = System.getProperty(USERDIR);
             Stream<Path> str = null;
             try {
                 str = Files.walk(Paths.get(userDir + "\\images"));
@@ -184,7 +223,7 @@ public class MainController {
         entryAmountText.setText("#Entries: " + (int) amountToLoad);
     }
 
-    private void fillLibrary() {
+    public void fillLibrary() {
         ObservableList<LibraryEntry> leList = FXCollections.observableArrayList();
         for (Creature c : MainGUI.creatureList) {
             leList.add(new LibraryEntry(c));
@@ -195,16 +234,14 @@ public class MainController {
         libraryList.setItems(leList);
     }
 
-    @FXML
-    private void newEncounter(ActionEvent event) {
+    private void newEncounter() {
         encounter.reset();
         encounterList.setItems(encounter.getObsList());
     }
 
-    @FXML
-    private void loadEncounter(ActionEvent event) {
+    private void loadEncounter() {
         final FileChooser fc = new FileChooser();
-        fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fc.setInitialDirectory(new File(System.getProperty(USERDIR)));
         fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
         File file = fc.showOpenDialog(MainGUI.mainStage);
         if (file != null) {
@@ -213,10 +250,9 @@ public class MainController {
         encounterList.setItems(encounter.getObsList());
     }
 
-    @FXML
-    private void saveEncounter(ActionEvent event) {
+    private void saveEncounter() {
         final FileChooser fc = new FileChooser();
-        fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fc.setInitialDirectory(new File(System.getProperty(USERDIR)));
         fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
         File file = fc.showSaveDialog(MainGUI.mainStage);
         if (file != null) {
@@ -224,62 +260,54 @@ public class MainController {
         }
     }
 
-    @FXML
-    private void addNPC(ActionEvent event) {
+    private void addNPC() {
         Utils.newNPCWindow(encounter);
         encounterList.setItems(encounter.getObsList());
     }
 
-    @FXML
-    private void addPlayer(ActionEvent event) {
+    private void addPlayer() {
         Utils.newPlayerWindow(encounter);
         encounterList.setItems(encounter.getObsList());
     }
 
-    @FXML
-    private void deleteSelected(ActionEvent event) {
+    private void deleteSelected() {
         if (!encounterList.getSelectionModel().isEmpty() && !encounter.getCreatureList().isEmpty()) {
             encounter.remove(encounterList.getSelectionModel().getSelectedIndex());
             encounterList.setItems(encounter.getObsList());
         }
     }
 
-    @FXML
-    private void copySelected(ActionEvent event) {
+    private void copySelected() {
         if (!encounterList.getSelectionModel().isEmpty()) {
             encounter.copy(encounterList.getSelectionModel().getSelectedIndex());
             encounterList.setItems(encounter.getObsList());
         }
     }
 
-    @FXML
-    private void sortEncounter(ActionEvent event) {
+    private void sortEncounter() {
         encounter.sort();
         encounterList.setItems(encounter.getObsList());
     }
 
     @FXML
-    private void nextTurn(ActionEvent event) {
+    private void nextTurn() {
         encounter.setNextIndex();
         encounterList.setItems(encounter.getObsList());
         encounterList.scrollTo(encounter.getCurrentIndex());
     }
 
-    @FXML
-    private void previousTurn(ActionEvent event) {
+    private void previousTurn() {
         encounter.setLastIndex();
         encounterList.setItems(encounter.getObsList());
         encounterList.scrollTo(encounter.getCurrentIndex());
     }
 
-    @FXML
-    private void addNewLibraryEntry(ActionEvent event) {
+    private void addNewLibraryEntry() {
         Utils.newLibraryEntryWindow();
     }
 
-    @FXML
-    private void autoSaveChanged() {
-        MainGUI.autosave = autoSaveCheckBox.isSelected();
+    private void autoSaveChanged(final boolean selected) {
+        MainGUI.autosave = selected;
     }
 
     private void setProgressTextAndBar(double percentage) {

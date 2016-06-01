@@ -23,7 +23,7 @@ public class MainGUI extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
 
     public static final String IMAGEFOLDER = System.getProperty("user.dir") + "\\images\\";
-    public static Image IMAGEICON;
+    public static Image imageIcon;
     public static ZipFile imageZipFile;
 
     public static List<Creature> creatureList = new ArrayList<>();
@@ -32,7 +32,7 @@ public class MainGUI extends Application {
 
     private static Thread autoSaveThread;
     private static final int AUTOSAVEINTERVAL = 60000;
-    private static boolean autosaveThread = true;
+    private static boolean doAutoSave = true;
     public static boolean autosave = false;
 
     public static void main(String[] args) {
@@ -49,7 +49,7 @@ public class MainGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        IMAGEICON = new Image(getClass().getResourceAsStream("icon.png"));
+        imageIcon = new Image(getClass().getResourceAsStream("icon.png"));
         Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("customstyle.css").toString());
@@ -57,7 +57,7 @@ public class MainGUI extends Application {
         mainStage = primaryStage;
 
         autoSaveThread = new Thread(() -> {
-            while (autosaveThread) {
+            while (doAutoSave) {
                 while (autosave) {
                     if (!encounter.getCreatureList().isEmpty()) {
                         encounter.autoSave();
@@ -74,11 +74,20 @@ public class MainGUI extends Application {
         autoSaveThread.setDaemon(true);
         autoSaveThread.start();
 
-        primaryStage.setOnCloseRequest(event -> autosaveThread = false);
-        primaryStage.getIcons().add(IMAGEICON);
+        primaryStage.setOnCloseRequest(event -> doAutoSave = false);
+        primaryStage.getIcons().add(imageIcon);
         primaryStage.setTitle("D&D Encounter Tool v2.0");
         primaryStage.setScene(scene);
         primaryStage.show();
         LOGGER.info("GUI start finished");
+    }
+
+    @Override
+    public void stop() {
+        try {
+            imageZipFile.close();
+        } catch (IOException e) {
+            LOGGER.error("", e);
+        }
     }
 }

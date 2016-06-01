@@ -13,8 +13,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-public class LibraryEntry extends AnchorPane {
-    
+public class LibraryEntry extends AnchorPane { // NOSONAR
+
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryEntry.class);
 
     private Creature creature;
@@ -37,7 +37,7 @@ public class LibraryEntry extends AnchorPane {
     }
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         nameText.setText(creature.getName());
     }
 

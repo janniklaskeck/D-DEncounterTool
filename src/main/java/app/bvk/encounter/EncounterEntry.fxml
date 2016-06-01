@@ -40,20 +40,20 @@
             </TextArea>
          </children>
       </VBox>
-      <VBox GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowSpan="2">
+      <VBox GridPane.columnIndex="4" GridPane.columnSpan="2">
          <children>
             <Label text="Misc. Notes">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextArea fx:id="miscTextArea" prefRowCount="3">
+            <TextArea fx:id="miscTextArea" prefRowCount="1">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin></TextArea>
          </children>
       </VBox>
-      <Button fx:id="openImageButton" mnemonicParsing="false" onAction="#openImage" text="Open Image" GridPane.rowIndex="1">
+      <Button fx:id="openImageButton" mnemonicParsing="false" text="Open Image" GridPane.rowIndex="1">
          <font>
             <Font size="14.0" />
          </font>

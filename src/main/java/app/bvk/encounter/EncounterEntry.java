@@ -23,7 +23,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
-public class EncounterEntry extends GridPane {
+public class EncounterEntry extends GridPane { // NOSONAR
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
 
@@ -71,6 +71,8 @@ public class EncounterEntry extends GridPane {
         }
         if (creature.getClass().equals(Player.class)) {
             openImageButton.setDisable(true);
+        } else {
+            openImageButton.setOnAction(event -> Utils.showImageFrame(getCreature()));
         }
 
         initiativeTextField.setText(Float.toString(creature.getInitiative()));
@@ -148,13 +150,8 @@ public class EncounterEntry extends GridPane {
     }
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         name.setText(creature.getName());
-    }
-
-    @FXML
-    private void openImage() {
-        Utils.showImageFrame(getCreature());
     }
 
     public Creature getCreature() {

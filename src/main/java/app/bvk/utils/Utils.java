@@ -51,7 +51,7 @@ public class Utils {
     public static void showImageFrame(Creature creature) {
         Image img;
         final Stage imgFrame = new Stage();
-        imgFrame.getIcons().add(MainGUI.IMAGEICON);
+        imgFrame.getIcons().add(MainGUI.imageIcon);
         imgFrame.initModality(Modality.WINDOW_MODAL);
 
         if (creature.getImage() == null) {
@@ -98,7 +98,7 @@ public class Utils {
     public static void newLibraryEntryWindow() {
         Dialog<Creature> d = new Dialog<>();
         Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(MainGUI.IMAGEICON);
+        stage.getIcons().add(MainGUI.imageIcon);
         d.initOwner(MainGUI.mainStage);
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
@@ -150,7 +150,7 @@ public class Utils {
     public static void newPlayerWindow(Encounter encounter) {
         Dialog<String> d = new Dialog<>();
         Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(MainGUI.IMAGEICON);
+        stage.getIcons().add(MainGUI.imageIcon);
         d.initOwner(MainGUI.mainStage);
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
@@ -185,7 +185,7 @@ public class Utils {
     public static void newNPCWindow(Encounter encounter) {
         Dialog<String> d = new Dialog<>();
         Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(MainGUI.IMAGEICON);
+        stage.getIcons().add(MainGUI.imageIcon);
         d.initOwner(MainGUI.mainStage);
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
