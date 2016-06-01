@@ -38,7 +38,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainController {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     private Encounter encounter;
@@ -172,7 +172,7 @@ public class MainController {
             }
             entries = MainGUI.imageZipFile.entries();
             while (entries.hasMoreElements()) {
-                ZipEntry ne = (ZipEntry) entries.nextElement();
+                ZipEntry ne = entries.nextElement();
                 String name = ne.getName().split("\\.")[0];
                 Monster m = new Monster(name, ne.getName());
                 MainGUI.creatureList.add(m);
