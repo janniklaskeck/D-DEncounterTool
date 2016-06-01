@@ -1,128 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<fx:root fx:id="gridPane" prefWidth="1000.0" type="GridPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="gridPane" type="GridPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" />
+      <ColumnConstraints hgrow="SOMETIMES" />
+      <ColumnConstraints hgrow="SOMETIMES" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.0" minWidth="251.0" prefWidth="251.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="120.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-         <children>
-            <HBox alignment="CENTER_RIGHT">
-               <children>
-                  <Label alignment="TOP_CENTER" text="Initiative" textAlignment="CENTER">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Label>
-                  <TextField fx:id="initiativeTextField" maxWidth="100.0">
-                     <HBox.margin>
-                        <Insets right="5.0" />
-                     </HBox.margin>
-                  </TextField>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_RIGHT">
-               <children>
-                  <Label alignment="CENTER" text="Health">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Label>
-                  <TextField fx:id="healthTextField" maxWidth="100.0">
-                     <HBox.margin>
-                        <Insets right="5.0" />
-                     </HBox.margin>
-                  </TextField>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_RIGHT">
-               <children>
-                  <Label alignment="CENTER" text="Armor Class">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Label>
-                  <TextField fx:id="armorClassTextField" maxWidth="100.0">
-                     <HBox.margin>
-                        <Insets right="5.0" />
-                     </HBox.margin>
-                  </TextField>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-      <VBox GridPane.columnIndex="3" GridPane.columnSpan="2">
+      <VBox GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
          <children>
             <Label text="Status Notes">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextArea fx:id="statusTextArea">
+            <TextArea fx:id="statusTextArea" prefRowCount="1">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin></TextArea>
+               </VBox.margin>
+            </TextArea>
          </children>
       </VBox>
-      <VBox GridPane.columnIndex="5" GridPane.columnSpan="2">
+      <VBox GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowSpan="2">
          <children>
             <Label text="Misc. Notes">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextArea fx:id="miscTextArea">
+            <TextArea fx:id="miscTextArea" prefRowCount="3">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin></TextArea>
          </children>
       </VBox>
-      <SplitPane dividerPositions="0.8" orientation="VERTICAL">
-        <items>
-          <AnchorPane>
-               <children>
-                  <Label fx:id="name" text="Label" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
-          <AnchorPane>
-               <children>
-                  <Button fx:id="openImageButton" layoutX="45.0" layoutY="8.0" mnemonicParsing="false" onAction="#openImage" text="Open Image" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-               </children>
-            </AnchorPane>
-        </items>
-      </SplitPane>
+      <Button fx:id="openImageButton" mnemonicParsing="false" onAction="#openImage" text="Open Image" GridPane.rowIndex="1">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Label fx:id="name" text="Label" wrapText="true">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="3">
+         <children>
+            <Label alignment="CENTER" text="AC">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="armorClassTextField" maxWidth="100.0">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2">
+         <children>
+            <Label alignment="CENTER" text="HP">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="healthTextField" maxWidth="100.0">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="1">
+         <children>
+            <Label alignment="TOP_CENTER" text="Ini." textAlignment="CENTER">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="initiativeTextField" maxWidth="100.0">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
    </children>
 </fx:root>
