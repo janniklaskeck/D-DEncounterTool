@@ -59,7 +59,7 @@ public class Encounter {
 
     public void addCreature(final String name) {
         for (Creature c : Settings.getInstance().getCreatureList()) {
-            if (c.getName().equals(name)) {
+            if (c.getName().get().equals(name)) {
                 creatureList.add(new Creature(c));
                 break;
             }
@@ -157,7 +157,7 @@ public class Encounter {
             jsonWriter.beginArray();
             for (Creature c : getCreatureList()) {
                 jsonWriter.beginObject();
-                jsonWriter.name("name").value(c.getName());
+                jsonWriter.name("name").value(c.getName().get());
                 jsonWriter.name("imagePath").value(c.getImagePath());
                 jsonWriter.name("initiative").value(c.getInitiative());
                 jsonWriter.name("health").value(c.getHealth());

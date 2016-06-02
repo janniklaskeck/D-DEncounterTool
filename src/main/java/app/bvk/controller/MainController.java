@@ -152,7 +152,7 @@ public class MainController {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
-                if (t.getCreature().getName().toLowerCase().contains(newValue.toLowerCase())) {
+                if (t.getCreature().getName().get().toLowerCase().contains(newValue.toLowerCase())) {
                     return true;
                 }
                 return false;

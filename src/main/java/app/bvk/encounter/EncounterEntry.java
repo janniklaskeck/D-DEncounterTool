@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -32,9 +31,6 @@ public class EncounterEntry extends GridPane { // NOSONAR
     private FXMLLoader loader;
 
     @FXML
-    private Label name;
-
-    @FXML
     private TextField initiativeTextField;
 
     @FXML
@@ -47,12 +43,9 @@ public class EncounterEntry extends GridPane { // NOSONAR
     private TextArea statusTextArea;
 
     @FXML
-    private TextArea miscTextArea;
-
-    @FXML
     private Button openImageButton;
 
-    public EncounterEntry(Creature c) {
+    public EncounterEntry(final Creature c) {
         this.creature = c;
         loader = new FXMLLoader(getClass().getResource("EncounterEntry.fxml"));
         loader.setRoot(this);
@@ -79,7 +72,6 @@ public class EncounterEntry extends GridPane { // NOSONAR
         healthTextField.setText(Integer.toString(creature.getHealth()));
         armorClassTextField.setText(Integer.toString(creature.getArmorClass()));
         statusTextArea.setText(creature.getStatusNotes());
-        miscTextArea.setText(creature.getMiscNotes());
 
         addListeners();
     }
@@ -145,13 +137,11 @@ public class EncounterEntry extends GridPane { // NOSONAR
         });
 
         statusTextArea.textProperty().addListener((obs, oldValue, newValue) -> creature.setStatusNotes(newValue));
-
-        miscTextArea.textProperty().addListener((obs, oldValue, newValue) -> creature.setMiscNotes(newValue));
     }
 
     @FXML
     public void initialize() {
-        name.setText(creature.getName());
+        openImageButton.textProperty().bind(creature.getName());
     }
 
     public Creature getCreature() {

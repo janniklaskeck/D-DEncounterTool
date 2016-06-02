@@ -56,7 +56,8 @@ public class Utils {
 
         if (creature.getImage() == null) {
             if (Settings.getInstance().getImageZipFile() == null) {
-                img = new Image(new File(Settings.getInstance().getImageFolder() + creature.getImagePath()).toURI().toString());
+                img = new Image(
+                        new File(Settings.getInstance().getImageFolder() + creature.getImagePath()).toURI().toString());
             } else {
                 ZipEntry ze = Settings.getInstance().getImageZipFile().getEntry(creature.getImagePath());
                 try {
@@ -71,12 +72,12 @@ public class Utils {
             img = creature.getImage();
         }
 
-        WrappedImageView iv = new WrappedImageView(creature.getImage());
-        VBox vbox = new VBox(iv);
+        final WrappedImageView iv = new WrappedImageView(creature.getImage());
+        final VBox vbox = new VBox(iv);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(10));
 
-        Scene myDialogScene = new Scene(vbox);
+        final Scene myDialogScene = new Scene(vbox);
 
         final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         final double width = img.getWidth() >= gd.getDisplayMode().getWidth() * 0.8
@@ -200,7 +201,7 @@ public class Utils {
         });
         ArrayList<String> names = new ArrayList<>();
         for (Creature le : Settings.getInstance().getCreatureList()) {
-            names.add(le.getName());
+            names.add(le.getName().get());
         }
         ObservableList<String> ol = FXCollections.observableArrayList(names);
         lv.setItems(ol);

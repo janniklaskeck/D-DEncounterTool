@@ -22,7 +22,7 @@ public class LibraryEntry extends AnchorPane { // NOSONAR
 
     @FXML
     private Text nameText;
-    
+
     @FXML
     private Button openImageButton;
 
@@ -41,7 +41,7 @@ public class LibraryEntry extends AnchorPane { // NOSONAR
 
     @FXML
     public void initialize() {
-        nameText.setText(creature.getName());
+        nameText.setText(creature.getName().get());
         openImageButton.setOnAction(event -> openImage());
     }
 
