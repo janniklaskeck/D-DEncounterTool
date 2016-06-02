@@ -51,16 +51,16 @@ public class Utils {
     public static void showImageFrame(Creature creature) {
         Image img;
         final Stage imgFrame = new Stage();
-        imgFrame.getIcons().add(MainGUI.imageIcon);
+        imgFrame.getIcons().add(Settings.getInstance().getImageIcon());
         imgFrame.initModality(Modality.WINDOW_MODAL);
 
         if (creature.getImage() == null) {
-            if (MainGUI.imageZipFile == null) {
-                img = new Image(new File(MainGUI.IMAGEFOLDER + creature.getImagePath()).toURI().toString());
+            if (Settings.getInstance().getImageZipFile() == null) {
+                img = new Image(new File(Settings.getInstance().getImageFolder() + creature.getImagePath()).toURI().toString());
             } else {
-                ZipEntry ze = MainGUI.imageZipFile.getEntry(creature.getImagePath());
+                ZipEntry ze = Settings.getInstance().getImageZipFile().getEntry(creature.getImagePath());
                 try {
-                    img = new Image(MainGUI.imageZipFile.getInputStream(ze));
+                    img = new Image(Settings.getInstance().getImageZipFile().getInputStream(ze));
                 } catch (IOException e) {
                     LOGGER.error("ERROR while loading image, using icon instead", e);
                     img = new Image(MainGUI.class.getResourceAsStream("icon.png"));
@@ -98,8 +98,8 @@ public class Utils {
     public static void newLibraryEntryWindow() {
         Dialog<Creature> d = new Dialog<>();
         Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(MainGUI.imageIcon);
-        d.initOwner(MainGUI.mainStage);
+        stage.getIcons().add(Settings.getInstance().getImageIcon());
+        d.initOwner(Settings.getInstance().getMainStage());
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
@@ -113,7 +113,7 @@ public class Utils {
             final FileChooser fc = new FileChooser();
             fc.setInitialDirectory(new File(System.getProperty("user.dir")));
             fc.getExtensionFilters().add(new ExtensionFilter("Image File", "*.png", "*.jpeg", "*.bmp"));
-            File file = fc.showOpenDialog(MainGUI.mainStage);
+            File file = fc.showOpenDialog(Settings.getInstance().getMainStage());
             if (file != null) {
                 imageFile = file;
                 imageName.setText(file.getName());
@@ -143,15 +143,15 @@ public class Utils {
 
         Optional<Creature> a = d.showAndWait();
         if (a.isPresent()) {
-            MainGUI.creatureList.add(a.get());
+            Settings.getInstance().getCreatureList().add(a.get());
         }
     }
 
     public static void newPlayerWindow(Encounter encounter) {
         Dialog<String> d = new Dialog<>();
         Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(MainGUI.imageIcon);
-        d.initOwner(MainGUI.mainStage);
+        stage.getIcons().add(Settings.getInstance().getImageIcon());
+        d.initOwner(Settings.getInstance().getMainStage());
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
@@ -185,8 +185,8 @@ public class Utils {
     public static void newNPCWindow(Encounter encounter) {
         Dialog<String> d = new Dialog<>();
         Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(MainGUI.imageIcon);
-        d.initOwner(MainGUI.mainStage);
+        stage.getIcons().add(Settings.getInstance().getImageIcon());
+        d.initOwner(Settings.getInstance().getMainStage());
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
@@ -199,7 +199,7 @@ public class Utils {
             }
         });
         ArrayList<String> names = new ArrayList<>();
-        for (Creature le : MainGUI.creatureList) {
+        for (Creature le : Settings.getInstance().getCreatureList()) {
             names.add(le.getName());
         }
         ObservableList<String> ol = FXCollections.observableArrayList(names);

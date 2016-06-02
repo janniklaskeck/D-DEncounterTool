@@ -11,7 +11,7 @@
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <right>
-            <Button fx:id="openImageButton" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" onAction="#openImage" prefHeight="30.0" prefWidth="100.0" text="Open Image" BorderPane.alignment="CENTER">
+            <Button fx:id="openImageButton" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Open Image" BorderPane.alignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font>

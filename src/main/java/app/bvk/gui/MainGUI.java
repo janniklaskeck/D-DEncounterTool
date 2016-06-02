@@ -2,15 +2,12 @@ package app.bvk.gui;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.ZipFile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import app.bvk.encounter.Encounter;
-import app.bvk.entity.Creature;
+import app.bvk.utils.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,61 +18,50 @@ import javafx.stage.Stage;
 public class MainGUI extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
+    private Thread autoSaveThread;
 
-    public static final String IMAGEFOLDER = System.getProperty("user.dir") + "\\images\\";
-    public static Image imageIcon;
-    public static ZipFile imageZipFile;
-
-    public static List<Creature> creatureList = new ArrayList<>();
-    public static Encounter encounter = new Encounter("Unnamed Encounter");
-    public static Stage mainStage;
-
-    private static Thread autoSaveThread;
-    private static final int AUTOSAVEINTERVAL = 60000;
-    private static boolean doAutoSave = true;
-    public static boolean autosave = false;
-
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
         try {
             Charset cp437 = Charset.forName("CP437");
-            imageZipFile = new ZipFile(System.getProperty("user.dir") + "\\images.zip", cp437);
+            Settings.getInstance().setImageZipFile(new ZipFile(System.getProperty("user.dir") + "\\images.zip", cp437));
         } catch (IOException e) {
             LOGGER.error("ERROR while loading zip file", e);
-            imageZipFile = null;
+            Settings.getInstance().setImageZipFile(null);
         }
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        imageIcon = new Image(getClass().getResourceAsStream("icon.png"));
+    public void start(final Stage primaryStage) throws Exception {
+        Settings.getInstance().setImageIcon(new Image(getClass().getResourceAsStream("icon.png")));
         Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("customstyle.css").toString());
 
-        mainStage = primaryStage;
+        Settings.getInstance().setMainStage(primaryStage);
 
         autoSaveThread = new Thread(() -> {
-            while (doAutoSave) {
-                while (autosave) {
-                    if (!encounter.getCreatureList().isEmpty()) {
-                        encounter.autoSave();
+            while (Settings.getInstance().isDoAutoSave()) {
+                while (Settings.getInstance().isAutosave()) {
+                    if (!Settings.getInstance().getEncounter().getCreatureList().isEmpty()) {
+                        Settings.getInstance().getEncounter().autoSave();
                         LOGGER.info("Autosave complete");
                     }
                 }
                 try {
-                    Thread.sleep(AUTOSAVEINTERVAL);
+                    Thread.sleep(Settings.getInstance().getAutoSaveInterval());
                 } catch (InterruptedException e) {
                     LOGGER.error("AutoSave Thread was interrupted", e);
+                    Thread.currentThread().interrupt();
                 }
             }
         });
         autoSaveThread.setDaemon(true);
         autoSaveThread.start();
 
-        primaryStage.setOnCloseRequest(event -> doAutoSave = false);
-        primaryStage.getIcons().add(imageIcon);
+        primaryStage.setOnCloseRequest(event -> Settings.getInstance().setDoAutoSave(false));
+        primaryStage.getIcons().add(Settings.getInstance().getImageIcon());
         primaryStage.setTitle("D&D Encounter Tool v2.0");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -85,7 +71,7 @@ public class MainGUI extends Application {
     @Override
     public void stop() {
         try {
-            imageZipFile.close();
+            Settings.getInstance().getImageZipFile().close();
         } catch (IOException e) {
             LOGGER.error("", e);
         }

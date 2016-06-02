@@ -16,8 +16,8 @@ import app.bvk.encounter.Encounter;
 import app.bvk.encounter.EncounterEntry;
 import app.bvk.entity.Creature;
 import app.bvk.entity.Monster;
-import app.bvk.gui.MainGUI;
 import app.bvk.library.LibraryEntry;
+import app.bvk.utils.Settings;
 import app.bvk.utils.Utils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -137,10 +137,10 @@ public class MainController {
     }
 
     private void initEncounter() {
-        encounter = MainGUI.encounter;
+        encounter = Settings.getInstance().getEncounter();
 
-        encounterNameTextField.setText(encounter.getEncounterName());
-        encounterNameTextField.textProperty().bindBidirectional(encounter.encounterNameProperty);
+        encounterNameTextField.setText(encounter.getEncounterNameProperty().get());
+        encounterNameTextField.textProperty().bindBidirectional(encounter.getEncounterNameProperty());
         encounterNameTextField.textProperty()
                 .addListener((obs, oldValue, newValue) -> encounter.setEncounterName(newValue));
     }
@@ -169,7 +169,7 @@ public class MainController {
     }
 
     private void loadData() {
-        if (MainGUI.imageZipFile == null) {
+        if (Settings.getInstance().getImageZipFile() == null) {
 
             String userDir = System.getProperty(USERDIR);
             Stream<Path> str = null;
@@ -189,8 +189,7 @@ public class MainController {
                         String creatureName = fileNameSplitDot[0];
                         Monster m = new Monster(creatureName,
                                 filePathSplitBackslash[filePathSplitBackslash.length - 1]);
-                        MainGUI.creatureList.add(m);
-
+                        Settings.getInstance().getCreatureList().add(m);
                     }
                     incProgress();
                     setProgressTextAndBar(progress / (amountToLoad));
@@ -204,17 +203,17 @@ public class MainController {
                 }
             }
         } else {
-            Enumeration<? extends ZipEntry> entries = MainGUI.imageZipFile.entries();
+            Enumeration<? extends ZipEntry> entries = Settings.getInstance().getImageZipFile().entries();
             while (entries.hasMoreElements()) {
                 amountToLoad++;
                 entries.nextElement();
             }
-            entries = MainGUI.imageZipFile.entries();
+            entries = Settings.getInstance().getImageZipFile().entries();
             while (entries.hasMoreElements()) {
                 ZipEntry ne = entries.nextElement();
                 String name = ne.getName().split("\\.")[0];
                 Monster m = new Monster(name, ne.getName());
-                MainGUI.creatureList.add(m);
+                Settings.getInstance().getCreatureList().add(m);
 
             }
             incProgress();
@@ -225,7 +224,7 @@ public class MainController {
 
     public void fillLibrary() {
         ObservableList<LibraryEntry> leList = FXCollections.observableArrayList();
-        for (Creature c : MainGUI.creatureList) {
+        for (Creature c : Settings.getInstance().getCreatureList()) {
             leList.add(new LibraryEntry(c));
             incProgress();
             setProgressTextAndBar(progress / (amountToLoad));
@@ -243,7 +242,7 @@ public class MainController {
         final FileChooser fc = new FileChooser();
         fc.setInitialDirectory(new File(System.getProperty(USERDIR)));
         fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
-        File file = fc.showOpenDialog(MainGUI.mainStage);
+        File file = fc.showOpenDialog(Settings.getInstance().getMainStage());
         if (file != null) {
             encounter.readFromFile(file);
         }
@@ -254,7 +253,7 @@ public class MainController {
         final FileChooser fc = new FileChooser();
         fc.setInitialDirectory(new File(System.getProperty(USERDIR)));
         fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
-        File file = fc.showSaveDialog(MainGUI.mainStage);
+        File file = fc.showSaveDialog(Settings.getInstance().getMainStage());
         if (file != null) {
             encounter.saveToFile(file);
         }
@@ -307,10 +306,10 @@ public class MainController {
     }
 
     private void autoSaveChanged(final boolean selected) {
-        MainGUI.autosave = selected;
+        Settings.getInstance().setAutosave(selected);
     }
 
-    private void setProgressTextAndBar(double percentage) {
+    private void setProgressTextAndBar(final double percentage) {
         barProgress.set(percentage);
         Platform.runLater(() -> progressText.set("Loading progress: " + (int) (percentage * 100) + "%"));
     }

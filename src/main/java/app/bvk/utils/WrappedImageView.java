@@ -9,23 +9,23 @@ public class WrappedImageView extends ImageView {
         setPreserveRatio(false);
     }
 
-    public WrappedImageView(Image img) {
+    public WrappedImageView(final Image img) {
         super(img);
         setPreserveRatio(true);
     }
 
     @Override
-    public double maxWidth(double height) {
+    public double maxWidth(final double height) {
         return 16384;
     }
 
     @Override
-    public double minWidth(double height) {
+    public double minWidth(final double height) {
         return 40;
     }
 
     @Override
-    public double prefWidth(double height) {
+    public double prefWidth(final double height) {
         Image img = getImage();
         if (img == null) {
             return minWidth(height);
@@ -34,17 +34,17 @@ public class WrappedImageView extends ImageView {
     }
 
     @Override
-    public double maxHeight(double width) {
+    public double maxHeight(final double width) {
         return 16384;
     }
 
     @Override
-    public double minHeight(double width) {
+    public double minHeight(final double width) {
         return 40;
     }
 
     @Override
-    public double prefHeight(double width) {
+    public double prefHeight(final double width) {
         Image img = getImage();
         if (img == null) {
             return minHeight(width);
@@ -58,7 +58,7 @@ public class WrappedImageView extends ImageView {
     }
 
     @Override
-    public void resize(double width, double height) {
+    public void resize(final double width, final double height) {
         setFitWidth(width);
         setFitHeight(height);
     }

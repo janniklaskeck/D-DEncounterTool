@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
 import app.bvk.entity.Creature;
-import app.bvk.gui.MainGUI;
+import app.bvk.utils.Settings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -33,12 +33,10 @@ public class Encounter {
     private ArrayList<Creature> creatureList;
     private int currentIndex = 0;
     private File file;
-    private String encounterName;
-    public StringProperty encounterNameProperty;
+    private StringProperty encounterNameProperty;
 
-    public Encounter(String name) {
-        encounterName = name;
-        encounterNameProperty = new SimpleStringProperty(encounterName);
+    public Encounter(final String name) {
+        encounterNameProperty = new SimpleStringProperty(name);
         creatureList = new ArrayList<>();
     }
 
@@ -46,7 +44,7 @@ public class Encounter {
         creatureList.clear();
     }
 
-    public void addCreature(Creature creature) {
+    public void addCreature(final Creature creature) {
         creatureList.add(creature);
         for (Creature c : getCreatureList()) {
             c.setSelected(false);
@@ -59,8 +57,8 @@ public class Encounter {
         }
     }
 
-    public void addCreature(String name) {
-        for (Creature c : MainGUI.creatureList) {
+    public void addCreature(final String name) {
+        for (Creature c : Settings.getInstance().getCreatureList()) {
             if (c.getName().equals(name)) {
                 creatureList.add(new Creature(c));
                 break;
@@ -77,7 +75,7 @@ public class Encounter {
         }
     }
 
-    public void copy(int index) {
+    public void copy(final int index) {
         getCreatureList().add(new Creature(getCreatureList().get(index)));
     }
 
@@ -116,18 +114,11 @@ public class Encounter {
         updateIndex();
     }
 
-    /**
-     * @return the currentIndex
-     */
     public int getCurrentIndex() {
         return currentIndex;
     }
 
-    /**
-     * @param currentIndex
-     *            the currentIndex to set
-     */
-    public void setCurrentIndex(int currentIndex) {
+    public void setCurrentIndex(final int currentIndex) {
         this.currentIndex = currentIndex;
         for (Creature c : getCreatureList()) {
             c.setSelected(false);
@@ -153,7 +144,7 @@ public class Encounter {
         setCurrentIndex(currentIndex);
     }
 
-    public void saveToFile(File file) {
+    public void saveToFile(final File file) {
         JsonWriter jsonWriter;
         try {
             jsonWriter = new JsonWriter(new FileWriter(file));
@@ -161,7 +152,7 @@ public class Encounter {
             jsonWriter.beginArray();
             jsonWriter.beginObject();
             jsonWriter.name("encounterName")
-                    .value("".equals(getEncounterName()) ? "Unnamed Encounter" : getEncounterName());
+                    .value("".equals(encounterNameProperty.get()) ? "Unnamed Encounter" : encounterNameProperty.get());
             jsonWriter.endObject();
             jsonWriter.beginArray();
             for (Creature c : getCreatureList()) {
@@ -188,8 +179,8 @@ public class Encounter {
             file.delete();
         }
         String date = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        file = new File(System.getProperty("user.dir") + "\\saves\\" + encounterName + "-" + date.replace(":", ".")
-                + ".ddesav");
+        file = new File(System.getProperty("user.dir") + "\\saves\\" + encounterNameProperty.get() + "-"
+                + date.replace(":", ".") + ".ddesav");
         file.getParentFile().mkdirs();
         try {
             file.createNewFile();
@@ -199,7 +190,7 @@ public class Encounter {
         saveToFile(file);
     }
 
-    public void readFromFile(File file) {
+    public void readFromFile(final File file) {
         FileInputStream fis;
         reset();
         try {
@@ -228,20 +219,8 @@ public class Encounter {
         setCurrentIndex(0);
     }
 
-    /**
-     * @return the encounterName
-     */
-    public String getEncounterName() {
-        return encounterName;
-    }
-
-    /**
-     * @param encounterName
-     *            the encounterName to set
-     */
-    public void setEncounterName(String encounterName) {
-        this.encounterName = encounterName;
-        encounterNameProperty.set(encounterName);
+    public void setEncounterName(final String encounterName) {
+        getEncounterNameProperty().set(encounterName);
     }
 
     public void remove(final int selectedIndex) {
@@ -252,5 +231,9 @@ public class Encounter {
             }
             getCreatureList().get(getCurrentIndex()).setSelected(true);
         }
+    }
+
+    public StringProperty getEncounterNameProperty() {
+        return encounterNameProperty;
     }
 }
