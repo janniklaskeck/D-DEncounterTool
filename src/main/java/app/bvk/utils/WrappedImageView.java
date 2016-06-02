@@ -1,17 +1,24 @@
 package app.bvk.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class WrappedImageView extends ImageView {
-
-    WrappedImageView() {
-        setPreserveRatio(false);
-    }
-
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(WrappedImageView.class);
+    
     public WrappedImageView(final Image img) {
         super(img);
         setPreserveRatio(true);
+        setOnScroll(event -> {
+            final double amount = event.getDeltaY();
+            scaleXProperty().add(amount);
+            scaleYProperty().add(amount);
+            LOGGER.debug("{}", amount);
+        });
     }
 
     @Override
@@ -61,5 +68,6 @@ public class WrappedImageView extends ImageView {
     public void resize(final double width, final double height) {
         setFitWidth(width);
         setFitHeight(height);
+        LOGGER.info("Resize");
     }
 }
