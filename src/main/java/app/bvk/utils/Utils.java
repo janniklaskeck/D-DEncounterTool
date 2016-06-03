@@ -72,12 +72,12 @@ public class Utils {
             img = creature.getImage();
         }
         final VBox vbox = new VBox();
-        final WrappedImageView iv = new WrappedImageView(vbox, creature.getImage());
+
+        final Scene myDialogScene = new Scene(vbox);
+        final WrappedImageView iv = new WrappedImageView(myDialogScene, creature.getImage());
         vbox.getChildren().add(iv);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(10));
-
-        final Scene myDialogScene = new Scene(vbox);
 
         final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         final double width = img.getWidth() >= gd.getDisplayMode().getWidth() * 0.8

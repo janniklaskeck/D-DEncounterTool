@@ -35,7 +35,7 @@ public class Creature {
     }
 
     public Creature(JsonObject jo) {
-        this.name.setValue(jo.get("name").toString().replace("\"", ""));
+        this.name = new SimpleStringProperty(jo.get("name").toString().replace("\"", ""));
         this.imagePath = jo.get("imagePath").toString().replace("\"", "");
         this.initiative = jo.get("initiative").getAsFloat();
         this.health = jo.get("health").getAsInt();
