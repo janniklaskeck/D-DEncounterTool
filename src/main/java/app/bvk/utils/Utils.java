@@ -71,9 +71,9 @@ public class Utils {
         } else {
             img = creature.getImage();
         }
-
-        final WrappedImageView iv = new WrappedImageView(creature.getImage());
-        final VBox vbox = new VBox(iv);
+        final VBox vbox = new VBox();
+        final WrappedImageView iv = new WrappedImageView(vbox, creature.getImage());
+        vbox.getChildren().add(iv);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(10));
 
