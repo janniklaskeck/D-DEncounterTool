@@ -3,10 +3,9 @@ package app.bvk.utils;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.zip.ZipEntry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +34,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 public class Utils {
 
@@ -48,21 +49,22 @@ public class Utils {
 
     }
 
-    public static void showImageFrame(Creature creature) {
+    public static void showImageFrame(final Creature creature) {
         Image img;
         final Stage imgFrame = new Stage();
         imgFrame.getIcons().add(Settings.getInstance().getImageIcon());
         imgFrame.initModality(Modality.WINDOW_MODAL);
 
         if (creature.getImage() == null) {
-            if (Settings.getInstance().getImageZipFile() == null) {
+            final ZipFile zf = Settings.getInstance().getImageZipFile();
+            if (zf == null) {
                 img = new Image(
                         new File(Settings.getInstance().getImageFolder() + creature.getImagePath()).toURI().toString());
             } else {
-                ZipEntry ze = Settings.getInstance().getImageZipFile().getEntry(creature.getImagePath());
                 try {
-                    img = new Image(Settings.getInstance().getImageZipFile().getInputStream(ze));
-                } catch (IOException e) {
+                    InputStream is = zf.getInputStream(zf.getFileHeader(creature.getImagePath()));
+                    img = new Image(is);
+                } catch (ZipException e) {
                     LOGGER.error("ERROR while loading image, using icon instead", e);
                     img = new Image(MainGUI.class.getResourceAsStream("icon.png"));
                 }

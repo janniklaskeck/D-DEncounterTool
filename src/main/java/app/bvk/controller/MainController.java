@@ -5,9 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
+import java.util.List;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.FileHeader;
 
 public class MainController {
 
@@ -170,11 +172,9 @@ public class MainController {
 
     private void loadData() {
         if (Settings.getInstance().getImageZipFile() == null) {
-
-            String userDir = System.getProperty(USERDIR);
             Stream<Path> str = null;
             try {
-                str = Files.walk(Paths.get(userDir + "\\images"));
+                str = Files.walk(Paths.get(Settings.getInstance().getImageFolder()));
                 str.forEach(filePath -> {
                     if (Files.isRegularFile(filePath) && filePath.toString().toLowerCase().contains("png")) {
                         amountToLoad++;
@@ -203,21 +203,21 @@ public class MainController {
                 }
             }
         } else {
-            Enumeration<? extends ZipEntry> entries = Settings.getInstance().getImageZipFile().entries();
-            while (entries.hasMoreElements()) {
-                amountToLoad++;
-                entries.nextElement();
+            try {
+                final ZipFile zf = Settings.getInstance().getImageZipFile();
+                @SuppressWarnings("unchecked")
+                List<FileHeader> fileHeaders = zf.getFileHeaders();
+                amountToLoad += fileHeaders.size();
+                for (FileHeader fh : fileHeaders) {
+                    final String name = fh.getFileName().split("\\.")[0];
+                    final Monster m = new Monster(name, fh.getFileName());
+                    Settings.getInstance().getCreatureList().add(m);
+                }
+                incProgress();
+                setProgressTextAndBar(progress / amountToLoad);
+            } catch (ZipException e) {
+                LOGGER.error("Error while reading zip entries", e);
             }
-            entries = Settings.getInstance().getImageZipFile().entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry ne = entries.nextElement();
-                String name = ne.getName().split("\\.")[0];
-                Monster m = new Monster(name, ne.getName());
-                Settings.getInstance().getCreatureList().add(m);
-
-            }
-            incProgress();
-            setProgressTextAndBar(progress / amountToLoad);
         }
         entryAmountText.setText("#Entries: " + (int) amountToLoad);
     }

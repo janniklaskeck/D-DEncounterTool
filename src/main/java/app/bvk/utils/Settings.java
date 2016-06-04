@@ -1,17 +1,27 @@
 package app.bvk.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipFile;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import app.bvk.encounter.Encounter;
 import app.bvk.entity.Creature;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
 
 public class Settings {
 
-    private final String imageFolder = System.getProperty("user.dir") + "\\images\\";
+    private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
+    private final String creatureFolder = System.getProperty("user.dir") + "/creatures";
+    private final String imageFolder = System.getProperty("user.dir") + "/creatures/images";
     private Image imageIcon;
     private ZipFile imageZipFile;
 
@@ -93,6 +103,47 @@ public class Settings {
 
     public long getAutoSaveInterval() {
         return autoSaveInterval;
+    }
+
+    public void saveLibrary() {
+        final File creatureFile = new File(getCreatureFolder() + "/creature.zip");
+        try {
+            if (creatureFile.exists()) {
+                LOGGER.info("Delete Existing zip file file {}", creatureFile.getAbsolutePath());
+                creatureFile.delete();
+            }
+
+            final File creatureFolderTemp = new File(getCreatureFolder() + "/creaturesTemp/");
+            if (!creatureFolderTemp.exists()) {
+                creatureFolderTemp.mkdir();
+            }
+            final ArrayList<File> creatureFiles = new ArrayList<>();
+            for (final Creature c : getCreatureList()) {
+                final File creatureJson = new File(
+                        creatureFolderTemp.getAbsolutePath() + "/" + c.getName().get() + ".json");
+                if (!creatureJson.exists()) {
+                    creatureJson.createNewFile();
+                }
+                c.writeJsonToFile(creatureJson);
+                creatureFiles.add(creatureJson);
+            }
+
+            final ZipFile zipFile = new ZipFile(creatureFile);
+            final ZipParameters parameters = new ZipParameters();
+            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+            parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_ULTRA);
+            zipFile.createZipFile(creatureFiles, parameters);
+            for (final File tempFile : creatureFolderTemp.listFiles()) {
+                tempFile.delete();
+            }
+            creatureFolderTemp.delete();
+        } catch (ZipException | IOException e) {
+            LOGGER.error("", e);
+        }
+    }
+
+    public String getCreatureFolder() {
+        return creatureFolder;
     }
 
 }

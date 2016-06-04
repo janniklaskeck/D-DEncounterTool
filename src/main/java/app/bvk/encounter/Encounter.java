@@ -155,7 +155,7 @@ public class Encounter {
                     .value("".equals(encounterNameProperty.get()) ? "Unnamed Encounter" : encounterNameProperty.get());
             jsonWriter.endObject();
             jsonWriter.beginArray();
-            for (Creature c : getCreatureList()) {
+            for (final Creature c : getCreatureList()) {
                 jsonWriter.beginObject();
                 jsonWriter.name("name").value(c.getName().get());
                 jsonWriter.name("imagePath").value(c.getImagePath());
@@ -163,7 +163,6 @@ public class Encounter {
                 jsonWriter.name("health").value(c.getHealth());
                 jsonWriter.name("armorClass").value(c.getArmorClass());
                 jsonWriter.name("statusNotes").value(c.getStatusNotes());
-                jsonWriter.name("miscNotes").value(c.getMiscNotes());
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();

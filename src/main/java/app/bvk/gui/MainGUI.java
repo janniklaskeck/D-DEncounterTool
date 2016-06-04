@@ -1,9 +1,5 @@
 package app.bvk.gui;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.zip.ZipFile;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +10,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 public class MainGUI extends Application {
 
@@ -23,9 +21,9 @@ public class MainGUI extends Application {
     public static void main(final String[] args) {
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
         try {
-            Charset cp437 = Charset.forName("CP437");
-            Settings.getInstance().setImageZipFile(new ZipFile(System.getProperty("user.dir") + "\\images.zip", cp437));
-        } catch (IOException e) {
+            final ZipFile zf = new ZipFile(Settings.getInstance().getCreatureFolder() + "/images.zip");
+            Settings.getInstance().setImageZipFile(zf);
+        } catch (ZipException e) {
             LOGGER.error("ERROR while loading zip file", e);
             Settings.getInstance().setImageZipFile(null);
         }
@@ -35,8 +33,8 @@ public class MainGUI extends Application {
     @Override
     public void start(final Stage primaryStage) throws Exception {
         Settings.getInstance().setImageIcon(new Image(getClass().getResourceAsStream("icon.png")));
-        Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
-        Scene scene = new Scene(root);
+        final Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
+        final Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("customstyle.css").toString());
 
         Settings.getInstance().setMainStage(primaryStage);
@@ -70,10 +68,6 @@ public class MainGUI extends Application {
 
     @Override
     public void stop() {
-        try {
-            Settings.getInstance().getImageZipFile().close();
-        } catch (IOException e) {
-            LOGGER.error("", e);
-        }
+        Settings.getInstance().saveLibrary();
     }
 }
