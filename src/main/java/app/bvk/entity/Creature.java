@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +34,7 @@ public class Creature {
 
     private static final String NAME = "name";
     private static final String ARMOR_CLASS = "ac";
-    private static final String STRENGTH = "str";
+    private static final String STRENGTH_KEY = "str";
     private static final String DEXTERITY = "dex";
     private static final String CONSTITUTION = "con";
     private static final String WISDOM = "wis";
@@ -62,16 +65,16 @@ public class Creature {
     private int moveSpeedAir = 0;
     private int moveSpeedWater = 0;
 
-    private String savingThrows = "";
-    private String skills = "";
+    private Map<String, Integer> savingThrows = new HashMap<>();
+    private Map<String, Integer> skills = new HashMap<>();
     private String immunities = "";
     private String senses = "";
     private List<String> languages = new ArrayList<>();
     private int challengeRating = 0;
     private int experience = 0;
 
-    private List<String> properties = new ArrayList<>();
-    private List<String> actions = new ArrayList<>();
+    private Map<String, String> properties = new HashMap<>();
+    private Map<String, String> actions = new HashMap<>();
 
     public Creature(final String name, final String path) {
         this.name = new SimpleStringProperty(name);
@@ -96,7 +99,7 @@ public class Creature {
         setArmorClass(jo.get(ARMOR_CLASS).getAsInt());
         this.statusNotes = jo.get("statusNotes").getAsString().replace("\"", "");
 
-        setStrength(jo.get(STRENGTH).getAsInt());
+        setStrength(jo.get(STRENGTH_KEY).getAsInt());
         setDexterity(jo.get(DEXTERITY).getAsInt());
         setConstitution(jo.get(CONSTITUTION).getAsInt());
         setWisdom(jo.get(WISDOM).getAsInt());
@@ -106,8 +109,16 @@ public class Creature {
         setMoveSpeedGround(jo.get(MOVESPEED_GROUND).getAsInt());
         setMoveSpeedAir(jo.get(MOVESPEED_AIR).getAsInt());
         setMoveSpeedWater(jo.get(MOVESPEED_WATER).getAsInt());
-        setSavingThrows(jo.get(SAVING_THROWS).getAsString());
-        setSkills(jo.get(SKILLS).getAsString());
+        for (final JsonElement savingThrow : jo.get(SAVING_THROWS).getAsJsonArray()) {
+            for (final Entry<String, JsonElement> entry : savingThrow.getAsJsonObject().entrySet()) {
+                getSavingThrows().put(entry.getKey(), entry.getValue().getAsInt());
+            }
+        }
+        for (final JsonElement skill : jo.get(SKILLS).getAsJsonArray()) {
+            for (final Entry<String, JsonElement> entry : skill.getAsJsonObject().entrySet()) {
+                getSkills().put(entry.getKey(), entry.getValue().getAsInt());
+            }
+        }
         setImmunities(jo.get(IMMUNITIES).getAsString());
         setSenses(jo.get(SENSES).getAsString());
 
@@ -119,14 +130,16 @@ public class Creature {
             getLanguages().add(lang.getAsString());
         }
 
-        for (final JsonElement prop : jo.get(PROPERTIES).getAsJsonArray()) {
-            getLanguages().add(prop.getAsString());
+        for (final JsonElement property : jo.get(PROPERTIES).getAsJsonArray()) {
+            for (final Entry<String, JsonElement> entry : property.getAsJsonObject().entrySet()) {
+                getProperties().put(entry.getKey(), entry.getValue().getAsString());
+            }
         }
-
         for (final JsonElement action : jo.get(ACTIONS).getAsJsonArray()) {
-            getLanguages().add(action.getAsString());
+            for (final Entry<String, JsonElement> entry : action.getAsJsonObject().entrySet()) {
+                getActions().put(entry.getKey(), entry.getValue().getAsString());
+            }
         }
-
     }
 
     public void writeJsonToFile(final File file) {
@@ -137,7 +150,7 @@ public class Creature {
             jsonWriter.setIndent("  ");
             jsonWriter.beginObject();
             jsonWriter.name(NAME).value(getName().get());
-            jsonWriter.name(STRENGTH).value(getStrength());
+            jsonWriter.name(STRENGTH_KEY).value(getStrength());
             jsonWriter.name(DEXTERITY).value(getDexterity());
             jsonWriter.name(CONSTITUTION).value(getConstitution());
             jsonWriter.name(WISDOM).value(getWisdom());
@@ -149,8 +162,20 @@ public class Creature {
             jsonWriter.name(MOVESPEED_AIR).value(getMoveSpeedAir());
             jsonWriter.name(MOVESPEED_WATER).value(getMoveSpeedWater());
 
-            jsonWriter.name(SAVING_THROWS).value(getSavingThrows());
-            jsonWriter.name(SKILLS).value(getSkills());
+            jsonWriter.name(SAVING_THROWS).beginArray();
+            for (Map.Entry<String, Integer> savingThrow : getSavingThrows().entrySet()) {
+                jsonWriter.beginObject();
+                jsonWriter.name(savingThrow.getKey()).value(savingThrow.getValue());
+                jsonWriter.endObject();
+            }
+            jsonWriter.endArray();
+            jsonWriter.name(SKILLS).beginArray();
+            for (Map.Entry<String, Integer> skill : getSkills().entrySet()) {
+                jsonWriter.beginObject();
+                jsonWriter.name(skill.getKey()).value(skill.getValue());
+                jsonWriter.endObject();
+            }
+            jsonWriter.endArray();
             jsonWriter.name(IMMUNITIES).value(getImmunities());
             jsonWriter.name(SENSES).value(getSenses());
             jsonWriter.name(LANGUAGES).beginArray();
@@ -161,13 +186,17 @@ public class Creature {
             jsonWriter.name(CHALLENGE_RATING).value(getChallengeRating());
             jsonWriter.name(EXPERIENCE).value(getExperience());
             jsonWriter.name(PROPERTIES).beginArray();
-            for (final String prop : getProperties()) {
-                jsonWriter.value(prop);
+            for (final Map.Entry<String, String> prop : getProperties().entrySet()) {
+                jsonWriter.beginObject();
+                jsonWriter.name(prop.getKey()).value(prop.getValue());
+                jsonWriter.endObject();
             }
             jsonWriter.endArray();
             jsonWriter.name(ACTIONS).beginArray();
-            for (final String action : getActions()) {
-                jsonWriter.value(action);
+            for (final Map.Entry<String, String> action : getActions().entrySet()) {
+                jsonWriter.beginObject();
+                jsonWriter.name(action.getKey()).value(action.getValue());
+                jsonWriter.endObject();
             }
             jsonWriter.endArray();
             jsonWriter.endObject();
@@ -314,19 +343,19 @@ public class Creature {
         this.moveSpeedWater = moveSpeedWater;
     }
 
-    public String getSavingThrows() {
+    public Map<String, Integer> getSavingThrows() {
         return savingThrows;
     }
 
-    public void setSavingThrows(String savingThrows) {
+    public void setSavingThrows(final Map<String, Integer> savingThrows) {
         this.savingThrows = savingThrows;
     }
 
-    public String getSkills() {
+    public Map<String, Integer> getSkills() {
         return skills;
     }
 
-    public void setSkills(String skills) {
+    public void setSkills(final Map<String, Integer> skills) {
         this.skills = skills;
     }
 
@@ -334,7 +363,7 @@ public class Creature {
         return immunities;
     }
 
-    public void setImmunities(String immunities) {
+    public void setImmunities(final String immunities) {
         this.immunities = immunities;
     }
 
@@ -342,7 +371,7 @@ public class Creature {
         return senses;
     }
 
-    public void setSenses(String senses) {
+    public void setSenses(final String senses) {
         this.senses = senses;
     }
 
@@ -350,7 +379,7 @@ public class Creature {
         return challengeRating;
     }
 
-    public void setChallengeRating(int challengeRating) {
+    public void setChallengeRating(final int challengeRating) {
         this.challengeRating = challengeRating;
     }
 
@@ -358,23 +387,23 @@ public class Creature {
         return experience;
     }
 
-    public void setExperience(int experience) {
+    public void setExperience(final int experience) {
         this.experience = experience;
     }
 
-    public List<String> getProperties() {
+    public Map<String, String> getProperties() {
         return properties;
     }
 
-    public void setProperties(List<String> properties) {
+    public void setProperties(final Map<String, String> properties) {
         this.properties = properties;
     }
 
-    public List<String> getActions() {
+    public Map<String, String> getActions() {
         return actions;
     }
 
-    public void setActions(List<String> actions) {
+    public void setActions(final Map<String, String> actions) {
         this.actions = actions;
     }
 
@@ -382,7 +411,7 @@ public class Creature {
         return languages;
     }
 
-    public void setLanguages(List<String> languages) {
+    public void setLanguages(final List<String> languages) {
         this.languages = languages;
     }
 }
