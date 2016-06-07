@@ -24,6 +24,7 @@ public class Settings {
     private final String imageFolder = System.getProperty("user.dir") + "/creatures/images";
     private Image imageIcon;
     private ZipFile imageZipFile;
+    private ZipFile creatureZipFile;
 
     private final List<Creature> creatureList = new ArrayList<>();
     private Encounter encounter = new Encounter("Unnamed Encounter");
@@ -106,7 +107,7 @@ public class Settings {
     }
 
     public void saveLibrary() {
-        final File creatureFile = new File(getCreatureFolder() + "/creature.zip");
+        final File creatureFile = new File(getCreatureFolder() + "/creatures.zip");
         try {
             if (creatureFile.exists()) {
                 LOGGER.info("Delete Existing zip file file {}", creatureFile.getAbsolutePath());
@@ -144,6 +145,20 @@ public class Settings {
 
     public String getCreatureFolder() {
         return creatureFolder;
+    }
+
+    /**
+     * @return the creatureZipFile
+     */
+    public ZipFile getCreatureZipFile() {
+        return creatureZipFile;
+    }
+
+    /**
+     * @param creatureZipFile the creatureZipFile to set
+     */
+    public void setCreatureZipFile(ZipFile creatureZipFile) {
+        this.creatureZipFile = creatureZipFile;
     }
 
 }

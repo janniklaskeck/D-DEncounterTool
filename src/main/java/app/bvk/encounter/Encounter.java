@@ -162,7 +162,7 @@ public class Encounter {
                 jsonWriter.name("initiative").value(c.getInitiative());
                 jsonWriter.name("health").value(c.getHealth());
                 jsonWriter.name("armorClass").value(c.getArmorClass());
-                jsonWriter.name("statusNotes").value(c.getStatusNotes());
+                jsonWriter.name("statusNotes").value(c.getNotes());
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();

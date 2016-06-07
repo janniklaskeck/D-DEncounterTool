@@ -71,7 +71,7 @@ public class EncounterEntry extends GridPane { // NOSONAR
         initiativeTextField.setText(Float.toString(creature.getInitiative()));
         healthTextField.setText(Integer.toString(creature.getHealth()));
         armorClassTextField.setText(Integer.toString(creature.getArmorClass()));
-        statusTextArea.setText(creature.getStatusNotes());
+        statusTextArea.setText(creature.getNotes());
 
         addListeners();
     }
@@ -136,7 +136,7 @@ public class EncounterEntry extends GridPane { // NOSONAR
             }
         });
 
-        statusTextArea.textProperty().addListener((obs, oldValue, newValue) -> creature.setStatusNotes(newValue));
+        statusTextArea.textProperty().addListener((obs, oldValue, newValue) -> creature.setNotes(newValue));
     }
 
     @FXML

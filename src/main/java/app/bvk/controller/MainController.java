@@ -1,15 +1,14 @@
 package app.bvk.controller;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.JsonParser;
 
 import app.bvk.encounter.Encounter;
 import app.bvk.encounter.EncounterEntry;
@@ -105,9 +104,13 @@ public class MainController {
     public void initialize() {
         initProgressDisplay();
         Thread t = new Thread(() -> {
-            loadData();
-            fillLibrary();
-            addLibraryTextFieldFilter();
+            try {
+                loadData();
+                fillLibrary();
+                addLibraryTextFieldFilter();
+            } catch (FileNotFoundException e) {
+                LOGGER.error("Image Zip File not found", e);
+            }
             Platform.runLater(() -> rootBorderPane.setBottom(null));
         });
         t.setDaemon(true);
@@ -170,56 +173,73 @@ public class MainController {
         progress++;
     }
 
-    private void loadData() {
+    private void loadData() throws FileNotFoundException {
         if (Settings.getInstance().getImageZipFile() == null) {
-            Stream<Path> str = null;
-            try {
-                str = Files.walk(Paths.get(Settings.getInstance().getImageFolder()));
-                str.forEach(filePath -> {
-                    if (Files.isRegularFile(filePath) && filePath.toString().toLowerCase().contains("png")) {
-                        amountToLoad++;
-                    }
-                });
-                str.forEach(filePath -> {
-                    if (Files.isRegularFile(filePath) && filePath.toString().toLowerCase().contains("png")) {
-                        String filePathString = filePath.toString();
-                        String[] filePathSplitBackslash = filePathString.split("\\\\");
-                        String[] fileNameSplitDot = filePathSplitBackslash[filePathSplitBackslash.length - 1]
-                                .split("\\.");
-                        String creatureName = fileNameSplitDot[0];
-                        Monster m = new Monster(creatureName,
-                                filePathSplitBackslash[filePathSplitBackslash.length - 1]);
-                        Settings.getInstance().getCreatureList().add(m);
-                    }
-                    incProgress();
-                    setProgressTextAndBar(progress / (amountToLoad));
-                });
-
-            } catch (IOException e) {
-                LOGGER.error("ERROR while reading zip file", e);
-            } finally {
-                if (str != null) {
-                    str.close();
-                }
-            }
+            throw new FileNotFoundException("Image Zip File not found");
         } else {
-            try {
-                final ZipFile zf = Settings.getInstance().getImageZipFile();
-                @SuppressWarnings("unchecked")
-                List<FileHeader> fileHeaders = zf.getFileHeaders();
-                amountToLoad += fileHeaders.size();
-                for (FileHeader fh : fileHeaders) {
+            if (Settings.getInstance().getCreatureZipFile() == null) {
+
+                loadImagesFromZip(true);
+            } else {
+                loadDataFromZip();
+                loadImagesFromZip(false);
+            }
+
+        }
+        entryAmountText.setText("#Entries: " + (int) amountToLoad);
+    }
+
+    private void loadDataFromZip() {
+        try {
+            final ZipFile zipCreatures = Settings.getInstance().getCreatureZipFile();
+            @SuppressWarnings("unchecked")
+            final List<FileHeader> fileHeaders = zipCreatures.getFileHeaders();
+            amountToLoad += fileHeaders.size();
+            for (final FileHeader fh : fileHeaders) {
+                final JsonParser parser = new JsonParser();
+                final Scanner scanner = new Scanner(zipCreatures.getInputStream(fh));
+                scanner.useDelimiter("\\A");
+
+                final Monster m = new Monster(parser.parse(scanner.next()).getAsJsonObject());
+                scanner.close();
+                Settings.getInstance().getCreatureList().add(m);
+                LOGGER.info("{}{}{}", m.getCharisma(), m.getExperience(), m.getChallengeRating());
+            }
+            incProgress();
+            setProgressTextAndBar(progress / amountToLoad);
+        } catch (ZipException e) {
+            LOGGER.error("Error while reading zip entries", e);
+        }
+    }
+
+    private void loadImagesFromZip(final boolean createMonster) {
+        try {
+            final ZipFile zipImages = Settings.getInstance().getImageZipFile();
+            @SuppressWarnings("unchecked")
+            final List<FileHeader> fileHeaders = zipImages.getFileHeaders();
+            amountToLoad += fileHeaders.size();
+            if (createMonster) {
+                for (final FileHeader fh : fileHeaders) {
                     final String name = fh.getFileName().split("\\.")[0];
                     final Monster m = new Monster(name, fh.getFileName());
                     Settings.getInstance().getCreatureList().add(m);
                 }
-                incProgress();
-                setProgressTextAndBar(progress / amountToLoad);
-            } catch (ZipException e) {
-                LOGGER.error("Error while reading zip entries", e);
+            } else {
+                for (final FileHeader fh : fileHeaders) {
+                    final String name = fh.getFileName().split("\\.")[0];
+                    final String imageName = fh.getFileName();
+                    Settings.getInstance().getCreatureList().stream().filter(c -> {
+                        final String creatureName = c.getName().get();
+                        return name.equals(creatureName);
+                    }).findFirst().get().setImagePath(imageName);
+                }
             }
+            incProgress();
+            setProgressTextAndBar(progress / amountToLoad);
+        } catch (ZipException e) {
+            LOGGER.error("Error while reading zip entries", e);
         }
-        entryAmountText.setText("#Entries: " + (int) amountToLoad);
+
     }
 
     public void fillLibrary() {
@@ -288,7 +308,6 @@ public class MainController {
         encounterList.setItems(encounter.getObsList());
     }
 
-    @FXML
     private void nextTurn() {
         encounter.setNextIndex();
         encounterList.setItems(encounter.getObsList());

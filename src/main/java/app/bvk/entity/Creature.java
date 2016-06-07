@@ -29,31 +29,35 @@ public class Creature {
     private float initiative = 0;
     private int health = 0;
     private int armorClass = 0;
-    private String statusNotes = "";
+    private String notes = "";
     private boolean isSelected = false;
 
-    private static final String NAME = "name";
+    private static final String IMAGEPATH_KEY = "imagePath";
+    private static final String INITIATIVE_KEY = "initiative";
+    private static final String HEALTH_KEY = "health";
+    private static final String NOTES_KEY = "statusNotes";
+    private static final String NAME_KEY = "name";
     private static final String ARMOR_CLASS = "ac";
     private static final String STRENGTH_KEY = "str";
-    private static final String DEXTERITY = "dex";
-    private static final String CONSTITUTION = "con";
-    private static final String WISDOM = "wis";
-    private static final String INTELLIGENCE = "int";
-    private static final String CHARISMA = "cha";
+    private static final String DEXTERITY_KEY = "dex";
+    private static final String CONSTITUTION_KEY = "con";
+    private static final String WISDOM_KEY = "wis";
+    private static final String INTELLIGENCE_KEY = "int";
+    private static final String CHARISMA_KEY = "cha";
 
-    private static final String MOVESPEED_GROUND = "moveSpeedGround";
-    private static final String MOVESPEED_AIR = "moveSpeedAir";
-    private static final String MOVESPEED_WATER = "moveSpeedWater";
+    private static final String MOVESPEED_GROUND_KEY = "moveSpeedGround";
+    private static final String MOVESPEED_AIR_KEY = "moveSpeedAir";
+    private static final String MOVESPEED_WATER_KEY = "moveSpeedWater";
 
-    private static final String SAVING_THROWS = "savingThrows";
-    private static final String SKILLS = "skills";
-    private static final String IMMUNITIES = "immunties";
-    private static final String SENSES = "senses";
-    private static final String LANGUAGES = "languages";
-    private static final String CHALLENGE_RATING = "challengeRating";
-    private static final String EXPERIENCE = "experience";
-    private static final String PROPERTIES = "properties";
-    private static final String ACTIONS = "actions";
+    private static final String SAVING_THROWS_KEY = "savingThrows";
+    private static final String SKILLS_KEY = "skills";
+    private static final String IMMUNITIES_KEY = "immunties";
+    private static final String SENSES_KEY = "senses";
+    private static final String LANGUAGES_KEY = "languages";
+    private static final String CHALLENGE_RATING_KEY = "challengeRating";
+    private static final String EXPERIENCE_KEY = "experience";
+    private static final String PROPERTIES_KEY = "properties";
+    private static final String ACTIONS_KEY = "actions";
 
     private int strength = 0;
     private int dexterity = 0;
@@ -88,54 +92,54 @@ public class Creature {
         this.initiative = c.getInitiative();
         this.health = c.getHealth();
         this.armorClass = c.getArmorClass();
-        this.statusNotes = c.getStatusNotes();
+        this.notes = c.getNotes();
     }
 
     public Creature(final JsonObject jo) {
-        this.name = new SimpleStringProperty(jo.get(NAME).toString().replace("\"", ""));
-        this.imagePath = jo.get("imagePath").toString().replace("\"", "");
-        this.initiative = jo.get("initiative").getAsFloat();
-        this.health = jo.get("health").getAsInt();
+        this.name = new SimpleStringProperty(jo.get(NAME_KEY).toString().replace("\"", ""));
+        this.imagePath = jo.get(IMAGEPATH_KEY).toString().replace("\"", "");
+        this.initiative = jo.get(INITIATIVE_KEY).getAsFloat();
+        this.health = jo.get(HEALTH_KEY).getAsInt();
         setArmorClass(jo.get(ARMOR_CLASS).getAsInt());
-        this.statusNotes = jo.get("statusNotes").getAsString().replace("\"", "");
+        this.notes = jo.get(NOTES_KEY).getAsString().replace("\"", "");
 
         setStrength(jo.get(STRENGTH_KEY).getAsInt());
-        setDexterity(jo.get(DEXTERITY).getAsInt());
-        setConstitution(jo.get(CONSTITUTION).getAsInt());
-        setWisdom(jo.get(WISDOM).getAsInt());
-        setIntelligence(jo.get(INTELLIGENCE).getAsInt());
-        setCharisma(jo.get(CHARISMA).getAsInt());
+        setDexterity(jo.get(DEXTERITY_KEY).getAsInt());
+        setConstitution(jo.get(CONSTITUTION_KEY).getAsInt());
+        setWisdom(jo.get(WISDOM_KEY).getAsInt());
+        setIntelligence(jo.get(INTELLIGENCE_KEY).getAsInt());
+        setCharisma(jo.get(CHARISMA_KEY).getAsInt());
 
-        setMoveSpeedGround(jo.get(MOVESPEED_GROUND).getAsInt());
-        setMoveSpeedAir(jo.get(MOVESPEED_AIR).getAsInt());
-        setMoveSpeedWater(jo.get(MOVESPEED_WATER).getAsInt());
-        for (final JsonElement savingThrow : jo.get(SAVING_THROWS).getAsJsonArray()) {
+        setMoveSpeedGround(jo.get(MOVESPEED_GROUND_KEY).getAsInt());
+        setMoveSpeedAir(jo.get(MOVESPEED_AIR_KEY).getAsInt());
+        setMoveSpeedWater(jo.get(MOVESPEED_WATER_KEY).getAsInt());
+        for (final JsonElement savingThrow : jo.get(SAVING_THROWS_KEY).getAsJsonArray()) {
             for (final Entry<String, JsonElement> entry : savingThrow.getAsJsonObject().entrySet()) {
                 getSavingThrows().put(entry.getKey(), entry.getValue().getAsInt());
             }
         }
-        for (final JsonElement skill : jo.get(SKILLS).getAsJsonArray()) {
+        for (final JsonElement skill : jo.get(SKILLS_KEY).getAsJsonArray()) {
             for (final Entry<String, JsonElement> entry : skill.getAsJsonObject().entrySet()) {
                 getSkills().put(entry.getKey(), entry.getValue().getAsInt());
             }
         }
-        setImmunities(jo.get(IMMUNITIES).getAsString());
-        setSenses(jo.get(SENSES).getAsString());
+        setImmunities(jo.get(IMMUNITIES_KEY).getAsString());
+        setSenses(jo.get(SENSES_KEY).getAsString());
 
         setLanguages(languages);
-        setChallengeRating(jo.get(CHALLENGE_RATING).getAsInt());
-        setExperience(jo.get(EXPERIENCE).getAsInt());
+        setChallengeRating(jo.get(CHALLENGE_RATING_KEY).getAsInt());
+        setExperience(jo.get(EXPERIENCE_KEY).getAsInt());
 
-        for (final JsonElement lang : jo.get(LANGUAGES).getAsJsonArray()) {
+        for (final JsonElement lang : jo.get(LANGUAGES_KEY).getAsJsonArray()) {
             getLanguages().add(lang.getAsString());
         }
 
-        for (final JsonElement property : jo.get(PROPERTIES).getAsJsonArray()) {
+        for (final JsonElement property : jo.get(PROPERTIES_KEY).getAsJsonArray()) {
             for (final Entry<String, JsonElement> entry : property.getAsJsonObject().entrySet()) {
                 getProperties().put(entry.getKey(), entry.getValue().getAsString());
             }
         }
-        for (final JsonElement action : jo.get(ACTIONS).getAsJsonArray()) {
+        for (final JsonElement action : jo.get(ACTIONS_KEY).getAsJsonArray()) {
             for (final Entry<String, JsonElement> entry : action.getAsJsonObject().entrySet()) {
                 getActions().put(entry.getKey(), entry.getValue().getAsString());
             }
@@ -149,50 +153,54 @@ public class Creature {
             jsonWriter = new JsonWriter(fw);
             jsonWriter.setIndent("  ");
             jsonWriter.beginObject();
-            jsonWriter.name(NAME).value(getName().get());
+            jsonWriter.name(NAME_KEY).value(getName().get());
+            jsonWriter.name(IMAGEPATH_KEY).value(getImagePath());
+            jsonWriter.name(INITIATIVE_KEY).value(getInitiative());
+            jsonWriter.name(HEALTH_KEY).value(getHealth());
+            jsonWriter.name(NOTES_KEY).value(getNotes());
             jsonWriter.name(STRENGTH_KEY).value(getStrength());
-            jsonWriter.name(DEXTERITY).value(getDexterity());
-            jsonWriter.name(CONSTITUTION).value(getConstitution());
-            jsonWriter.name(WISDOM).value(getWisdom());
-            jsonWriter.name(INTELLIGENCE).value(getIntelligence());
-            jsonWriter.name(CHARISMA).value(getCharisma());
+            jsonWriter.name(DEXTERITY_KEY).value(getDexterity());
+            jsonWriter.name(CONSTITUTION_KEY).value(getConstitution());
+            jsonWriter.name(WISDOM_KEY).value(getWisdom());
+            jsonWriter.name(INTELLIGENCE_KEY).value(getIntelligence());
+            jsonWriter.name(CHARISMA_KEY).value(getCharisma());
             jsonWriter.name(ARMOR_CLASS).value(getArmorClass());
 
-            jsonWriter.name(MOVESPEED_GROUND).value(getMoveSpeedGround());
-            jsonWriter.name(MOVESPEED_AIR).value(getMoveSpeedAir());
-            jsonWriter.name(MOVESPEED_WATER).value(getMoveSpeedWater());
+            jsonWriter.name(MOVESPEED_GROUND_KEY).value(getMoveSpeedGround());
+            jsonWriter.name(MOVESPEED_AIR_KEY).value(getMoveSpeedAir());
+            jsonWriter.name(MOVESPEED_WATER_KEY).value(getMoveSpeedWater());
 
-            jsonWriter.name(SAVING_THROWS).beginArray();
+            jsonWriter.name(SAVING_THROWS_KEY).beginArray();
             for (Map.Entry<String, Integer> savingThrow : getSavingThrows().entrySet()) {
                 jsonWriter.beginObject();
                 jsonWriter.name(savingThrow.getKey()).value(savingThrow.getValue());
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
-            jsonWriter.name(SKILLS).beginArray();
+            jsonWriter.name(SKILLS_KEY).beginArray();
             for (Map.Entry<String, Integer> skill : getSkills().entrySet()) {
                 jsonWriter.beginObject();
                 jsonWriter.name(skill.getKey()).value(skill.getValue());
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
-            jsonWriter.name(IMMUNITIES).value(getImmunities());
-            jsonWriter.name(SENSES).value(getSenses());
-            jsonWriter.name(LANGUAGES).beginArray();
+            jsonWriter.name(IMMUNITIES_KEY).value(getImmunities());
+            jsonWriter.name(SENSES_KEY).value(getSenses());
+            jsonWriter.name(LANGUAGES_KEY).beginArray();
             for (final String lang : getLanguages()) {
                 jsonWriter.value(lang);
             }
             jsonWriter.endArray();
-            jsonWriter.name(CHALLENGE_RATING).value(getChallengeRating());
-            jsonWriter.name(EXPERIENCE).value(getExperience());
-            jsonWriter.name(PROPERTIES).beginArray();
+            jsonWriter.name(CHALLENGE_RATING_KEY).value(getChallengeRating());
+            jsonWriter.name(EXPERIENCE_KEY).value(getExperience());
+            jsonWriter.name(PROPERTIES_KEY).beginArray();
             for (final Map.Entry<String, String> prop : getProperties().entrySet()) {
                 jsonWriter.beginObject();
                 jsonWriter.name(prop.getKey()).value(prop.getValue());
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
-            jsonWriter.name(ACTIONS).beginArray();
+            jsonWriter.name(ACTIONS_KEY).beginArray();
             for (final Map.Entry<String, String> action : getActions().entrySet()) {
                 jsonWriter.beginObject();
                 jsonWriter.name(action.getKey()).value(action.getValue());
@@ -255,12 +263,12 @@ public class Creature {
         this.armorClass = armorClass;
     }
 
-    public String getStatusNotes() {
-        return statusNotes;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setStatusNotes(final String statusNotes) {
-        this.statusNotes = statusNotes;
+    public void setNotes(final String notes) {
+        this.notes = notes;
     }
 
     public boolean isSelected() {

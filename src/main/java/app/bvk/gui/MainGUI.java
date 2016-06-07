@@ -21,8 +21,10 @@ public class MainGUI extends Application {
     public static void main(final String[] args) {
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
         try {
-            final ZipFile zf = new ZipFile(Settings.getInstance().getCreatureFolder() + "/images.zip");
-            Settings.getInstance().setImageZipFile(zf);
+            final ZipFile zipImages = new ZipFile(Settings.getInstance().getCreatureFolder() + "/images.zip");
+            final ZipFile zipCreatures = new ZipFile(Settings.getInstance().getCreatureFolder() + "/creatures.zip");
+            Settings.getInstance().setImageZipFile(zipImages);
+            Settings.getInstance().setCreatureZipFile(zipCreatures);
         } catch (ZipException e) {
             LOGGER.error("ERROR while loading zip file", e);
             Settings.getInstance().setImageZipFile(null);
