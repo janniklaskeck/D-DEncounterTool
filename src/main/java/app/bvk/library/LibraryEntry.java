@@ -36,31 +36,31 @@ public class LibraryEntry extends AnchorPane { // NOSONAR
      * @param creature
      */
     public LibraryEntry(final Creature creature) {
-	this.creature = creature;
-	loader = new FXMLLoader(getClass().getResource("LibraryEntry.fxml"));
-	loader.setRoot(this);
-	loader.setController(this);
+        this.creature = creature;
+        loader = new FXMLLoader(getClass().getResource("LibraryEntry.fxml"));
+        loader.setRoot(this);
+        loader.setController(this);
 
-	try {
-	    loader.load();
-	} catch (IOException e) {
-	    LOGGER.error("ERROR while loadgin libraryentry fxml", e);
-	}
+        try {
+            loader.load();
+        } catch (IOException e) {
+            LOGGER.error("ERROR while loadgin libraryentry fxml", e);
+        }
     }
 
     @FXML
     protected void initialize() {
-	nameText.setText(creature.getName().get());
-	openImageButton.setOnAction(event -> openImage());
+        nameText.setText(creature.getName().get());
+        openImageButton.setOnAction(event -> openImage());
     }
 
     private void openImage() {
-	// Utils.showImageFrame(creature);
-	new EditorWindow();
+        // Utils.showImageFrame(creature);
+        new EditorWindow();
     }
 
     public Creature getCreature() {
-	return creature;
+        return creature;
     }
 
 }
