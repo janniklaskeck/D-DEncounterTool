@@ -97,6 +97,21 @@ public class Utils {
         imgFrame.setScene(myDialogScene);
         imgFrame.show();
     }
+    
+    public static Stage showSavingWarning() {
+        final Stage stage = new Stage();
+        stage.getIcons().add(Settings.getInstance().getImageIcon());
+        stage.setTitle("Saving! Don't close this Window!");
+        stage.initModality(Modality.APPLICATION_MODAL);
+        final Label label = new Label("Saving!");
+        final Scene scene = new Scene(label);
+        stage.setScene(scene);
+        stage.setWidth(200);
+        stage.setHeight(100);
+        stage.setResizable(false);
+        stage.show();
+        return stage;
+    }
 
     public static void newLibraryEntryWindow() {
         Dialog<Creature> d = new Dialog<>();

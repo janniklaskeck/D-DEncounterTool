@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import app.bvk.utils.Settings;
+import app.bvk.utils.Utils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -60,7 +61,10 @@ public class MainGUI extends Application {
         autoSaveThread.setDaemon(true);
         autoSaveThread.start();
 
-        primaryStage.setOnCloseRequest(event -> Settings.getInstance().setDoAutoSave(false));
+        primaryStage.setOnCloseRequest(event -> {
+            saveData();
+            Settings.getInstance().setDoAutoSave(false);
+        });
         primaryStage.getIcons().add(Settings.getInstance().getImageIcon());
         primaryStage.setTitle("D&D Encounter Tool v2.0");
         primaryStage.setScene(scene);
@@ -68,8 +72,9 @@ public class MainGUI extends Application {
         LOGGER.info("GUI start finished");
     }
 
-    @Override
-    public void stop() {
+    public void saveData() {
+        final Stage stage = Utils.showSavingWarning();
         Settings.getInstance().saveLibrary();
+        stage.close();
     }
 }
