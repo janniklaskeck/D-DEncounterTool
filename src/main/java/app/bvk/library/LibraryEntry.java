@@ -11,7 +11,7 @@ import app.bvk.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 
 /**
@@ -19,7 +19,7 @@ import javafx.scene.text.Text;
  * @author Niklas 12.06.2016
  *
  */
-public class LibraryEntry extends AnchorPane
+public class LibraryEntry extends BorderPane
 { // NOSONAR
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryEntry.class);
