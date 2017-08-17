@@ -14,19 +14,24 @@ import javafx.stage.Stage;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
-public class MainGUI extends Application {
+public class MainGUI extends Application
+{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
     private Thread autoSaveThread;
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args)
+    {
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
-        try {
+        try
+        {
             final ZipFile zipImages = new ZipFile(Settings.getInstance().getCreatureFolder() + "/images.zip");
             final ZipFile zipCreatures = new ZipFile(Settings.getInstance().getCreatureFolder() + "/creatures.zip");
             Settings.getInstance().setImageZipFile(zipImages);
             Settings.getInstance().setCreatureZipFile(zipCreatures);
-        } catch (ZipException e) {
+        }
+        catch (final ZipException e)
+        {
             LOGGER.error("ERROR while loading zip file", e);
             Settings.getInstance().setImageZipFile(null);
         }
@@ -34,35 +39,44 @@ public class MainGUI extends Application {
     }
 
     @Override
-    public void start(final Stage primaryStage) throws Exception {
-        Settings.getInstance().setImageIcon(new Image(getClass().getResourceAsStream("icon.png")));
-        final Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
+    public void start(final Stage primaryStage) throws Exception
+    {
+        Settings.getInstance().setImageIcon(new Image(this.getClass().getResourceAsStream("icon.png")));
+        final Parent root = FXMLLoader.load(this.getClass().getResource("gui.fxml"));
         final Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("customstyle.css").toString());
+        scene.getStylesheets().add(this.getClass().getResource("customstyle.css").toString());
 
         Settings.getInstance().setMainStage(primaryStage);
 
-        autoSaveThread = new Thread(() -> {
-            while (Settings.getInstance().isDoAutoSave()) {
-                while (Settings.getInstance().isAutosave()) {
-                    if (!Settings.getInstance().getEncounter().getCreatureList().isEmpty()) {
+        this.autoSaveThread = new Thread(() ->
+        {
+            while (Settings.getInstance().isDoAutoSave())
+            {
+                while (Settings.getInstance().isAutosave())
+                {
+                    if (!Settings.getInstance().getEncounter().getCreatureList().isEmpty())
+                    {
                         Settings.getInstance().getEncounter().autoSave();
                         LOGGER.info("Autosave complete");
                     }
                 }
-                try {
+                try
+                {
                     Thread.sleep(Settings.getInstance().getAutoSaveInterval());
-                } catch (InterruptedException e) {
+                }
+                catch (final InterruptedException e)
+                {
                     LOGGER.error("AutoSave Thread was interrupted", e);
                     Thread.currentThread().interrupt();
                 }
             }
         });
-        autoSaveThread.setDaemon(true);
-        autoSaveThread.start();
+        this.autoSaveThread.setDaemon(true);
+        this.autoSaveThread.start();
 
-        primaryStage.setOnCloseRequest(event -> {
-            saveData();
+        primaryStage.setOnCloseRequest(event ->
+        {
+            this.saveData();
             Settings.getInstance().setDoAutoSave(false);
         });
         primaryStage.getIcons().add(Settings.getInstance().getImageIcon());
@@ -72,7 +86,8 @@ public class MainGUI extends Application {
         LOGGER.info("GUI start finished");
     }
 
-    public void saveData() {
+    public void saveData()
+    {
         final Stage stage = Utils.showSavingWarning();
         Settings.getInstance().saveLibrary();
         stage.close();

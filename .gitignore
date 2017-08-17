@@ -68,3 +68,6 @@ local.properties
 images/
 /target/
 /creatures/
+
+.classpath
+.project
