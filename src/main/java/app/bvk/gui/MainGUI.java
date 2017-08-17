@@ -11,32 +11,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 
 public class MainGUI extends Application
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
     private Thread autoSaveThread;
-
-    public static void main(final String[] args)
-    {
-        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
-        try
-        {
-            final ZipFile zipImages = new ZipFile(Settings.getInstance().getCreatureFolder() + "/images.zip");
-            final ZipFile zipCreatures = new ZipFile(Settings.getInstance().getCreatureFolder() + "/creatures.zip");
-            Settings.getInstance().setImageZipFile(zipImages);
-            Settings.getInstance().setCreatureZipFile(zipCreatures);
-        }
-        catch (final ZipException e)
-        {
-            LOGGER.error("ERROR while loading zip file", e);
-            Settings.getInstance().setImageZipFile(null);
-        }
-        launch(args);
-    }
 
     @Override
     public void start(final Stage primaryStage) throws Exception
