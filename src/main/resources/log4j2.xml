@@ -21,7 +21,7 @@
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Root>
-        <Logger name="app.bvk" level="ALL" additivity="false">
+        <Logger name="app.bvk" level="DEBUG" additivity="false">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Logger>

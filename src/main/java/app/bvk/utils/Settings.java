@@ -163,7 +163,7 @@ public class Settings
             for (final File tempFile : creatureFolderTemp.listFiles())
             {
                 final boolean couldDeleteTempFile = tempFile.delete();
-                LOGGER.debug("Could delete temp File {}? {}", tempFile.getName(), couldDeleteTempFile);
+                LOGGER.trace("Could delete temp File {}? {}", tempFile.getName(), couldDeleteTempFile);
             }
             final boolean couldDeleteTempFolder = creatureFolderTemp.delete();
             LOGGER.debug("Could delete temp folder?{}", couldDeleteTempFolder);
