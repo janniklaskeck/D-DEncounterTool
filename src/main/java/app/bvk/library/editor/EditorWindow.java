@@ -45,7 +45,7 @@ public class EditorWindow extends GridPane
     private Scene initScene()
     {
         Parent root = null;
-        final FXMLLoader loader = new FXMLLoader(this.getClass().getResource("EditorWindow.fxml"));
+        final FXMLLoader loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EditorWindow.fxml"));
         try
         {
             root = loader.load();

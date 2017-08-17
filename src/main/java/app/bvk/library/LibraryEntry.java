@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import app.bvk.entity.Creature;
 import app.bvk.library.editor.EditorWindow;
+import app.bvk.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -32,6 +33,9 @@ public class LibraryEntry extends AnchorPane
     @FXML
     private Button openImageButton;
 
+    @FXML
+    private Button openStatsButton;
+
     /**
      *
      * @param creature
@@ -39,7 +43,7 @@ public class LibraryEntry extends AnchorPane
     public LibraryEntry(final Creature creature)
     {
         this.creature = creature;
-        this.loader = new FXMLLoader(this.getClass().getResource("LibraryEntry.fxml"));
+        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("LibraryEntry.fxml"));
         this.loader.setRoot(this);
         this.loader.setController(this);
 
@@ -57,12 +61,8 @@ public class LibraryEntry extends AnchorPane
     protected void initialize()
     {
         this.nameText.setText(this.creature.getName().get());
-        this.openImageButton.setOnAction(event -> this.openImage());
-    }
-
-    private void openImage()
-    {
-        new EditorWindow();
+        this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature()));
+        this.openStatsButton.setOnAction(event -> new EditorWindow());
     }
 
     public Creature getCreature()

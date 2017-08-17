@@ -22,7 +22,8 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
-public class EncounterEntry extends GridPane { // NOSONAR
+public class EncounterEntry extends GridPane
+{ // NOSONAR
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
 
@@ -45,107 +46,141 @@ public class EncounterEntry extends GridPane { // NOSONAR
     @FXML
     private Button openImageButton;
 
-    public EncounterEntry(final Creature c) {
+    public EncounterEntry(final Creature c)
+    {
         this.creature = c;
-        loader = new FXMLLoader(getClass().getResource("EncounterEntry.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
-        try {
-            loader.load();
-        } catch (IOException e) {
+        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EncounterEntry.fxml"));
+        this.loader.setRoot(this);
+        this.loader.setController(this);
+        try
+        {
+            this.loader.load();
+        }
+        catch (final IOException e)
+        {
             LOGGER.error("ERROR while loading encounterentry fxml", e);
         }
-        setupCreature();
+        this.setupCreature();
     }
 
-    private void setupCreature() {
-        if (creature.isSelected()) {
-            setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+    private void setupCreature()
+    {
+        if (this.creature.isSelected())
+        {
+            this.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
         }
-        if (creature.getClass().equals(Player.class)) {
-            openImageButton.setDisable(true);
-        } else {
-            openImageButton.setOnAction(event -> Utils.showImageFrame(getCreature()));
+        if (this.creature.getClass().equals(Player.class))
+        {
+            this.openImageButton.setDisable(true);
+        }
+        else
+        {
+            this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature()));
         }
 
-        initiativeTextField.setText(Float.toString(creature.getInitiative()));
-        healthTextField.setText(Integer.toString(creature.getHealth()));
-        armorClassTextField.setText(Integer.toString(creature.getArmorClass()));
-        statusTextArea.setText(creature.getNotes());
+        this.initiativeTextField.setText(Float.toString(this.creature.getInitiative()));
+        this.healthTextField.setText(Integer.toString(this.creature.getHealth()));
+        this.armorClassTextField.setText(Integer.toString(this.creature.getArmorClass()));
+        this.statusTextArea.setText(this.creature.getNotes());
 
-        addListeners();
+        this.addListeners();
     }
 
-    private void addListeners() {
-        initiativeTextField.textProperty().addListener((obs, oldValue, newValue) -> {
+    private void addListeners()
+    {
+        this.initiativeTextField.textProperty().addListener((obs, oldValue, newValue) ->
+        {
             float initiative = 0;
-            try {
+            try
+            {
                 initiative = Float.parseFloat(newValue);
-            } catch (Exception e) {
+            }
+            catch (final Exception e)
+            {
                 initiative = 0;
                 LOGGER.error("ERROR while parsing initiative, set to 0", e);
             }
-            creature.setInitiative(initiative);
-            if (newValue.length() > MAXIMUMNUMBERS) {
-                initiativeTextField.setText(initiativeTextField.getText(0, MAXIMUMNUMBERS));
+            this.creature.setInitiative(initiative);
+            if (newValue.length() > MAXIMUMNUMBERS)
+            {
+                this.initiativeTextField.setText(this.initiativeTextField.getText(0, MAXIMUMNUMBERS));
             }
         });
-        healthTextField.focusedProperty().addListener((obs, oldValue, newValue) -> {
-            if (!newValue) {
+        this.healthTextField.focusedProperty().addListener((obs, oldValue, newValue) ->
+        {
+            if (!newValue)
+            {
                 int health = 0;
-                try {
-                    health = Integer.parseInt(healthTextField.getText());
-                } catch (Exception e) {
+                try
+                {
+                    health = Integer.parseInt(this.healthTextField.getText());
+                }
+                catch (final Exception e)
+                {
                     health = 0;
                     LOGGER.error("ERROR while parsing health, set to 0", e);
                 }
-                creature.setHealth(health);
+                this.creature.setHealth(health);
             }
 
         });
-        healthTextField.setOnKeyPressed(key -> {
-            if (key.getCode().equals(KeyCode.ENTER)) {
+        this.healthTextField.setOnKeyPressed(key ->
+        {
+            if (key.getCode().equals(KeyCode.ENTER))
+            {
                 int health = 0;
-                try {
-                    health = Integer.parseInt(healthTextField.getText());
-                } catch (Exception e) {
+                try
+                {
+                    health = Integer.parseInt(this.healthTextField.getText());
+                }
+                catch (final Exception e)
+                {
                     health = 0;
                     LOGGER.error("ERROR while parsing health, set to 0", e);
                 }
-                creature.setHealth(health);
+                this.creature.setHealth(health);
 
             }
         });
-        healthTextField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.length() > MAXIMUMNUMBERS) {
-                healthTextField.setText(healthTextField.getText(0, MAXIMUMNUMBERS));
+        this.healthTextField.textProperty().addListener((obs, oldValue, newValue) ->
+        {
+            if (newValue.length() > MAXIMUMNUMBERS)
+            {
+                this.healthTextField.setText(this.healthTextField.getText(0, MAXIMUMNUMBERS));
             }
         });
 
-        armorClassTextField.textProperty().addListener((obs, oldValue, newValue) -> {
+        this.armorClassTextField.textProperty().addListener((obs, oldValue, newValue) ->
+        {
             int armorClass = 0;
-            try {
+            try
+            {
                 armorClass = Integer.parseInt(newValue);
-            } catch (Exception e) {
+            }
+            catch (final Exception e)
+            {
                 armorClass = 0;
                 LOGGER.error("ERROR while parsing armorclass, set to 0", e);
             }
-            creature.setArmorClass(armorClass);
-            if (newValue.length() > MAXIMUMNUMBERS) {
-                armorClassTextField.setText(armorClassTextField.getText(0, MAXIMUMNUMBERS));
+            this.creature.setArmorClass(armorClass);
+            if (newValue.length() > MAXIMUMNUMBERS)
+            {
+                this.armorClassTextField.setText(this.armorClassTextField.getText(0, MAXIMUMNUMBERS));
             }
         });
 
-        statusTextArea.textProperty().addListener((obs, oldValue, newValue) -> creature.setNotes(newValue));
+        this.statusTextArea.textProperty().addListener((obs, oldValue, newValue) -> this.creature.setNotes(newValue));
     }
 
     @FXML
-    public void initialize() {
-        openImageButton.textProperty().bind(creature.getName());
+    public void initialize()
+    {
+        this.openImageButton.textProperty().bind(this.creature.getName());
     }
 
-    public Creature getCreature() {
-        return creature;
+    public Creature getCreature()
+    {
+        return this.creature;
     }
 
 }
