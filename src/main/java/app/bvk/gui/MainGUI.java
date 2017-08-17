@@ -41,10 +41,10 @@ public class MainGUI extends Application
     @Override
     public void start(final Stage primaryStage) throws Exception
     {
-        Settings.getInstance().setImageIcon(new Image(this.getClass().getResourceAsStream("icon.png")));
-        final Parent root = FXMLLoader.load(this.getClass().getResource("gui.fxml"));
+        Settings.getInstance().setImageIcon(new Image(this.getClass().getClassLoader().getResourceAsStream("icon.png")));
+        final Parent root = FXMLLoader.load(this.getClass().getClassLoader().getResource("gui.fxml"));
         final Scene scene = new Scene(root);
-        scene.getStylesheets().add(this.getClass().getResource("customstyle.css").toString());
+        scene.getStylesheets().add(this.getClass().getClassLoader().getResource("customstyle.css").toString());
 
         Settings.getInstance().setMainStage(primaryStage);
 

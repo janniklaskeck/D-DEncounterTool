@@ -20,7 +20,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
 
-public class Creature {
+public class Creature
+{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Creature.class);
     private StringProperty name;
@@ -80,12 +81,14 @@ public class Creature {
     private Map<String, String> properties = new HashMap<>();
     private Map<String, String> actions = new HashMap<>();
 
-    public Creature(final String name, final String path) {
+    public Creature(final String name, final String path)
+    {
         this.name = new SimpleStringProperty(name);
         this.imagePath = path;
     }
 
-    public Creature(final Creature c) {
+    public Creature(final Creature c)
+    {
         this.name = c.getName();
         this.imagePath = c.getImagePath();
         this.image = c.getImage();
@@ -95,113 +98,127 @@ public class Creature {
         this.notes = c.getNotes();
     }
 
-    public Creature(final JsonObject jo) {
+    public Creature(final JsonObject jo)
+    {
         this.name = new SimpleStringProperty(jo.get(NAME_KEY).toString().replace("\"", ""));
         this.imagePath = jo.get(IMAGEPATH_KEY).toString().replace("\"", "");
         this.initiative = jo.get(INITIATIVE_KEY).getAsFloat();
         this.health = jo.get(HEALTH_KEY).getAsInt();
-        setArmorClass(jo.get(ARMOR_CLASS).getAsInt());
+        this.setArmorClass(jo.get(ARMOR_CLASS).getAsInt());
         this.notes = jo.get(NOTES_KEY).getAsString().replace("\"", "");
 
-        setStrength(jo.get(STRENGTH_KEY).getAsInt());
-        setDexterity(jo.get(DEXTERITY_KEY).getAsInt());
-        setConstitution(jo.get(CONSTITUTION_KEY).getAsInt());
-        setWisdom(jo.get(WISDOM_KEY).getAsInt());
-        setIntelligence(jo.get(INTELLIGENCE_KEY).getAsInt());
-        setCharisma(jo.get(CHARISMA_KEY).getAsInt());
+        this.setStrength(jo.get(STRENGTH_KEY).getAsInt());
+        this.setDexterity(jo.get(DEXTERITY_KEY).getAsInt());
+        this.setConstitution(jo.get(CONSTITUTION_KEY).getAsInt());
+        this.setWisdom(jo.get(WISDOM_KEY).getAsInt());
+        this.setIntelligence(jo.get(INTELLIGENCE_KEY).getAsInt());
+        this.setCharisma(jo.get(CHARISMA_KEY).getAsInt());
 
-        setMoveSpeedGround(jo.get(MOVESPEED_GROUND_KEY).getAsInt());
-        setMoveSpeedAir(jo.get(MOVESPEED_AIR_KEY).getAsInt());
-        setMoveSpeedWater(jo.get(MOVESPEED_WATER_KEY).getAsInt());
-        for (final JsonElement savingThrow : jo.get(SAVING_THROWS_KEY).getAsJsonArray()) {
-            for (final Entry<String, JsonElement> entry : savingThrow.getAsJsonObject().entrySet()) {
-                getSavingThrows().put(entry.getKey(), entry.getValue().getAsInt());
+        this.setMoveSpeedGround(jo.get(MOVESPEED_GROUND_KEY).getAsInt());
+        this.setMoveSpeedAir(jo.get(MOVESPEED_AIR_KEY).getAsInt());
+        this.setMoveSpeedWater(jo.get(MOVESPEED_WATER_KEY).getAsInt());
+        for (final JsonElement savingThrow : jo.get(SAVING_THROWS_KEY).getAsJsonArray())
+        {
+            for (final Entry<String, JsonElement> entry : savingThrow.getAsJsonObject().entrySet())
+            {
+                this.getSavingThrows().put(entry.getKey(), entry.getValue().getAsInt());
             }
         }
-        for (final JsonElement skill : jo.get(SKILLS_KEY).getAsJsonArray()) {
-            for (final Entry<String, JsonElement> entry : skill.getAsJsonObject().entrySet()) {
-                getSkills().put(entry.getKey(), entry.getValue().getAsInt());
+        for (final JsonElement skill : jo.get(SKILLS_KEY).getAsJsonArray())
+        {
+            for (final Entry<String, JsonElement> entry : skill.getAsJsonObject().entrySet())
+            {
+                this.getSkills().put(entry.getKey(), entry.getValue().getAsInt());
             }
         }
-        setImmunities(jo.get(IMMUNITIES_KEY).getAsString());
-        setSenses(jo.get(SENSES_KEY).getAsString());
+        this.setImmunities(jo.get(IMMUNITIES_KEY).getAsString());
+        this.setSenses(jo.get(SENSES_KEY).getAsString());
 
-        setLanguages(languages);
-        setChallengeRating(jo.get(CHALLENGE_RATING_KEY).getAsInt());
-        setExperience(jo.get(EXPERIENCE_KEY).getAsInt());
+        this.setLanguages(this.languages);
+        this.setChallengeRating(jo.get(CHALLENGE_RATING_KEY).getAsInt());
+        this.setExperience(jo.get(EXPERIENCE_KEY).getAsInt());
 
-        for (final JsonElement lang : jo.get(LANGUAGES_KEY).getAsJsonArray()) {
-            getLanguages().add(lang.getAsString());
+        for (final JsonElement lang : jo.get(LANGUAGES_KEY).getAsJsonArray())
+        {
+            this.getLanguages().add(lang.getAsString());
         }
 
-        for (final JsonElement property : jo.get(PROPERTIES_KEY).getAsJsonArray()) {
-            for (final Entry<String, JsonElement> entry : property.getAsJsonObject().entrySet()) {
-                getProperties().put(entry.getKey(), entry.getValue().getAsString());
+        for (final JsonElement property : jo.get(PROPERTIES_KEY).getAsJsonArray())
+        {
+            for (final Entry<String, JsonElement> entry : property.getAsJsonObject().entrySet())
+            {
+                this.getProperties().put(entry.getKey(), entry.getValue().getAsString());
             }
         }
-        for (final JsonElement action : jo.get(ACTIONS_KEY).getAsJsonArray()) {
-            for (final Entry<String, JsonElement> entry : action.getAsJsonObject().entrySet()) {
-                getActions().put(entry.getKey(), entry.getValue().getAsString());
+        for (final JsonElement action : jo.get(ACTIONS_KEY).getAsJsonArray())
+        {
+            for (final Entry<String, JsonElement> entry : action.getAsJsonObject().entrySet())
+            {
+                this.getActions().put(entry.getKey(), entry.getValue().getAsString());
             }
         }
     }
 
-    public void writeJsonToFile(final File file) {
-        try {
-            final JsonWriter jsonWriter;
-            final FileWriter fw = new FileWriter(file);
-            jsonWriter = new JsonWriter(fw);
+    public void writeJsonToFile(final File file)
+    {
+        try (final FileWriter fw = new FileWriter(file); final JsonWriter jsonWriter = new JsonWriter(fw);)
+        {
             jsonWriter.setIndent("  ");
             jsonWriter.beginObject();
-            jsonWriter.name(NAME_KEY).value(getName().get());
-            jsonWriter.name(IMAGEPATH_KEY).value(getImagePath());
-            jsonWriter.name(INITIATIVE_KEY).value(getInitiative());
-            jsonWriter.name(HEALTH_KEY).value(getHealth());
-            jsonWriter.name(NOTES_KEY).value(getNotes());
-            jsonWriter.name(STRENGTH_KEY).value(getStrength());
-            jsonWriter.name(DEXTERITY_KEY).value(getDexterity());
-            jsonWriter.name(CONSTITUTION_KEY).value(getConstitution());
-            jsonWriter.name(WISDOM_KEY).value(getWisdom());
-            jsonWriter.name(INTELLIGENCE_KEY).value(getIntelligence());
-            jsonWriter.name(CHARISMA_KEY).value(getCharisma());
-            jsonWriter.name(ARMOR_CLASS).value(getArmorClass());
+            jsonWriter.name(NAME_KEY).value(this.getName().get());
+            jsonWriter.name(IMAGEPATH_KEY).value(this.getImagePath());
+            jsonWriter.name(INITIATIVE_KEY).value(this.getInitiative());
+            jsonWriter.name(HEALTH_KEY).value(this.getHealth());
+            jsonWriter.name(NOTES_KEY).value(this.getNotes());
+            jsonWriter.name(STRENGTH_KEY).value(this.getStrength());
+            jsonWriter.name(DEXTERITY_KEY).value(this.getDexterity());
+            jsonWriter.name(CONSTITUTION_KEY).value(this.getConstitution());
+            jsonWriter.name(WISDOM_KEY).value(this.getWisdom());
+            jsonWriter.name(INTELLIGENCE_KEY).value(this.getIntelligence());
+            jsonWriter.name(CHARISMA_KEY).value(this.getCharisma());
+            jsonWriter.name(ARMOR_CLASS).value(this.getArmorClass());
 
-            jsonWriter.name(MOVESPEED_GROUND_KEY).value(getMoveSpeedGround());
-            jsonWriter.name(MOVESPEED_AIR_KEY).value(getMoveSpeedAir());
-            jsonWriter.name(MOVESPEED_WATER_KEY).value(getMoveSpeedWater());
+            jsonWriter.name(MOVESPEED_GROUND_KEY).value(this.getMoveSpeedGround());
+            jsonWriter.name(MOVESPEED_AIR_KEY).value(this.getMoveSpeedAir());
+            jsonWriter.name(MOVESPEED_WATER_KEY).value(this.getMoveSpeedWater());
 
             jsonWriter.name(SAVING_THROWS_KEY).beginArray();
-            for (Map.Entry<String, Integer> savingThrow : getSavingThrows().entrySet()) {
+            for (final Map.Entry<String, Integer> savingThrow : this.getSavingThrows().entrySet())
+            {
                 jsonWriter.beginObject();
                 jsonWriter.name(savingThrow.getKey()).value(savingThrow.getValue());
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
             jsonWriter.name(SKILLS_KEY).beginArray();
-            for (Map.Entry<String, Integer> skill : getSkills().entrySet()) {
+            for (final Map.Entry<String, Integer> skill : this.getSkills().entrySet())
+            {
                 jsonWriter.beginObject();
                 jsonWriter.name(skill.getKey()).value(skill.getValue());
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
-            jsonWriter.name(IMMUNITIES_KEY).value(getImmunities());
-            jsonWriter.name(SENSES_KEY).value(getSenses());
+            jsonWriter.name(IMMUNITIES_KEY).value(this.getImmunities());
+            jsonWriter.name(SENSES_KEY).value(this.getSenses());
             jsonWriter.name(LANGUAGES_KEY).beginArray();
-            for (final String lang : getLanguages()) {
+            for (final String lang : this.getLanguages())
+            {
                 jsonWriter.value(lang);
             }
             jsonWriter.endArray();
-            jsonWriter.name(CHALLENGE_RATING_KEY).value(getChallengeRating());
-            jsonWriter.name(EXPERIENCE_KEY).value(getExperience());
+            jsonWriter.name(CHALLENGE_RATING_KEY).value(this.getChallengeRating());
+            jsonWriter.name(EXPERIENCE_KEY).value(this.getExperience());
             jsonWriter.name(PROPERTIES_KEY).beginArray();
-            for (final Map.Entry<String, String> prop : getProperties().entrySet()) {
+            for (final Map.Entry<String, String> prop : this.getProperties().entrySet())
+            {
                 jsonWriter.beginObject();
                 jsonWriter.name(prop.getKey()).value(prop.getValue());
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
             jsonWriter.name(ACTIONS_KEY).beginArray();
-            for (final Map.Entry<String, String> action : getActions().entrySet()) {
+            for (final Map.Entry<String, String> action : this.getActions().entrySet())
+            {
                 jsonWriter.beginObject();
                 jsonWriter.name(action.getKey()).value(action.getValue());
                 jsonWriter.endObject();
@@ -210,216 +227,270 @@ public class Creature {
             jsonWriter.endObject();
             jsonWriter.close();
             fw.close();
-        } catch (IOException e) {
+        }
+        catch (final IOException e)
+        {
             LOGGER.error("", e);
         }
     }
 
-    public StringProperty getName() {
-        return name;
+    public StringProperty getName()
+    {
+        return this.name;
     }
 
-    public void setName(final StringProperty name) {
+    public void setName(final StringProperty name)
+    {
         this.name = name;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImagePath()
+    {
+        return this.imagePath;
     }
 
-    public void setImagePath(final String imagePath) {
+    public void setImagePath(final String imagePath)
+    {
         this.imagePath = imagePath;
     }
 
-    public Image getImage() {
-        return image;
+    public Image getImage()
+    {
+        return this.image;
     }
 
-    public void setImage(final Image image) {
+    public void setImage(final Image image)
+    {
         this.image = image;
     }
 
-    public float getInitiative() {
-        return initiative;
+    public float getInitiative()
+    {
+        return this.initiative;
     }
 
-    public void setInitiative(final float initiative) {
+    public void setInitiative(final float initiative)
+    {
         this.initiative = initiative;
     }
 
-    public int getHealth() {
-        return health;
+    public int getHealth()
+    {
+        return this.health;
     }
 
-    public void setHealth(final int health) {
+    public void setHealth(final int health)
+    {
         this.health = health;
     }
 
-    public int getArmorClass() {
-        return armorClass;
+    public int getArmorClass()
+    {
+        return this.armorClass;
     }
 
-    public void setArmorClass(final int armorClass) {
+    public void setArmorClass(final int armorClass)
+    {
         this.armorClass = armorClass;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getNotes()
+    {
+        return this.notes;
     }
 
-    public void setNotes(final String notes) {
+    public void setNotes(final String notes)
+    {
         this.notes = notes;
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    public boolean isSelected()
+    {
+        return this.isSelected;
     }
 
-    public void setSelected(final boolean isSelected) {
+    public void setSelected(final boolean isSelected)
+    {
         this.isSelected = isSelected;
     }
 
-    public int getStrength() {
-        return strength;
+    public int getStrength()
+    {
+        return this.strength;
     }
 
-    public void setStrength(int strength) {
+    public void setStrength(final int strength)
+    {
         this.strength = strength;
     }
 
-    public int getDexterity() {
-        return dexterity;
+    public int getDexterity()
+    {
+        return this.dexterity;
     }
 
-    public void setDexterity(int dexterity) {
+    public void setDexterity(final int dexterity)
+    {
         this.dexterity = dexterity;
     }
 
-    public int getConstitution() {
-        return constitution;
+    public int getConstitution()
+    {
+        return this.constitution;
     }
 
-    public void setConstitution(int constitution) {
+    public void setConstitution(final int constitution)
+    {
         this.constitution = constitution;
     }
 
-    public int getWisdom() {
-        return wisdom;
+    public int getWisdom()
+    {
+        return this.wisdom;
     }
 
-    public void setWisdom(int wisdom) {
+    public void setWisdom(final int wisdom)
+    {
         this.wisdom = wisdom;
     }
 
-    public int getIntelligence() {
-        return intelligence;
+    public int getIntelligence()
+    {
+        return this.intelligence;
     }
 
-    public void setIntelligence(int intelligence) {
+    public void setIntelligence(final int intelligence)
+    {
         this.intelligence = intelligence;
     }
 
-    public int getCharisma() {
-        return charisma;
+    public int getCharisma()
+    {
+        return this.charisma;
     }
 
-    public void setCharisma(int charisma) {
+    public void setCharisma(final int charisma)
+    {
         this.charisma = charisma;
     }
 
-    public int getMoveSpeedGround() {
-        return moveSpeedGround;
+    public int getMoveSpeedGround()
+    {
+        return this.moveSpeedGround;
     }
 
-    public void setMoveSpeedGround(int moveSpeedGround) {
+    public void setMoveSpeedGround(final int moveSpeedGround)
+    {
         this.moveSpeedGround = moveSpeedGround;
     }
 
-    public int getMoveSpeedAir() {
-        return moveSpeedAir;
+    public int getMoveSpeedAir()
+    {
+        return this.moveSpeedAir;
     }
 
-    public void setMoveSpeedAir(int moveSpeedAir) {
+    public void setMoveSpeedAir(final int moveSpeedAir)
+    {
         this.moveSpeedAir = moveSpeedAir;
     }
 
-    public int getMoveSpeedWater() {
-        return moveSpeedWater;
+    public int getMoveSpeedWater()
+    {
+        return this.moveSpeedWater;
     }
 
-    public void setMoveSpeedWater(int moveSpeedWater) {
+    public void setMoveSpeedWater(final int moveSpeedWater)
+    {
         this.moveSpeedWater = moveSpeedWater;
     }
 
-    public Map<String, Integer> getSavingThrows() {
-        return savingThrows;
+    public Map<String, Integer> getSavingThrows()
+    {
+        return this.savingThrows;
     }
 
-    public void setSavingThrows(final Map<String, Integer> savingThrows) {
+    public void setSavingThrows(final Map<String, Integer> savingThrows)
+    {
         this.savingThrows = savingThrows;
     }
 
-    public Map<String, Integer> getSkills() {
-        return skills;
+    public Map<String, Integer> getSkills()
+    {
+        return this.skills;
     }
 
-    public void setSkills(final Map<String, Integer> skills) {
+    public void setSkills(final Map<String, Integer> skills)
+    {
         this.skills = skills;
     }
 
-    public String getImmunities() {
-        return immunities;
+    public String getImmunities()
+    {
+        return this.immunities;
     }
 
-    public void setImmunities(final String immunities) {
+    public void setImmunities(final String immunities)
+    {
         this.immunities = immunities;
     }
 
-    public String getSenses() {
-        return senses;
+    public String getSenses()
+    {
+        return this.senses;
     }
 
-    public void setSenses(final String senses) {
+    public void setSenses(final String senses)
+    {
         this.senses = senses;
     }
 
-    public int getChallengeRating() {
-        return challengeRating;
+    public int getChallengeRating()
+    {
+        return this.challengeRating;
     }
 
-    public void setChallengeRating(final int challengeRating) {
+    public void setChallengeRating(final int challengeRating)
+    {
         this.challengeRating = challengeRating;
     }
 
-    public int getExperience() {
-        return experience;
+    public int getExperience()
+    {
+        return this.experience;
     }
 
-    public void setExperience(final int experience) {
+    public void setExperience(final int experience)
+    {
         this.experience = experience;
     }
 
-    public Map<String, String> getProperties() {
-        return properties;
+    public Map<String, String> getProperties()
+    {
+        return this.properties;
     }
 
-    public void setProperties(final Map<String, String> properties) {
+    public void setProperties(final Map<String, String> properties)
+    {
         this.properties = properties;
     }
 
-    public Map<String, String> getActions() {
-        return actions;
+    public Map<String, String> getActions()
+    {
+        return this.actions;
     }
 
-    public void setActions(final Map<String, String> actions) {
+    public void setActions(final Map<String, String> actions)
+    {
         this.actions = actions;
     }
 
-    public List<String> getLanguages() {
-        return languages;
+    public List<String> getLanguages()
+    {
+        return this.languages;
     }
 
-    public void setLanguages(final List<String> languages) {
+    public void setLanguages(final List<String> languages)
+    {
         this.languages = languages;
     }
 }

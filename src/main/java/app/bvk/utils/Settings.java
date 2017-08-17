@@ -17,7 +17,8 @@ import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 
-public class Settings {
+public class Settings
+{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
     private final String creatureFolder = System.getProperty("user.dir") + "/creatures";
@@ -36,94 +37,119 @@ public class Settings {
 
     private static Settings instance;
 
-    private Settings() {
+    private Settings()
+    {
     }
 
-    public static synchronized Settings getInstance() {
-        if (instance == null) {
+    public static synchronized Settings getInstance()
+    {
+        if (instance == null)
+        {
             instance = new Settings();
         }
         return instance;
     }
 
-    public Image getImageIcon() {
-        return imageIcon;
+    public Image getImageIcon()
+    {
+        return this.imageIcon;
     }
 
-    public void setImageIcon(final Image imageIcon) {
+    public void setImageIcon(final Image imageIcon)
+    {
         this.imageIcon = imageIcon;
     }
 
-    public ZipFile getImageZipFile() {
-        return imageZipFile;
+    public ZipFile getImageZipFile()
+    {
+        return this.imageZipFile;
     }
 
-    public void setImageZipFile(final ZipFile imageZipFile) {
+    public void setImageZipFile(final ZipFile imageZipFile)
+    {
         this.imageZipFile = imageZipFile;
     }
 
-    public Encounter getEncounter() {
-        return encounter;
+    public Encounter getEncounter()
+    {
+        return this.encounter;
     }
 
-    public void setEncounter(final Encounter encounter) {
+    public void setEncounter(final Encounter encounter)
+    {
         this.encounter = encounter;
     }
 
-    public Stage getMainStage() {
-        return mainStage;
+    public Stage getMainStage()
+    {
+        return this.mainStage;
     }
 
-    public void setMainStage(final Stage mainStage) {
+    public void setMainStage(final Stage mainStage)
+    {
         this.mainStage = mainStage;
     }
 
-    public boolean isDoAutoSave() {
-        return doAutoSave;
+    public boolean isDoAutoSave()
+    {
+        return this.doAutoSave;
     }
 
-    public void setDoAutoSave(final boolean doAutoSave) {
+    public void setDoAutoSave(final boolean doAutoSave)
+    {
         this.doAutoSave = doAutoSave;
     }
 
-    public boolean isAutosave() {
-        return autosave;
+    public boolean isAutosave()
+    {
+        return this.autosave;
     }
 
-    public void setAutosave(final boolean autosave) {
+    public void setAutosave(final boolean autosave)
+    {
         this.autosave = autosave;
     }
 
-    public String getImageFolder() {
-        return imageFolder;
+    public String getImageFolder()
+    {
+        return this.imageFolder;
     }
 
-    public List<Creature> getCreatureList() {
-        return creatureList;
+    public List<Creature> getCreatureList()
+    {
+        return this.creatureList;
     }
 
-    public long getAutoSaveInterval() {
-        return autoSaveInterval;
+    public long getAutoSaveInterval()
+    {
+        return this.autoSaveInterval;
     }
 
-    public void saveLibrary() {
-        final File creatureFile = new File(getCreatureFolder() + "/creatures.zip");
-        try {
-            if (creatureFile.exists()) {
+    public void saveLibrary()
+    {
+        final File creatureFile = new File(this.getCreatureFolder(), "creatures.zip");
+        try
+        {
+            if (creatureFile.exists())
+            {
                 LOGGER.info("Delete Existing zip file file {}", creatureFile.getAbsolutePath());
-                creatureFile.delete();
+                final boolean wasDeleted = creatureFile.delete();
+                LOGGER.debug("Existing creature zip was deleted? {}", wasDeleted);
             }
 
-            final File creatureFolderTemp = new File(getCreatureFolder() + "/creaturesTemp/");
-            if (!creatureFolderTemp.exists()) {
+            final File creatureFolderTemp = new File(this.getCreatureFolder(), "creaturesTemp");
+            if (!creatureFolderTemp.exists())
+            {
                 creatureFolderTemp.mkdir();
             }
             final ArrayList<File> creatureFiles = new ArrayList<>();
-            for (final Creature c : getCreatureList()) {
-                final File creatureJson = new File(
-                        creatureFolderTemp.getAbsolutePath() + "/" + c.getName().get() + ".json");
-                if (!creatureJson.exists()) {
-                    creatureJson.createNewFile();
+            for (final Creature c : this.getCreatureList())
+            {
+                final File creatureJson = new File(creatureFolderTemp.getAbsolutePath(), c.getName().get() + ".json");
+                if (!creatureJson.exists())
+                {
+                    final boolean jsonCreationSuccessful = creatureJson.createNewFile();
+                    LOGGER.trace("Could create creature json for creature {}? {}", c.getName(), jsonCreationSuccessful);
                 }
                 c.writeJsonToFile(creatureJson);
                 creatureFiles.add(creatureJson);
@@ -134,30 +160,39 @@ public class Settings {
             parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
             parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_ULTRA);
             zipFile.createZipFile(creatureFiles, parameters);
-            for (final File tempFile : creatureFolderTemp.listFiles()) {
-                tempFile.delete();
+            for (final File tempFile : creatureFolderTemp.listFiles())
+            {
+                final boolean couldDeleteTempFile = tempFile.delete();
+                LOGGER.debug("Could delete temp File {}? {}", tempFile.getName(), couldDeleteTempFile);
             }
-            creatureFolderTemp.delete();
-        } catch (ZipException | IOException e) {
+            final boolean couldDeleteTempFolder = creatureFolderTemp.delete();
+            LOGGER.debug("Could delete temp folder?{}", couldDeleteTempFolder);
+        }
+        catch (ZipException | IOException e)
+        {
             LOGGER.error("", e);
         }
     }
 
-    public String getCreatureFolder() {
-        return creatureFolder;
+    public String getCreatureFolder()
+    {
+        return this.creatureFolder;
     }
 
     /**
      * @return the creatureZipFile
      */
-    public ZipFile getCreatureZipFile() {
-        return creatureZipFile;
+    public ZipFile getCreatureZipFile()
+    {
+        return this.creatureZipFile;
     }
 
     /**
-     * @param creatureZipFile the creatureZipFile to set
+     * @param creatureZipFile
+     *            the creatureZipFile to set
      */
-    public void setCreatureZipFile(ZipFile creatureZipFile) {
+    public void setCreatureZipFile(final ZipFile creatureZipFile)
+    {
         this.creatureZipFile = creatureZipFile;
     }
 

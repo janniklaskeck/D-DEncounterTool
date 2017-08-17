@@ -5,7 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 
-public class EditorController {
+public class EditorController
+{
 
     @FXML
     private ListView<String> languageListView;
@@ -29,56 +30,61 @@ public class EditorController {
     private Button cancelButton;
 
     @FXML
-    public void initialize() {
-        initData();
-        initButtons();
+    public void initialize()
+    {
+        this.initData();
+        this.initButtons();
     }
 
-    private void initButtons() {
-        saveButton.setOnAction(event -> EditorWindow.getEditorStage().close());
-        resetButton.setOnAction(event -> EditorWindow.getEditorStage().close());
-        cancelButton.setOnAction(event -> EditorWindow.getEditorStage().close());
+    private void initButtons()
+    {
+        this.saveButton.setOnAction(event -> EditorWindow.getEditorStage().close());
+        this.resetButton.setOnAction(event -> EditorWindow.getEditorStage().close());
+        this.cancelButton.setOnAction(event -> EditorWindow.getEditorStage().close());
     }
 
-    private void initData() {
-        initLanguages();
-        initImmunities();
+    private void initData()
+    {
+        this.initLanguages();
+        this.initImmunities();
     }
 
-    private void initImmunities() {
-        immunityListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        immunityListView.getItems().add("Bludgeoning");
-        immunityListView.getItems().add("Piercing");
-        immunityListView.getItems().add("Slashing");
-        immunityListView.getItems().add("Bludgeoning (NM)");
-        immunityListView.getItems().add("Piercing (NM)");
-        immunityListView.getItems().add("Slashing (NM)");
-        immunityListView.getItems().add("Fire");
-        immunityListView.getItems().add("Cold");
-        immunityListView.getItems().add("Poison");
-        immunityListView.getItems().add("Thunder");
-        immunityListView.getItems().add("Acid");
-        immunityListView.getItems().add("Lighting");
+    private void initImmunities()
+    {
+        this.immunityListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        this.immunityListView.getItems().add("Bludgeoning");
+        this.immunityListView.getItems().add("Piercing");
+        this.immunityListView.getItems().add("Slashing");
+        this.immunityListView.getItems().add("Bludgeoning (NM)");
+        this.immunityListView.getItems().add("Piercing (NM)");
+        this.immunityListView.getItems().add("Slashing (NM)");
+        this.immunityListView.getItems().add("Fire");
+        this.immunityListView.getItems().add("Cold");
+        this.immunityListView.getItems().add("Poison");
+        this.immunityListView.getItems().add("Thunder");
+        this.immunityListView.getItems().add("Acid");
+        this.immunityListView.getItems().add("Lighting");
     }
 
-    private void initLanguages() {
-        languageListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        languageListView.getItems().add("Common");
-        languageListView.getItems().add("Dwarvish");
-        languageListView.getItems().add("Elvish");
-        languageListView.getItems().add("Giant");
-        languageListView.getItems().add("Gnomish");
-        languageListView.getItems().add("Goblin");
-        languageListView.getItems().add("Halfling");
-        languageListView.getItems().add("Orc");
-        languageListView.getItems().add("Abyssal");
-        languageListView.getItems().add("Celestial");
-        languageListView.getItems().add("Draconic");
-        languageListView.getItems().add("Deep Speech");
-        languageListView.getItems().add("Infernal");
-        languageListView.getItems().add("Primordial");
-        languageListView.getItems().add("Sylvan");
-        languageListView.getItems().add("Undercommon");
+    private void initLanguages()
+    {
+        this.languageListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        this.languageListView.getItems().add("Common");
+        this.languageListView.getItems().add("Dwarvish");
+        this.languageListView.getItems().add("Elvish");
+        this.languageListView.getItems().add("Giant");
+        this.languageListView.getItems().add("Gnomish");
+        this.languageListView.getItems().add("Goblin");
+        this.languageListView.getItems().add("Halfling");
+        this.languageListView.getItems().add("Orc");
+        this.languageListView.getItems().add("Abyssal");
+        this.languageListView.getItems().add("Celestial");
+        this.languageListView.getItems().add("Draconic");
+        this.languageListView.getItems().add("Deep Speech");
+        this.languageListView.getItems().add("Infernal");
+        this.languageListView.getItems().add("Primordial");
+        this.languageListView.getItems().add("Sylvan");
+        this.languageListView.getItems().add("Undercommon");
     }
 
 }

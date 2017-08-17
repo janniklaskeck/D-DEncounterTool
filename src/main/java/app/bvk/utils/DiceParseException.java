@@ -1,7 +1,8 @@
 package app.bvk.utils;
 
-public class DiceParseException extends Exception {
+public class DiceParseException extends Exception
+{
 
-	private static final long serialVersionUID = 8433344368015593656L;
+    private static final long serialVersionUID = 8433344368015593656L;
 
 }

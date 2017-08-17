@@ -17,7 +17,8 @@ import javafx.stage.Stage;
  * @author Niklas 12.06.2016
  *
  */
-public class EditorWindow extends GridPane { // NOSONAR
+public class EditorWindow extends GridPane
+{ // NOSONAR
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EditorWindow.class);
     private static Stage editorStage;
@@ -25,13 +26,15 @@ public class EditorWindow extends GridPane { // NOSONAR
     /**
      * Constructor
      */
-    public EditorWindow() {
-        final Scene scene = initScene();
-        initStage(scene);
+    public EditorWindow()
+    {
+        final Scene scene = this.initScene();
+        this.initStage(scene);
         getEditorStage().show();
     }
 
-    private void initStage(final Scene scene) {
+    private void initStage(final Scene scene)
+    {
         setEditorStage(new Stage());
         editorStage.getIcons().add(Settings.getInstance().getImageIcon());
         editorStage.setScene(scene);
@@ -39,22 +42,28 @@ public class EditorWindow extends GridPane { // NOSONAR
         editorStage.setResizable(false);
     }
 
-    private Scene initScene() {
+    private Scene initScene()
+    {
         Parent root = null;
-        final FXMLLoader loader = new FXMLLoader(getClass().getResource("EditorWindow.fxml"));
-        try {
+        final FXMLLoader loader = new FXMLLoader(this.getClass().getResource("EditorWindow.fxml"));
+        try
+        {
             root = loader.load();
-        } catch (IOException e) {
+        }
+        catch (final IOException e)
+        {
             LOGGER.error("Error while loading fxml file", e);
         }
         return new Scene(root);
     }
 
-    public static Stage getEditorStage() {
+    public static Stage getEditorStage()
+    {
         return editorStage;
     }
 
-    private static void setEditorStage(final Stage stage) {
+    private static void setEditorStage(final Stage stage)
+    {
         editorStage = stage;
     }
 }

@@ -3,6 +3,7 @@ package app.bvk.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
@@ -38,7 +39,8 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 
-public class MainController {
+public class MainController
+{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private static final String USERDIR = "user.dir";
@@ -101,232 +103,281 @@ public class MainController {
     private float amountToLoad = 0.0f;
 
     @FXML
-    public void initialize() {
-	initProgressDisplay();
-	Thread t = new Thread(() -> {
-	    try {
-		loadData();
-		fillLibrary();
-		addLibraryTextFieldFilter();
-	    } catch (FileNotFoundException e) {
-		LOGGER.error("Image Zip File not found", e);
-	    }
-	    Platform.runLater(() -> rootBorderPane.setBottom(null));
-	});
-	t.setDaemon(true);
-	t.start();
-	initEncounter();
-	setupButtons();
+    public void initialize()
+    {
+        this.initProgressDisplay();
+        final Thread t = new Thread(() ->
+        {
+            try
+            {
+                this.loadData();
+                this.fillLibrary();
+                this.addLibraryTextFieldFilter();
+            }
+            catch (final FileNotFoundException e)
+            {
+                LOGGER.error("Image Zip File not found", e);
+            }
+            Platform.runLater(() -> this.rootBorderPane.setBottom(null));
+        });
+        t.setDaemon(true);
+        t.start();
+        this.initEncounter();
+        this.setupButtons();
     }
 
-    private void setupButtons() {
-	addNpcButton.setOnAction(event -> addNPC());
-	deleteButton.setOnAction(event -> deleteSelected());
-	newEncounterButton.setOnAction(event -> newEncounter());
-	loadEncounterButton.setOnAction(event -> loadEncounter());
-	saveEncounterButton.setOnAction(event -> saveEncounter());
-	previousButton.setOnAction(event -> previousTurn());
-	copyButton.setOnAction(event -> copySelected());
-	nextButton.setOnAction(event -> nextTurn());
-	sortButton.setOnAction(event -> sortEncounter());
-	addPlayerButton.setOnAction(event -> addPlayer());
-	addLibraryEntryButton.setOnAction(event -> addNewLibraryEntry());
-	autoSaveCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> autoSaveChanged(newValue));
+    private void setupButtons()
+    {
+        this.addNpcButton.setOnAction(event -> this.addNPC());
+        this.deleteButton.setOnAction(event -> this.deleteSelected());
+        this.newEncounterButton.setOnAction(event -> this.newEncounter());
+        this.loadEncounterButton.setOnAction(event -> this.loadEncounter());
+        this.saveEncounterButton.setOnAction(event -> this.saveEncounter());
+        this.previousButton.setOnAction(event -> this.previousTurn());
+        this.copyButton.setOnAction(event -> this.copySelected());
+        this.nextButton.setOnAction(event -> this.nextTurn());
+        this.sortButton.setOnAction(event -> this.sortEncounter());
+        this.addPlayerButton.setOnAction(event -> this.addPlayer());
+        this.addLibraryEntryButton.setOnAction(event -> this.addNewLibraryEntry());
+        this.autoSaveCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> this.autoSaveChanged(newValue));
     }
 
-    private void initProgressDisplay() {
-	barProgress = new SimpleDoubleProperty(0.0);
-	progressText = new SimpleStringProperty();
-	loadingProgressBar.progressProperty().bindBidirectional(barProgress);
-	loadingProgressLabel.textProperty().bindBidirectional(progressText);
+    private void initProgressDisplay()
+    {
+        this.barProgress = new SimpleDoubleProperty(0.0);
+        this.progressText = new SimpleStringProperty();
+        this.loadingProgressBar.progressProperty().bindBidirectional(this.barProgress);
+        this.loadingProgressLabel.textProperty().bindBidirectional(this.progressText);
     }
 
-    private void initEncounter() {
-	encounter = Settings.getInstance().getEncounter();
+    private void initEncounter()
+    {
+        this.encounter = Settings.getInstance().getEncounter();
 
-	encounterNameTextField.setText(encounter.getEncounterNameProperty().get());
-	encounterNameTextField.textProperty().bindBidirectional(encounter.getEncounterNameProperty());
-	encounterNameTextField.textProperty()
-		.addListener((obs, oldValue, newValue) -> encounter.setEncounterName(newValue));
+        this.encounterNameTextField.setText(this.encounter.getEncounterNameProperty().get());
+        this.encounterNameTextField.textProperty().bindBidirectional(this.encounter.getEncounterNameProperty());
+        this.encounterNameTextField.textProperty().addListener((obs, oldValue, newValue) -> this.encounter.setEncounterName(newValue));
     }
 
-    private void addLibraryTextFieldFilter() {
-	FilteredList<LibraryEntry> fData = new FilteredList<>(libraryList.getItems(), p -> true);
-	filterTextField.textProperty().addListener((obs, oldValue, newValue) -> {
-	    fData.setPredicate(t -> {
-		if (newValue == null || newValue.isEmpty()) {
-		    return true;
-		}
-		if (t.getCreature().getName().get().toLowerCase().contains(newValue.toLowerCase())) {
-		    return true;
-		}
-		return false;
-	    });
-	    libraryList.setItems(fData);
-	});
-	incProgress();
+    private void addLibraryTextFieldFilter()
+    {
+        final FilteredList<LibraryEntry> fData = new FilteredList<>(this.libraryList.getItems(), p -> true);
+        this.filterTextField.textProperty().addListener((obs, oldValue, newValue) ->
+        {
+            fData.setPredicate(t ->
+            {
+                final boolean isEmpty = newValue == null || newValue.isEmpty();
+                final boolean nameMatch = t.getCreature().getName().get().toLowerCase().contains(newValue.toLowerCase());
+                return isEmpty || nameMatch;
+            });
+            this.libraryList.setItems(fData);
+        });
+        this.incProgress();
 
-	setProgressTextAndBar(progress / amountToLoad);
+        this.setProgressTextAndBar(this.progress / this.amountToLoad);
     }
 
-    private void incProgress() {
-	progress++;
+    private void incProgress()
+    {
+        this.progress++;
     }
 
-    private void loadData() throws FileNotFoundException {
-	if (Settings.getInstance().getImageZipFile() == null) {
-	    throw new FileNotFoundException("Image Zip File not found");
-	} else {
-	    if (Settings.getInstance().getCreatureZipFile() == null) {
+    private void loadData() throws FileNotFoundException
+    {
+        if (Settings.getInstance().getImageZipFile() == null)
+        {
+            throw new FileNotFoundException("Image Zip File not found");
+        }
+        else
+        {
+            if (Settings.getInstance().getCreatureZipFile() == null)
+            {
 
-		loadImagesFromZip(true);
-	    } else {
-		loadDataFromZip();
-		loadImagesFromZip(false);
-	    }
-	}
-	entryAmountText.setText("#Entries: " + (int) amountToLoad);
+                this.loadImagesFromZip(true);
+            }
+            else
+            {
+                this.loadDataFromZip();
+                this.loadImagesFromZip(false);
+            }
+        }
+        this.entryAmountText.setText("#Entries: " + (int) this.amountToLoad);
     }
 
-    private void loadDataFromZip() {
-	try {
-	    final ZipFile zipCreatures = Settings.getInstance().getCreatureZipFile();
-	    @SuppressWarnings("unchecked")
-	    final List<FileHeader> fileHeaders = zipCreatures.getFileHeaders();
-	    amountToLoad += fileHeaders.size();
-	    for (final FileHeader fh : fileHeaders) {
-		final JsonParser parser = new JsonParser();
-		final Scanner scanner = new Scanner(zipCreatures.getInputStream(fh));
-		scanner.useDelimiter("\\A");
+    private void loadDataFromZip()
+    {
+        try
+        {
+            final ZipFile zipCreatures = Settings.getInstance().getCreatureZipFile();
+            @SuppressWarnings("unchecked")
+            final List<FileHeader> fileHeaders = zipCreatures.getFileHeaders();
+            this.amountToLoad += fileHeaders.size();
+            for (final FileHeader fh : fileHeaders)
+            {
+                final JsonParser parser = new JsonParser();
+                final Scanner scanner = new Scanner(zipCreatures.getInputStream(fh));
+                scanner.useDelimiter("\\A");
 
-		final Monster m = new Monster(parser.parse(scanner.next()).getAsJsonObject());
-		scanner.close();
-		Settings.getInstance().getCreatureList().add(m);
-	    }
-	    incProgress();
-	    setProgressTextAndBar(progress / amountToLoad);
-	} catch (ZipException e) {
-	    LOGGER.error("Error while reading zip entries", e);
-	}
+                final Monster m = new Monster(parser.parse(scanner.next()).getAsJsonObject());
+                scanner.close();
+                Settings.getInstance().getCreatureList().add(m);
+            }
+            this.incProgress();
+            this.setProgressTextAndBar(this.progress / this.amountToLoad);
+        }
+        catch (final ZipException e)
+        {
+            LOGGER.error("Error while reading zip entries", e);
+        }
     }
 
-    private void loadImagesFromZip(final boolean createMonster) {
-	try {
-	    final ZipFile zipImages = Settings.getInstance().getImageZipFile();
-	    @SuppressWarnings("unchecked")
-	    final List<FileHeader> fileHeaders = zipImages.getFileHeaders();
-	    if (createMonster) {
-		for (final FileHeader fh : fileHeaders) {
-		    final String name = fh.getFileName().split("\\.")[0];
-		    final Monster m = new Monster(name, fh.getFileName());
-		    Settings.getInstance().getCreatureList().add(m);
-		}
-	    } else {
-		for (final FileHeader fh : fileHeaders) {
-		    final String name = fh.getFileName().split("\\.")[0];
-		    final String imageName = fh.getFileName();
-		    Settings.getInstance().getCreatureList().stream().filter(c -> {
-			final String creatureName = c.getName().get();
-			return name.equals(creatureName);
-		    }).findFirst().get().setImagePath(imageName);
-		}
-	    }
-	    incProgress();
-	    setProgressTextAndBar(progress / amountToLoad);
-	} catch (ZipException e) {
-	    LOGGER.error("Error while reading zip entries", e);
-	}
+    private void loadImagesFromZip(final boolean createMonster)
+    {
+        try
+        {
+            final ZipFile zipImages = Settings.getInstance().getImageZipFile();
+            @SuppressWarnings("unchecked")
+            final List<FileHeader> fileHeaders = zipImages.getFileHeaders();
+            if (createMonster)
+            {
+                for (final FileHeader fh : fileHeaders)
+                {
+                    final String name = fh.getFileName().split("\\.")[0];
+                    final Monster m = new Monster(name, fh.getFileName());
+                    Settings.getInstance().getCreatureList().add(m);
+                }
+            }
+            else
+            {
+                for (final FileHeader fh : fileHeaders)
+                {
+                    final String name = fh.getFileName().split("\\.")[0];
+                    final String imageName = fh.getFileName();
+                    final Optional<Creature> firstCreature = Settings.getInstance().getCreatureList().stream()
+                            .filter(c -> name.equals(c.getName().get())).findFirst();
+                    if (firstCreature.isPresent())
+                    {
+                        firstCreature.get().setImagePath(imageName);
+                    }
+                }
+            }
+            this.incProgress();
+            this.setProgressTextAndBar(this.progress / this.amountToLoad);
+        }
+        catch (final ZipException e)
+        {
+            LOGGER.error("Error while reading zip entries", e);
+        }
 
     }
 
-    private void fillLibrary() {
-	ObservableList<LibraryEntry> leList = FXCollections.observableArrayList();
-	for (Creature c : Settings.getInstance().getCreatureList()) {
-	    leList.add(new LibraryEntry(c));
-	    incProgress();
-	    setProgressTextAndBar(progress / (amountToLoad));
-	}
+    private void fillLibrary()
+    {
+        final ObservableList<LibraryEntry> leList = FXCollections.observableArrayList();
+        for (final Creature c : Settings.getInstance().getCreatureList())
+        {
+            leList.add(new LibraryEntry(c));
+            this.incProgress();
+            this.setProgressTextAndBar(this.progress / this.amountToLoad);
+        }
 
-	libraryList.setItems(leList);
+        this.libraryList.setItems(leList);
     }
 
-    private void newEncounter() {
-	encounter.reset();
-	encounterList.setItems(encounter.getObsList());
+    private void newEncounter()
+    {
+        this.encounter.reset();
+        this.encounterList.setItems(this.encounter.getObsList());
     }
 
-    private void loadEncounter() {
-	final FileChooser fc = new FileChooser();
-	fc.setInitialDirectory(new File(System.getProperty(USERDIR)));
-	fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
-	File file = fc.showOpenDialog(Settings.getInstance().getMainStage());
-	if (file != null) {
-	    encounter.readFromFile(file);
-	}
-	encounterList.setItems(encounter.getObsList());
+    private void loadEncounter()
+    {
+        final FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(new File(System.getProperty(USERDIR)));
+        fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
+        final File file = fc.showOpenDialog(Settings.getInstance().getMainStage());
+        if (file != null)
+        {
+            this.encounter.readFromFile(file);
+        }
+        this.encounterList.setItems(this.encounter.getObsList());
     }
 
-    private void saveEncounter() {
-	final FileChooser fc = new FileChooser();
-	fc.setInitialDirectory(new File(System.getProperty(USERDIR)));
-	fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
-	File file = fc.showSaveDialog(Settings.getInstance().getMainStage());
-	if (file != null) {
-	    encounter.saveToFile(file);
-	}
+    private void saveEncounter()
+    {
+        final FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(new File(System.getProperty(USERDIR)));
+        fc.getExtensionFilters().add(new ExtensionFilter("D&D Encounter Save", "*.ddesav"));
+        final File file = fc.showSaveDialog(Settings.getInstance().getMainStage());
+        if (file != null)
+        {
+            this.encounter.saveToFile(file);
+        }
     }
 
-    private void addNPC() {
-	Utils.newNPCWindow(encounter);
-	encounterList.setItems(encounter.getObsList());
+    private void addNPC()
+    {
+        Utils.newNPCWindow(this.encounter);
+        this.encounterList.setItems(this.encounter.getObsList());
     }
 
-    private void addPlayer() {
-	Utils.newPlayerWindow(encounter);
-	encounterList.setItems(encounter.getObsList());
+    private void addPlayer()
+    {
+        Utils.newPlayerWindow(this.encounter);
+        this.encounterList.setItems(this.encounter.getObsList());
     }
 
-    private void deleteSelected() {
-	if (!encounterList.getSelectionModel().isEmpty() && !encounter.getCreatureList().isEmpty()) {
-	    encounter.remove(encounterList.getSelectionModel().getSelectedIndex());
-	    encounterList.setItems(encounter.getObsList());
-	}
+    private void deleteSelected()
+    {
+        if (!this.encounterList.getSelectionModel().isEmpty() && !this.encounter.getCreatureList().isEmpty())
+        {
+            this.encounter.remove(this.encounterList.getSelectionModel().getSelectedIndex());
+            this.encounterList.setItems(this.encounter.getObsList());
+        }
     }
 
-    private void copySelected() {
-	if (!encounterList.getSelectionModel().isEmpty()) {
-	    encounter.copy(encounterList.getSelectionModel().getSelectedIndex());
-	    encounterList.setItems(encounter.getObsList());
-	}
+    private void copySelected()
+    {
+        if (!this.encounterList.getSelectionModel().isEmpty())
+        {
+            this.encounter.copy(this.encounterList.getSelectionModel().getSelectedIndex());
+            this.encounterList.setItems(this.encounter.getObsList());
+        }
     }
 
-    private void sortEncounter() {
-	encounter.sort();
-	encounterList.setItems(encounter.getObsList());
+    private void sortEncounter()
+    {
+        this.encounter.sort();
+        this.encounterList.setItems(this.encounter.getObsList());
     }
 
-    private void nextTurn() {
-	encounter.setNextIndex();
-	encounterList.setItems(encounter.getObsList());
-	encounterList.scrollTo(encounter.getCurrentIndex());
+    private void nextTurn()
+    {
+        this.encounter.setNextIndex();
+        this.encounterList.setItems(this.encounter.getObsList());
+        this.encounterList.scrollTo(this.encounter.getCurrentIndex());
     }
 
-    private void previousTurn() {
-	encounter.setLastIndex();
-	encounterList.setItems(encounter.getObsList());
-	encounterList.scrollTo(encounter.getCurrentIndex());
+    private void previousTurn()
+    {
+        this.encounter.setLastIndex();
+        this.encounterList.setItems(this.encounter.getObsList());
+        this.encounterList.scrollTo(this.encounter.getCurrentIndex());
     }
 
-    private void addNewLibraryEntry() {
-	Utils.newLibraryEntryWindow();
+    private void addNewLibraryEntry()
+    {
+        Utils.newLibraryEntryWindow();
     }
 
-    private void autoSaveChanged(final boolean selected) {
-	Settings.getInstance().setAutosave(selected);
+    private void autoSaveChanged(final boolean selected)
+    {
+        Settings.getInstance().setAutosave(selected);
     }
 
-    private void setProgressTextAndBar(final double percentage) {
-	barProgress.set(percentage);
-	Platform.runLater(() -> progressText.set("Loading progress: " + (int) (percentage * 100) + "%"));
+    private void setProgressTextAndBar(final double percentage)
+    {
+        this.barProgress.set(percentage);
+        Platform.runLater(() -> this.progressText.set("Loading progress: " + (int) (percentage * 100) + "%"));
     }
 }

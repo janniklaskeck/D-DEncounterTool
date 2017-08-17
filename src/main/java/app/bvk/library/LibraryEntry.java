@@ -18,7 +18,8 @@ import javafx.scene.text.Text;
  * @author Niklas 12.06.2016
  *
  */
-public class LibraryEntry extends AnchorPane { // NOSONAR
+public class LibraryEntry extends AnchorPane
+{ // NOSONAR
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryEntry.class);
 
@@ -35,32 +36,38 @@ public class LibraryEntry extends AnchorPane { // NOSONAR
      *
      * @param creature
      */
-    public LibraryEntry(final Creature creature) {
+    public LibraryEntry(final Creature creature)
+    {
         this.creature = creature;
-        loader = new FXMLLoader(getClass().getResource("LibraryEntry.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
+        this.loader = new FXMLLoader(this.getClass().getResource("LibraryEntry.fxml"));
+        this.loader.setRoot(this);
+        this.loader.setController(this);
 
-        try {
-            loader.load();
-        } catch (IOException e) {
+        try
+        {
+            this.loader.load();
+        }
+        catch (final IOException e)
+        {
             LOGGER.error("ERROR while loadgin libraryentry fxml", e);
         }
     }
 
     @FXML
-    protected void initialize() {
-        nameText.setText(creature.getName().get());
-        openImageButton.setOnAction(event -> openImage());
+    protected void initialize()
+    {
+        this.nameText.setText(this.creature.getName().get());
+        this.openImageButton.setOnAction(event -> this.openImage());
     }
 
-    private void openImage() {
-        // Utils.showImageFrame(creature);
+    private void openImage()
+    {
         new EditorWindow();
     }
 
-    public Creature getCreature() {
-        return creature;
+    public Creature getCreature()
+    {
+        return this.creature;
     }
 
 }

@@ -37,7 +37,8 @@ import javafx.stage.Stage;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
-public class Utils {
+public class Utils
+{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
     private static File imageFile = null;
@@ -45,32 +46,42 @@ public class Utils {
     private static final String CANCELSTRING = "Cancel";
     private static final String ENTERPLAYERNAMESTRING = "Enter Player Name";
 
-    private Utils() {
+    private Utils()
+    {
 
     }
 
-    public static void showImageFrame(final Creature creature) {
+    public static void showImageFrame(final Creature creature)
+    {
         Image img;
         final Stage imgFrame = new Stage();
         imgFrame.getIcons().add(Settings.getInstance().getImageIcon());
         imgFrame.initModality(Modality.WINDOW_MODAL);
 
-        if (creature.getImage() == null) {
+        if (creature.getImage() == null)
+        {
             final ZipFile zf = Settings.getInstance().getImageZipFile();
-            if (zf == null) {
-                img = new Image(
-                        new File(Settings.getInstance().getImageFolder() + creature.getImagePath()).toURI().toString());
-            } else {
-                try {
-                    InputStream is = zf.getInputStream(zf.getFileHeader(creature.getImagePath()));
+            if (zf == null)
+            {
+                img = new Image(new File(Settings.getInstance().getImageFolder() + creature.getImagePath()).toURI().toString());
+            }
+            else
+            {
+                try
+                {
+                    final InputStream is = zf.getInputStream(zf.getFileHeader(creature.getImagePath()));
                     img = new Image(is);
-                } catch (ZipException e) {
+                }
+                catch (final ZipException e)
+                {
                     LOGGER.error("ERROR while loading image, using icon instead", e);
                     img = new Image(MainGUI.class.getResourceAsStream("icon.png"));
                 }
             }
             creature.setImage(img);
-        } else {
+        }
+        else
+        {
             img = creature.getImage();
         }
         final VBox vbox = new VBox();
@@ -82,10 +93,8 @@ public class Utils {
         vbox.setPadding(new Insets(10));
 
         final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        final double width = img.getWidth() >= gd.getDisplayMode().getWidth() * 0.8
-                ? gd.getDisplayMode().getWidth() * 0.8 : img.getWidth();
-        final double height = img.getHeight() >= gd.getDisplayMode().getHeight() * 0.8
-                ? gd.getDisplayMode().getHeight() * 0.8 : img.getHeight();
+        final double width = img.getWidth() >= gd.getDisplayMode().getWidth() * 0.8 ? gd.getDisplayMode().getWidth() * 0.8 : img.getWidth();
+        final double height = img.getHeight() >= gd.getDisplayMode().getHeight() * 0.8 ? gd.getDisplayMode().getHeight() * 0.8 : img.getHeight();
         final double windowXPos = 80;
         final double windowYPos = 45;
 
@@ -97,8 +106,9 @@ public class Utils {
         imgFrame.setScene(myDialogScene);
         imgFrame.show();
     }
-    
-    public static Stage showSavingWarning() {
+
+    public static Stage showSavingWarning()
+    {
         final Stage stage = new Stage();
         stage.getIcons().add(Settings.getInstance().getImageIcon());
         stage.setTitle("Saving! Don't close this Window!");
@@ -113,152 +123,170 @@ public class Utils {
         return stage;
     }
 
-    public static void newLibraryEntryWindow() {
-        Dialog<Creature> d = new Dialog<>();
-        Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
+    public static void newLibraryEntryWindow()
+    {
+        final Dialog<Creature> d = new Dialog<>();
+        final Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
         stage.getIcons().add(Settings.getInstance().getImageIcon());
         d.initOwner(Settings.getInstance().getMainStage());
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
-        Label name = new Label(NAMESTRING);
-        TextField tfName = new TextField();
-        Label image = new Label(NAMESTRING);
-        TextField imageName = new TextField();
+        final Label name = new Label(NAMESTRING);
+        final TextField tfName = new TextField();
+        final Label image = new Label(NAMESTRING);
+        final TextField imageName = new TextField();
         imageName.setEditable(false);
-        Button chooseImage = new Button("Select Image");
-        chooseImage.setOnAction(event -> {
+        final Button chooseImage = new Button("Select Image");
+        chooseImage.setOnAction(event ->
+        {
             final FileChooser fc = new FileChooser();
             fc.setInitialDirectory(new File(System.getProperty("user.dir")));
             fc.getExtensionFilters().add(new ExtensionFilter("Image File", "*.png", "*.jpeg", "*.bmp"));
-            File file = fc.showOpenDialog(Settings.getInstance().getMainStage());
-            if (file != null) {
+            final File file = fc.showOpenDialog(Settings.getInstance().getMainStage());
+            if (file != null)
+            {
                 imageFile = file;
                 imageName.setText(file.getName());
             }
         });
 
-        GridPane grid = new GridPane();
+        final GridPane grid = new GridPane();
         grid.add(name, 0, 0);
         grid.add(tfName, 1, 0);
         grid.add(image, 0, 1);
         grid.add(imageName, 1, 1);
         grid.add(chooseImage, 2, 1);
         d.getDialogPane().setContent(grid);
-        ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
-        ButtonType cancelButton = new ButtonType(CANCELSTRING, ButtonData.CANCEL_CLOSE);
+        final ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
+        final ButtonType cancelButton = new ButtonType(CANCELSTRING, ButtonData.CANCEL_CLOSE);
         d.getDialogPane().getButtonTypes().add(okButton);
         d.getDialogPane().getButtonTypes().add(cancelButton);
-        d.setResultConverter(param -> {
-            if (param == okButton) {
+        d.setResultConverter(param ->
+        {
+            if (param == okButton)
+            {
                 return new Creature(tfName.getText(), imageFile.getName());
             }
-            if (param == cancelButton) {
+            if (param == cancelButton)
+            {
                 return null;
             }
             return null;
         });
 
-        Optional<Creature> a = d.showAndWait();
-        if (a.isPresent()) {
+        final Optional<Creature> a = d.showAndWait();
+        if (a.isPresent())
+        {
             Settings.getInstance().getCreatureList().add(a.get());
         }
     }
 
-    public static void newPlayerWindow(Encounter encounter) {
-        Dialog<String> d = new Dialog<>();
-        Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
+    public static void newPlayerWindow(final Encounter encounter)
+    {
+        final Dialog<String> d = new Dialog<>();
+        final Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
         stage.getIcons().add(Settings.getInstance().getImageIcon());
         d.initOwner(Settings.getInstance().getMainStage());
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
-        Label name = new Label(NAMESTRING);
-        TextField tf = new TextField();
+        final Label name = new Label(NAMESTRING);
+        final TextField tf = new TextField();
 
-        GridPane grid = new GridPane();
+        final GridPane grid = new GridPane();
         grid.add(name, 0, 0);
         grid.add(tf, 1, 0);
         d.getDialogPane().setContent(grid);
-        ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
-        ButtonType cancelButton = new ButtonType(CANCELSTRING, ButtonData.CANCEL_CLOSE);
+        final ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
+        final ButtonType cancelButton = new ButtonType(CANCELSTRING, ButtonData.CANCEL_CLOSE);
         d.getDialogPane().getButtonTypes().add(okButton);
         d.getDialogPane().getButtonTypes().add(cancelButton);
-        d.setResultConverter(param -> {
-            if (param == okButton) {
+        d.setResultConverter(param ->
+        {
+            if (param == okButton)
+            {
                 return tf.getText();
             }
-            if (param == cancelButton) {
+            if (param == cancelButton)
+            {
                 return null;
             }
             return null;
         });
 
-        Optional<String> a = d.showAndWait();
-        if (a.isPresent()) {
+        final Optional<String> a = d.showAndWait();
+        if (a.isPresent())
+        {
             encounter.addCreature(new Player(tf.getText(), ""));
         }
     }
 
-    public static void newNPCWindow(Encounter encounter) {
-        Dialog<String> d = new Dialog<>();
-        Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
+    public static void newNPCWindow(final Encounter encounter)
+    {
+        final Dialog<String> d = new Dialog<>();
+        final Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
         stage.getIcons().add(Settings.getInstance().getImageIcon());
         d.initOwner(Settings.getInstance().getMainStage());
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
-        Label name = new Label("Filter: ");
-        TextField filterTF = new TextField();
-        ListView<String> lv = new ListView<>();
-        lv.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
+        final Label name = new Label("Filter: ");
+        final TextField filterTF = new TextField();
+        final ListView<String> lv = new ListView<>();
+        lv.setOnMouseClicked(event ->
+        {
+            if (event.getClickCount() == 2)
+            {
                 d.resultProperty().set(lv.getSelectionModel().getSelectedItem());
             }
         });
-        ArrayList<String> names = new ArrayList<>();
-        for (Creature le : Settings.getInstance().getCreatureList()) {
+        final ArrayList<String> names = new ArrayList<>();
+        for (final Creature le : Settings.getInstance().getCreatureList())
+        {
             names.add(le.getName().get());
         }
-        ObservableList<String> ol = FXCollections.observableArrayList(names);
+        final ObservableList<String> ol = FXCollections.observableArrayList(names);
         lv.setItems(ol);
-        FilteredList<String> fData = new FilteredList<>(ol, p -> true);
-        filterTF.textProperty().addListener((obs, oldValue, newValue) -> {
-            fData.setPredicate(t -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                if (t.toLowerCase().contains(newValue.toLowerCase())) {
-                    return true;
-                }
-                return false;
+        final FilteredList<String> fData = new FilteredList<>(ol, p -> true);
+        filterTF.textProperty().addListener((obs, oldValue, newValue) ->
+        {
+            fData.setPredicate(t ->
+            {
+                final boolean isEmpty = newValue == null || newValue.isEmpty();
+                final boolean nameMatch = t.toLowerCase().contains(newValue.toLowerCase());
+                return isEmpty || nameMatch;
             });
             lv.setItems(fData);
         });
 
-        GridPane grid = new GridPane();
+        final GridPane grid = new GridPane();
         grid.add(name, 0, 0);
         grid.add(filterTF, 1, 0);
         grid.add(lv, 0, 1, 2, 1);
         d.getDialogPane().setContent(grid);
 
-        ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
-        ButtonType cancelButton = new ButtonType(CANCELSTRING, ButtonData.CANCEL_CLOSE);
+        final ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
+        final ButtonType cancelButton = new ButtonType(CANCELSTRING, ButtonData.CANCEL_CLOSE);
         d.getDialogPane().getButtonTypes().add(okButton);
         d.getDialogPane().getButtonTypes().add(cancelButton);
-        d.setResultConverter(param -> {
-            if (param == okButton) {
+        d.setResultConverter(param ->
+        {
+            if (param == okButton)
+            {
                 return lv.getSelectionModel().getSelectedItem();
             }
-            if (param == cancelButton) {
+            if (param == cancelButton)
+            {
                 return null;
             }
             return null;
 
         });
 
-        Optional<String> a = d.showAndWait();
-        if (a.isPresent()) {
+        final Optional<String> a = d.showAndWait();
+        if (a.isPresent())
+        {
             encounter.addCreature(a.get());
         }
     }
