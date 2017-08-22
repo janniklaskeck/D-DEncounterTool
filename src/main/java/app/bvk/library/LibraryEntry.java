@@ -20,7 +20,7 @@ import javafx.scene.text.Text;
  *
  */
 public class LibraryEntry extends BorderPane
-{ // NOSONAR
+{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryEntry.class);
 
@@ -29,17 +29,11 @@ public class LibraryEntry extends BorderPane
 
     @FXML
     private Text nameText;
-
     @FXML
     private Button openImageButton;
-
     @FXML
     private Button openStatsButton;
 
-    /**
-     *
-     * @param creature
-     */
     public LibraryEntry(final Creature creature)
     {
         this.creature = creature;
@@ -61,7 +55,7 @@ public class LibraryEntry extends BorderPane
     protected void initialize()
     {
         this.nameText.setText(this.creature.getName().get());
-        this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature()));
+        this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature(), CreatureLibrary.getInstance().getZipFile()));
         this.openStatsButton.setOnAction(event -> new EditorWindow());
     }
 

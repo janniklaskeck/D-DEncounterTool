@@ -100,57 +100,62 @@ public class Creature
 
     public Creature(final JsonObject jo)
     {
-        this.name = new SimpleStringProperty(jo.get(NAME_KEY).toString().replace("\"", ""));
-        this.imagePath = jo.get(IMAGEPATH_KEY).toString().replace("\"", "");
-        this.initiative = jo.get(INITIATIVE_KEY).getAsFloat();
-        this.health = jo.get(HEALTH_KEY).getAsInt();
-        this.setArmorClass(jo.get(ARMOR_CLASS).getAsInt());
-        this.notes = jo.get(NOTES_KEY).getAsString().replace("\"", "");
+        this.loadFromJson(jo);
+    }
 
-        this.setStrength(jo.get(STRENGTH_KEY).getAsInt());
-        this.setDexterity(jo.get(DEXTERITY_KEY).getAsInt());
-        this.setConstitution(jo.get(CONSTITUTION_KEY).getAsInt());
-        this.setWisdom(jo.get(WISDOM_KEY).getAsInt());
-        this.setIntelligence(jo.get(INTELLIGENCE_KEY).getAsInt());
-        this.setCharisma(jo.get(CHARISMA_KEY).getAsInt());
+    private void loadFromJson(final JsonObject json)
+    {
+        this.name = new SimpleStringProperty(json.get(NAME_KEY).toString().replace("\"", ""));
+        this.imagePath = json.get(IMAGEPATH_KEY).toString().replace("\"", "");
+        this.initiative = json.get(INITIATIVE_KEY).getAsFloat();
+        this.health = json.get(HEALTH_KEY).getAsInt();
+        this.setArmorClass(json.get(ARMOR_CLASS).getAsInt());
+        this.notes = json.get(NOTES_KEY).getAsString().replace("\"", "");
 
-        this.setMoveSpeedGround(jo.get(MOVESPEED_GROUND_KEY).getAsInt());
-        this.setMoveSpeedAir(jo.get(MOVESPEED_AIR_KEY).getAsInt());
-        this.setMoveSpeedWater(jo.get(MOVESPEED_WATER_KEY).getAsInt());
-        for (final JsonElement savingThrow : jo.get(SAVING_THROWS_KEY).getAsJsonArray())
+        this.setStrength(json.get(STRENGTH_KEY).getAsInt());
+        this.setDexterity(json.get(DEXTERITY_KEY).getAsInt());
+        this.setConstitution(json.get(CONSTITUTION_KEY).getAsInt());
+        this.setWisdom(json.get(WISDOM_KEY).getAsInt());
+        this.setIntelligence(json.get(INTELLIGENCE_KEY).getAsInt());
+        this.setCharisma(json.get(CHARISMA_KEY).getAsInt());
+
+        this.setMoveSpeedGround(json.get(MOVESPEED_GROUND_KEY).getAsInt());
+        this.setMoveSpeedAir(json.get(MOVESPEED_AIR_KEY).getAsInt());
+        this.setMoveSpeedWater(json.get(MOVESPEED_WATER_KEY).getAsInt());
+        for (final JsonElement savingThrow : json.get(SAVING_THROWS_KEY).getAsJsonArray())
         {
             for (final Entry<String, JsonElement> entry : savingThrow.getAsJsonObject().entrySet())
             {
                 this.getSavingThrows().put(entry.getKey(), entry.getValue().getAsInt());
             }
         }
-        for (final JsonElement skill : jo.get(SKILLS_KEY).getAsJsonArray())
+        for (final JsonElement skill : json.get(SKILLS_KEY).getAsJsonArray())
         {
             for (final Entry<String, JsonElement> entry : skill.getAsJsonObject().entrySet())
             {
                 this.getSkills().put(entry.getKey(), entry.getValue().getAsInt());
             }
         }
-        this.setImmunities(jo.get(IMMUNITIES_KEY).getAsString());
-        this.setSenses(jo.get(SENSES_KEY).getAsString());
+        this.setImmunities(json.get(IMMUNITIES_KEY).getAsString());
+        this.setSenses(json.get(SENSES_KEY).getAsString());
 
         this.setLanguages(this.languages);
-        this.setChallengeRating(jo.get(CHALLENGE_RATING_KEY).getAsInt());
-        this.setExperience(jo.get(EXPERIENCE_KEY).getAsInt());
+        this.setChallengeRating(json.get(CHALLENGE_RATING_KEY).getAsInt());
+        this.setExperience(json.get(EXPERIENCE_KEY).getAsInt());
 
-        for (final JsonElement lang : jo.get(LANGUAGES_KEY).getAsJsonArray())
+        for (final JsonElement lang : json.get(LANGUAGES_KEY).getAsJsonArray())
         {
             this.getLanguages().add(lang.getAsString());
         }
 
-        for (final JsonElement property : jo.get(PROPERTIES_KEY).getAsJsonArray())
+        for (final JsonElement property : json.get(PROPERTIES_KEY).getAsJsonArray())
         {
             for (final Entry<String, JsonElement> entry : property.getAsJsonObject().entrySet())
             {
                 this.getProperties().put(entry.getKey(), entry.getValue().getAsString());
             }
         }
-        for (final JsonElement action : jo.get(ACTIONS_KEY).getAsJsonArray())
+        for (final JsonElement action : json.get(ACTIONS_KEY).getAsJsonArray())
         {
             for (final Entry<String, JsonElement> entry : action.getAsJsonObject().entrySet())
             {
@@ -492,5 +497,10 @@ public class Creature
     public void setLanguages(final List<String> languages)
     {
         this.languages = languages;
+    }
+
+    public void load(final JsonObject creatureData)
+    {
+        this.loadFromJson(creatureData);
     }
 }

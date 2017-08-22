@@ -3,6 +3,7 @@ package app.bvk.gui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import app.bvk.library.CreatureLibrary;
 import app.bvk.utils.Settings;
 import app.bvk.utils.Utils;
 import javafx.application.Application;
@@ -34,11 +35,7 @@ public class MainGUI extends Application
             {
                 while (Settings.getInstance().isAutosave())
                 {
-                    if (!Settings.getInstance().getEncounter().getCreatureList().isEmpty())
-                    {
-                        Settings.getInstance().getEncounter().autoSave();
-                        LOGGER.info("Autosave complete");
-                    }
+                    // TODO AutoSave
                 }
                 try
                 {
@@ -69,7 +66,7 @@ public class MainGUI extends Application
     public void saveData()
     {
         final Stage stage = Utils.showSavingWarning();
-        Settings.getInstance().saveLibrary();
+        CreatureLibrary.getInstance().saveCreatures();
         stage.close();
     }
 }

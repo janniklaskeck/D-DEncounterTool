@@ -95,9 +95,6 @@ public class Encounter
         this.getCreatureList().add(new Creature(this.getCreatureList().get(index)));
     }
 
-    /**
-     * @return the creatureList
-     */
     public List<Creature> getCreatureList()
     {
         return this.creatureList;

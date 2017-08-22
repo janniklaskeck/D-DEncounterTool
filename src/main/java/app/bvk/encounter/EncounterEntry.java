@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import app.bvk.entity.Creature;
 import app.bvk.entity.Player;
 import app.bvk.gui.MainGUI;
+import app.bvk.library.CreatureLibrary;
 import app.bvk.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -46,9 +47,9 @@ public class EncounterEntry extends GridPane
     @FXML
     private Button openImageButton;
 
-    public EncounterEntry(final Creature c)
+    public EncounterEntry(final Creature creature)
     {
-        this.creature = c;
+        this.creature = creature;
         this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EncounterEntry.fxml"));
         this.loader.setRoot(this);
         this.loader.setController(this);
@@ -75,7 +76,7 @@ public class EncounterEntry extends GridPane
         }
         else
         {
-            this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature()));
+            this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature(), CreatureLibrary.getInstance().getZipFile()));
         }
 
         this.initiativeTextField.setText(Float.toString(this.creature.getInitiative()));

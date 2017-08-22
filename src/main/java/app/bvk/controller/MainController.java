@@ -1,20 +1,14 @@
 package app.bvk.controller;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonParser;
-
 import app.bvk.encounter.Encounter;
 import app.bvk.encounter.EncounterEntry;
 import app.bvk.entity.Creature;
-import app.bvk.entity.Monster;
+import app.bvk.library.CreatureLibrary;
 import app.bvk.library.LibraryEntry;
 import app.bvk.utils.Settings;
 import app.bvk.utils.Utils;
@@ -35,9 +29,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.FileHeader;
 
 public class MainController
 {
@@ -49,31 +40,22 @@ public class MainController
 
     @FXML
     private BorderPane rootBorderPane;
-
     @FXML
     private ListView<LibraryEntry> libraryList;
-
     @FXML
     private ListView<EncounterEntry> encounterList;
-
     @FXML
     private Text entryAmountText;
-
     @FXML
     private TextField filterTextField;
-
     @FXML
     private TextField encounterNameTextField;
-
     @FXML
     private CheckBox autoSaveCheckBox;
-
     @FXML
     private ProgressBar loadingProgressBar;
-
     @FXML
     private Label loadingProgressLabel;
-
     @FXML
     private Button addNpcButton;
     @FXML
@@ -108,17 +90,11 @@ public class MainController
         this.initProgressDisplay();
         final Thread t = new Thread(() ->
         {
-            try
-            {
-                this.loadData();
-                this.fillLibrary();
-                this.addLibraryTextFieldFilter();
-            }
-            catch (final FileNotFoundException e)
-            {
-                LOGGER.error("Image Zip File not found", e);
-            }
+            CreatureLibrary.getInstance();
+            this.fillLibrary();
+            this.addLibraryTextFieldFilter();
             Platform.runLater(() -> this.rootBorderPane.setBottom(null));
+            LOGGER.debug("Loading finished!");
         });
         t.setDaemon(true);
         t.start();
@@ -152,7 +128,7 @@ public class MainController
 
     private void initEncounter()
     {
-        this.encounter = Settings.getInstance().getEncounter();
+        this.encounter = new Encounter("unnamed");
 
         this.encounterNameTextField.setText(this.encounter.getEncounterNameProperty().get());
         this.encounterNameTextField.textProperty().bindBidirectional(this.encounter.getEncounterNameProperty());
@@ -182,103 +158,12 @@ public class MainController
         this.progress++;
     }
 
-    private void loadData() throws FileNotFoundException
-    {
-        if (Settings.getInstance().getImageZipFile() == null)
-        {
-            throw new FileNotFoundException("Image Zip File not found");
-        }
-        else
-        {
-            if (Settings.getInstance().getCreatureZipFile() == null)
-            {
-
-                this.loadImagesFromZip(true);
-            }
-            else
-            {
-                this.loadDataFromZip();
-                this.loadImagesFromZip(false);
-            }
-        }
-        this.entryAmountText.setText("#Entries: " + (int) this.amountToLoad);
-    }
-
-    private void loadDataFromZip()
-    {
-        try
-        {
-            final ZipFile zipCreatures = Settings.getInstance().getCreatureZipFile();
-            @SuppressWarnings("unchecked")
-            final List<FileHeader> fileHeaders = zipCreatures.getFileHeaders();
-            this.amountToLoad += fileHeaders.size();
-            for (final FileHeader fh : fileHeaders)
-            {
-                final JsonParser parser = new JsonParser();
-                final Scanner scanner = new Scanner(zipCreatures.getInputStream(fh));
-                scanner.useDelimiter("\\A");
-
-                final Monster m = new Monster(parser.parse(scanner.next()).getAsJsonObject());
-                scanner.close();
-                Settings.getInstance().getCreatureList().add(m);
-            }
-            this.incProgress();
-            this.setProgressTextAndBar(this.progress / this.amountToLoad);
-        }
-        catch (final ZipException e)
-        {
-            LOGGER.error("Error while reading zip entries", e);
-        }
-    }
-
-    private void loadImagesFromZip(final boolean createMonster)
-    {
-        try
-        {
-            final ZipFile zipImages = Settings.getInstance().getImageZipFile();
-            @SuppressWarnings("unchecked")
-            final List<FileHeader> fileHeaders = zipImages.getFileHeaders();
-            if (createMonster)
-            {
-                for (final FileHeader fh : fileHeaders)
-                {
-                    final String name = fh.getFileName().split("\\.")[0];
-                    final Monster m = new Monster(name, fh.getFileName());
-                    Settings.getInstance().getCreatureList().add(m);
-                }
-            }
-            else
-            {
-                for (final FileHeader fh : fileHeaders)
-                {
-                    final String name = fh.getFileName().split("\\.")[0];
-                    final String imageName = fh.getFileName();
-                    final Optional<Creature> firstCreature = Settings.getInstance().getCreatureList().stream()
-                            .filter(c -> name.equals(c.getName().get())).findFirst();
-                    if (firstCreature.isPresent())
-                    {
-                        firstCreature.get().setImagePath(imageName);
-                    }
-                }
-            }
-            this.incProgress();
-            this.setProgressTextAndBar(this.progress / this.amountToLoad);
-        }
-        catch (final ZipException e)
-        {
-            LOGGER.error("Error while reading zip entries", e);
-        }
-
-    }
-
     private void fillLibrary()
     {
         final ObservableList<LibraryEntry> leList = FXCollections.observableArrayList();
-        for (final Creature c : Settings.getInstance().getCreatureList())
+        for (final Creature c : CreatureLibrary.getInstance().getCreatures())
         {
             leList.add(new LibraryEntry(c));
-            this.incProgress();
-            this.setProgressTextAndBar(this.progress / this.amountToLoad);
         }
 
         this.libraryList.setItems(leList);

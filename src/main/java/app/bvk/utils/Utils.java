@@ -51,7 +51,7 @@ public class Utils
 
     }
 
-    public static void showImageFrame(final Creature creature)
+    public static void showImageFrame(final Creature creature, final ZipFile zipFile)
     {
         Image img;
         final Stage imgFrame = new Stage();
@@ -60,24 +60,17 @@ public class Utils
 
         if (creature.getImage() == null)
         {
-            final ZipFile zf = Settings.getInstance().getImageZipFile();
-            if (zf == null)
+            try
             {
-                img = new Image(new File(Settings.getInstance().getImageFolder() + creature.getImagePath()).toURI().toString());
+                final InputStream is = zipFile.getInputStream(zipFile.getFileHeader(creature.getImagePath()));
+                img = new Image(is);
             }
-            else
+            catch (final ZipException e)
             {
-                try
-                {
-                    final InputStream is = zf.getInputStream(zf.getFileHeader(creature.getImagePath()));
-                    img = new Image(is);
-                }
-                catch (final ZipException e)
-                {
-                    LOGGER.error("ERROR while loading image, using icon instead", e);
-                    img = new Image(MainGUI.class.getResourceAsStream("icon.png"));
-                }
+                LOGGER.error("ERROR while loading image, using icon instead", e);
+                img = new Image(MainGUI.class.getResourceAsStream("icon.png"));
             }
+
             creature.setImage(img);
         }
         else
