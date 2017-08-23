@@ -37,7 +37,7 @@ public class LibraryEntry extends BorderPane
     public LibraryEntry(final Creature creature)
     {
         this.creature = creature;
-        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("LibraryEntry.fxml"));
+        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("LibraryEntryGui.fxml"));
         this.loader.setRoot(this);
         this.loader.setController(this);
 

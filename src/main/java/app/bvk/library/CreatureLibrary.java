@@ -20,7 +20,6 @@ import com.google.gson.JsonParser;
 
 import app.bvk.entity.Creature;
 import app.bvk.entity.Monster;
-import app.bvk.utils.Settings;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
@@ -33,7 +32,7 @@ public final class CreatureLibrary
     private static final Logger LOGGER = LoggerFactory.getLogger(CreatureLibrary.class);
     private static final String LIBRARY_FILE_NAME = "library.zip";
     private static final JsonParser JSON_PARSER = new JsonParser();
-
+    private static final Path CREATURE_FOLDER = Paths.get(System.getProperty("user.dir"), "creatures");
     private final List<Creature> creatureList = new ArrayList<>();
 
     private ZipFile libraryZipFile;
@@ -42,7 +41,7 @@ public final class CreatureLibrary
 
     private CreatureLibrary()
     {
-        this.init(Paths.get(Settings.getInstance().getCreatureFolder()));
+        this.init(CREATURE_FOLDER);
     }
 
     private boolean init(final Path libraryFolder)
@@ -87,8 +86,7 @@ public final class CreatureLibrary
                 final InputStream fileInputStream = this.libraryZipFile.getInputStream(fh);
                 if (fileName.toLowerCase().endsWith("json"))
                 {
-                    final String fileContent = new BufferedReader(new InputStreamReader(fileInputStream)).lines().parallel()
-                            .collect(Collectors.joining("\n"));
+                    final String fileContent = new BufferedReader(new InputStreamReader(fileInputStream)).lines().parallel().collect(Collectors.joining("\n"));
                     final JsonObject creatureData = JSON_PARSER.parse(fileContent).getAsJsonObject();
                     final Monster monster = new Monster(creatureData);
                     final Creature creature = this.getCreature(monster.getName().getValue());
@@ -186,15 +184,15 @@ public final class CreatureLibrary
 
     /**
      * Get a creature by name
-     * 
+     *
      * @param name
      *            of the creature
      * @return the creature if it exists in the library or null if not
      */
     public Creature getCreature(final String name)
     {
-        final Optional<Creature> creatureOptional = this.creatureList.stream()
-                .filter(creature -> creature.getName().getValue().equalsIgnoreCase(name)).findFirst();
+        final Optional<Creature> creatureOptional = this.creatureList.stream().filter(creature -> creature.getName().getValue().equalsIgnoreCase(name))
+                .findFirst();
         if (creatureOptional.isPresent())
         {
             return creatureOptional.get();
@@ -210,5 +208,10 @@ public final class CreatureLibrary
     public ZipFile getZipFile()
     {
         return this.libraryZipFile;
+    }
+
+    public void addCreature(final Creature creature)
+    {
+        this.creatureList.add(creature);
     }
 }

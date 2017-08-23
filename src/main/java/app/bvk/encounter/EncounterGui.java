@@ -54,7 +54,7 @@ public class EncounterGui extends BorderPane
 
     public EncounterGui()
     {
-        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("Encounter.fxml"));
+        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EncounterGui.fxml"));
         this.loader.setRoot(this);
         this.loader.setController(this);
 
@@ -64,8 +64,9 @@ public class EncounterGui extends BorderPane
         }
         catch (final IOException e)
         {
-            LOGGER.error("ERROR while loadgin libraryentry fxml", e);
+            LOGGER.error("ERROR while loading encounter fxml", e);
         }
+
     }
 
     @FXML
@@ -132,13 +133,13 @@ public class EncounterGui extends BorderPane
 
     private void addNPC()
     {
-        Utils.newNPCWindow(this.encounter);
+        Utils.newNPCWindow(this.getScene().getWindow(), this.encounter);
         this.encounterList.setItems(this.encounter.getObsList());
     }
 
     private void addPlayer()
     {
-        Utils.newPlayerWindow(this.encounter);
+        Utils.newPlayerWindow(this.getScene().getWindow(), this.encounter);
         this.encounterList.setItems(this.encounter.getObsList());
     }
 

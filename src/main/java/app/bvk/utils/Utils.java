@@ -14,6 +14,7 @@ import app.bvk.encounter.Encounter;
 import app.bvk.entity.Creature;
 import app.bvk.entity.Player;
 import app.bvk.gui.MainGUI;
+import app.bvk.library.CreatureLibrary;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -34,6 +35,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -46,6 +48,8 @@ public class Utils
     private static final String CANCELSTRING = "Cancel";
     private static final String ENTERPLAYERNAMESTRING = "Enter Player Name";
 
+    public static final Image ICON = new Image(Utils.class.getClassLoader().getResourceAsStream("icon.png"));
+
     private Utils()
     {
 
@@ -55,7 +59,7 @@ public class Utils
     {
         Image img;
         final Stage imgFrame = new Stage();
-        imgFrame.getIcons().add(Settings.getInstance().getImageIcon());
+        imgFrame.getIcons().add(ICON);
         imgFrame.initModality(Modality.WINDOW_MODAL);
 
         if (creature.getImage() == null)
@@ -103,7 +107,7 @@ public class Utils
     public static Stage showSavingWarning()
     {
         final Stage stage = new Stage();
-        stage.getIcons().add(Settings.getInstance().getImageIcon());
+        stage.getIcons().add(ICON);
         stage.setTitle("Saving! Don't close this Window!");
         stage.initModality(Modality.APPLICATION_MODAL);
         final Label label = new Label("Saving!");
@@ -116,12 +120,12 @@ public class Utils
         return stage;
     }
 
-    public static void newLibraryEntryWindow()
+    public static void newLibraryEntryWindow(final Window ownerWindow)
     {
         final Dialog<Creature> d = new Dialog<>();
         final Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(Settings.getInstance().getImageIcon());
-        d.initOwner(Settings.getInstance().getMainStage());
+        stage.getIcons().add(ICON);
+        d.initOwner(ownerWindow);
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
@@ -136,7 +140,7 @@ public class Utils
             final FileChooser fc = new FileChooser();
             fc.setInitialDirectory(new File(System.getProperty("user.dir")));
             fc.getExtensionFilters().add(new ExtensionFilter("Image File", "*.png", "*.jpeg", "*.bmp"));
-            final File file = fc.showOpenDialog(Settings.getInstance().getMainStage());
+            final File file = fc.showOpenDialog(ownerWindow);
             if (file != null)
             {
                 imageFile = file;
@@ -171,16 +175,16 @@ public class Utils
         final Optional<Creature> a = d.showAndWait();
         if (a.isPresent())
         {
-            Settings.getInstance().getCreatureList().add(a.get());
+            CreatureLibrary.getInstance().addCreature(a.get());
         }
     }
 
-    public static void newPlayerWindow(final Encounter encounter)
+    public static void newPlayerWindow(final Window ownerWindow, final Encounter encounter)
     {
         final Dialog<String> d = new Dialog<>();
         final Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(Settings.getInstance().getImageIcon());
-        d.initOwner(Settings.getInstance().getMainStage());
+        stage.getIcons().add(ICON);
+        d.initOwner(ownerWindow);
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
@@ -215,12 +219,12 @@ public class Utils
         }
     }
 
-    public static void newNPCWindow(final Encounter encounter)
+    public static void newNPCWindow(final Window ownerWindow, final Encounter encounter)
     {
         final Dialog<String> d = new Dialog<>();
         final Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(Settings.getInstance().getImageIcon());
-        d.initOwner(Settings.getInstance().getMainStage());
+        stage.getIcons().add(ICON);
+        d.initOwner(ownerWindow);
         d.initModality(Modality.WINDOW_MODAL);
         d.setTitle(ENTERPLAYERNAMESTRING);
         d.setResizable(false);
@@ -235,7 +239,7 @@ public class Utils
             }
         });
         final ArrayList<String> names = new ArrayList<>();
-        for (final Creature le : Settings.getInstance().getCreatureList())
+        for (final Creature le : CreatureLibrary.getInstance().getCreatures())
         {
             names.add(le.getName().get());
         }

@@ -3,11 +3,11 @@ package app.bvk.gui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import app.bvk.utils.Utils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class MainGUI extends Application
@@ -17,14 +17,14 @@ public class MainGUI extends Application
     @Override
     public void start(final Stage primaryStage) throws Exception
     {
-        final Parent root = FXMLLoader.load(this.getClass().getClassLoader().getResource("gui.fxml"));
+        final Parent root = FXMLLoader.load(this.getClass().getClassLoader().getResource("MainGui.fxml"));
         final Scene scene = new Scene(root);
         scene.getStylesheets().add(this.getClass().getClassLoader().getResource("customstyle.css").toString());
         primaryStage.setOnCloseRequest(event ->
         {
 
         });
-        primaryStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("icon.png")));
+        primaryStage.getIcons().add(Utils.ICON);
         primaryStage.setTitle("D&D Encounter Tool v2.0");
         primaryStage.setScene(scene);
         primaryStage.show();

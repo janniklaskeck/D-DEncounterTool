@@ -32,7 +32,7 @@ public class LibraryGui extends BorderPane
 
     public LibraryGui()
     {
-        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("Library.fxml"));
+        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("LibraryGui.fxml"));
         this.loader.setRoot(this);
         this.loader.setController(this);
 
@@ -42,14 +42,14 @@ public class LibraryGui extends BorderPane
         }
         catch (final IOException e)
         {
-            LOGGER.error("ERROR while loadgin libraryentry fxml", e);
+            LOGGER.error("ERROR while loading library fxml", e);
         }
     }
 
     @FXML
     private void initialize()
     {
-        this.addLibraryEntryButton.setOnAction(event -> Utils.newLibraryEntryWindow());
+        this.addLibraryEntryButton.setOnAction(event -> Utils.newLibraryEntryWindow(this.getScene().getWindow()));
         this.addLibraryTextFieldFilter();
     }
 

@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
 import app.bvk.entity.Creature;
-import app.bvk.utils.Settings;
+import app.bvk.library.CreatureLibrary;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -67,7 +67,7 @@ public class Encounter
 
     public void addCreature(final String name)
     {
-        for (final Creature c : Settings.getInstance().getCreatureList())
+        for (final Creature c : CreatureLibrary.getInstance().getCreatures())
         {
             if (c.getName().get().equals(name))
             {
@@ -187,8 +187,7 @@ public class Encounter
             jsonWriter.setIndent("  ");
             jsonWriter.beginArray();
             jsonWriter.beginObject();
-            jsonWriter.name("encounterName")
-                    .value("".equals(this.encounterNameProperty.get()) ? "Unnamed Encounter" : this.encounterNameProperty.get());
+            jsonWriter.name("encounterName").value("".equals(this.encounterNameProperty.get()) ? "Unnamed Encounter" : this.encounterNameProperty.get());
             jsonWriter.endObject();
             jsonWriter.beginArray();
             for (final Creature c : this.getCreatureList())
@@ -220,8 +219,7 @@ public class Encounter
             LOGGER.debug("Deletion of auto save file was successful? {}", deletionSuccessful);
         }
         final String date = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        this.file = new File(
-                System.getProperty("user.dir") + "\\saves\\" + this.encounterNameProperty.get() + "-" + date.replace(":", ".") + ".ddesav");
+        this.file = new File(System.getProperty("user.dir") + "\\saves\\" + this.encounterNameProperty.get() + "-" + date.replace(":", ".") + ".ddesav");
         this.file.getParentFile().mkdirs();
         try
         {

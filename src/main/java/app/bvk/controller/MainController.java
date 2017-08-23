@@ -12,7 +12,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 
 public class MainController
@@ -23,11 +23,11 @@ public class MainController
     @FXML
     private BorderPane rootBorderPane;
     @FXML
-    private AnchorPane settingsAnchorPane;
+    private Tab settingsTab;
     @FXML
-    private AnchorPane libraryAnchorPane;
+    private Tab libraryTab;
     @FXML
-    private AnchorPane encounterAnchorPane;
+    private Tab encounterTab;
 
     @FXML
     private ProgressBar loadingProgressBar;
@@ -40,9 +40,9 @@ public class MainController
     @FXML
     public void initialize()
     {
-        this.settingsAnchorPane.getChildren().add(new SettingsGui());
-        this.libraryAnchorPane.getChildren().add(new LibraryGui());
-        this.encounterAnchorPane.getChildren().add(new EncounterGui());
+        this.settingsTab.setContent(new SettingsGui());
+        this.libraryTab.setContent(new LibraryGui());
+        this.encounterTab.setContent(new EncounterGui());
 
         LOGGER.debug("Main GUI initialized.");
     }

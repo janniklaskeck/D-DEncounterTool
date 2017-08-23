@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import app.bvk.utils.Settings;
+import app.bvk.utils.Utils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -36,7 +36,7 @@ public class EditorWindow extends GridPane
     private void initStage(final Scene scene)
     {
         setEditorStage(new Stage());
-        editorStage.getIcons().add(Settings.getInstance().getImageIcon());
+        editorStage.getIcons().add(Utils.ICON);
         editorStage.setScene(scene);
         editorStage.setTitle("Creature Editor");
         editorStage.setResizable(false);
@@ -45,7 +45,7 @@ public class EditorWindow extends GridPane
     private Scene initScene()
     {
         Parent root = null;
-        final FXMLLoader loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EditorWindow.fxml"));
+        final FXMLLoader loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EditorWindowGui.fxml"));
         try
         {
             root = loader.load();

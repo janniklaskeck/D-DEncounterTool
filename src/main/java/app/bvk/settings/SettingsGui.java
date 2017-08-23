@@ -22,7 +22,7 @@ public class SettingsGui extends GridPane
 
     public SettingsGui()
     {
-        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("settings.fxml"));
+        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("SettingsGui.fxml"));
         this.loader.setRoot(this);
         this.loader.setController(this);
 
@@ -32,7 +32,7 @@ public class SettingsGui extends GridPane
         }
         catch (final IOException e)
         {
-            LOGGER.error("ERROR while loadgin libraryentry fxml", e);
+            LOGGER.error("ERROR while loading settings fxml", e);
         }
     }
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="rootBorderPane" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.bvk.controller.MainController">
+   <center>
+				<TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+					<tabs>
+						<Tab fx:id="encounterTab" text="Encounter" />
+						<Tab fx:id="libraryTab" text="Library" />
+						<Tab fx:id="settingsTab" text="Settings" />
+					</tabs>
+				</TabPane>
+   </center>
+   <bottom>
+		<AnchorPane fx:id="progressAnchorPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
+			<children>
+            <Label fx:id="loadingProgressLabel" alignment="CENTER" contentDisplay="CENTER" text="Loading Progress: " textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <ProgressBar fx:id="loadingProgressBar" progress="0.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+			</children>
+		</AnchorPane>
+   </bottom>
+</BorderPane>

@@ -8,8 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -26,7 +25,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </HBox>
-            <BorderPane>
+            <BorderPane minHeight="-Infinity" minWidth="-Infinity">
                <left>
                   <HBox spacing="5.0" BorderPane.alignment="CENTER">
                      <children>
@@ -61,6 +60,6 @@
       </VBox>
    </top>
    <center>
-      <ListView fx:id="encounterList" BorderPane.alignment="CENTER" />
+      <ListView fx:id="encounterList" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER" />
    </center>
-</BorderPane>
+</fx:root>

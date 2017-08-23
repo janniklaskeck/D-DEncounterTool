@@ -50,7 +50,7 @@ public class EncounterEntry extends GridPane
     public EncounterEntry(final Creature creature)
     {
         this.creature = creature;
-        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EncounterEntry.fxml"));
+        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EncounterEntryGui.fxml"));
         this.loader.setRoot(this);
         this.loader.setController(this);
         try
