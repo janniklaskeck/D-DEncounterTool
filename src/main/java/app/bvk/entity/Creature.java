@@ -1,7 +1,5 @@
 package app.bvk.entity;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +14,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
+import de.schlichtherle.truezip.file.TFile;
+import de.schlichtherle.truezip.file.TFileWriter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
@@ -164,9 +164,9 @@ public class Creature
         }
     }
 
-    public void writeJsonToFile(final File file)
+    public void writeJsonToFile(final TFile file)
     {
-        try (final FileWriter fw = new FileWriter(file); final JsonWriter jsonWriter = new JsonWriter(fw);)
+        try (final TFileWriter fw = new TFileWriter(file); final JsonWriter jsonWriter = new JsonWriter(fw);)
         {
             jsonWriter.setIndent("  ");
             jsonWriter.beginObject();

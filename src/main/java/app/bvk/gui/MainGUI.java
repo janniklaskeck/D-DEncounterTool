@@ -3,8 +3,10 @@ package app.bvk.gui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import app.bvk.library.CreatureLibrary;
 import app.bvk.utils.Utils;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,7 +24,8 @@ public class MainGUI extends Application
         scene.getStylesheets().add(this.getClass().getClassLoader().getResource("customstyle.css").toString());
         primaryStage.setOnCloseRequest(event ->
         {
-
+            CreatureLibrary.getInstance().saveCreatures();
+            Platform.exit();
         });
         primaryStage.getIcons().add(Utils.ICON);
         primaryStage.setTitle("D&D Encounter Tool v2.0");

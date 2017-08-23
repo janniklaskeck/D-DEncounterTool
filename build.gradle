@@ -27,7 +27,7 @@ ext {
     gsonVersion = "2.8.1"
     slf4jVersion = "1.7.25"
     log4jVersion = "2.8.2"
-    zip4jVersion = "1.3.2"
+    truezipVersion = "7.7.10"
     junitVersion = "4.12"
 }
 
@@ -40,7 +40,9 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
     compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
     compile "org.apache.logging.log4j:log4j-jul:$log4jVersion"
-    compile "net.lingala.zip4j:zip4j:$zip4jVersion"
+    compile "de.schlichtherle.truezip:truezip-driver-zip:$truezipVersion"
+    compile "de.schlichtherle.truezip:truezip-file:$truezipVersion"
+    compile "de.schlichtherle.truezip:truezip-path:$truezipVersion"
     testCompile "junit:junit:$junitVersion"
 }
 

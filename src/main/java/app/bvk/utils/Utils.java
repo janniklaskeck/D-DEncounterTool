@@ -3,7 +3,7 @@ package app.bvk.utils;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -15,6 +15,8 @@ import app.bvk.entity.Creature;
 import app.bvk.entity.Player;
 import app.bvk.gui.MainGUI;
 import app.bvk.library.CreatureLibrary;
+import de.schlichtherle.truezip.file.TFile;
+import de.schlichtherle.truezip.file.TFileInputStream;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -36,8 +38,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 
 public class Utils
 {
@@ -55,7 +55,7 @@ public class Utils
 
     }
 
-    public static void showImageFrame(final Creature creature, final ZipFile zipFile)
+    public static void showImageFrame(final Creature creature)
     {
         Image img;
         final Stage imgFrame = new Stage();
@@ -64,12 +64,12 @@ public class Utils
 
         if (creature.getImage() == null)
         {
-            try
+            final File creatureImageFile = CreatureLibrary.getInstance().getLibraryFilePath().resolve(creature.getImagePath()).toFile();
+            try (final TFileInputStream is = new TFileInputStream(new TFile(creatureImageFile));)
             {
-                final InputStream is = zipFile.getInputStream(zipFile.getFileHeader(creature.getImagePath()));
                 img = new Image(is);
             }
-            catch (final ZipException e)
+            catch (final IOException e)
             {
                 LOGGER.error("ERROR while loading image, using icon instead", e);
                 img = new Image(MainGUI.class.getResourceAsStream("icon.png"));

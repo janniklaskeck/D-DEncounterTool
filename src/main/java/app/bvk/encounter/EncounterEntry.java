@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import app.bvk.entity.Creature;
 import app.bvk.entity.Player;
 import app.bvk.gui.MainGUI;
-import app.bvk.library.CreatureLibrary;
 import app.bvk.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -76,7 +75,7 @@ public class EncounterEntry extends GridPane
         }
         else
         {
-            this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature(), CreatureLibrary.getInstance().getZipFile()));
+            this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature()));
         }
 
         this.initiativeTextField.setText(Float.toString(this.creature.getInitiative()));

@@ -5,7 +5,10 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import app.bvk.entity.Creature;
 import app.bvk.utils.Utils;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,6 +54,14 @@ public class LibraryGui extends BorderPane
     {
         this.addLibraryEntryButton.setOnAction(event -> Utils.newLibraryEntryWindow(this.getScene().getWindow()));
         this.addLibraryTextFieldFilter();
+        CreatureLibrary.getInstance();
+        final ObservableList<LibraryEntry> leList = FXCollections.observableArrayList();
+        for (final Creature c : CreatureLibrary.getInstance().getCreatures())
+        {
+            leList.add(new LibraryEntry(c));
+        }
+
+        this.libraryList.setItems(leList);
     }
 
     private void addLibraryTextFieldFilter()

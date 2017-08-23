@@ -55,7 +55,7 @@ public class LibraryEntry extends BorderPane
     protected void initialize()
     {
         this.nameText.setText(this.creature.getName().get());
-        this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature(), CreatureLibrary.getInstance().getZipFile()));
+        this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature()));
         this.openStatsButton.setOnAction(event -> new EditorWindow());
     }
 
