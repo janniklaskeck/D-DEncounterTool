@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox spacing="5.0">
+               <children>
+                  <Button fx:id="newEncounterButton" mnemonicParsing="false" text="New" />
+                  <Button fx:id="loadEncounterButton" mnemonicParsing="false" text="Load" />
+                  <Button fx:id="saveEncounterButton" mnemonicParsing="false" text="Save" />
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <BorderPane>
+               <left>
+                  <HBox spacing="5.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="addNpcButton" mnemonicParsing="false" text="Add Npc" />
+                        <Button fx:id="addPlayerButton" mnemonicParsing="false" text="Add Player" />
+                        <Button fx:id="deleteButton" mnemonicParsing="false" text="Delete" />
+                        <Button fx:id="copyButton" mnemonicParsing="false" text="Copy" />
+                     </children>
+                  </HBox>
+               </left>
+               <right>
+                  <HBox spacing="5.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="sortButton" mnemonicParsing="false" text="Sort" />
+                        <Button fx:id="nextButton" mnemonicParsing="false" text="Next" />
+                        <Button fx:id="previousButton" mnemonicParsing="false" text="Previous" />
+                     </children>
+                  </HBox>
+               </right>
+               <center>
+                  <TextField fx:id="encounterNameTextField" promptText="Enter Encounter Name" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </BorderPane.margin>
+                  </TextField>
+               </center>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </BorderPane>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <ListView fx:id="encounterList" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>
