@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import app.bvk.entity.Creature;
 import app.bvk.library.CreatureLibrary;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -32,7 +34,7 @@ public class NpcDialogPane extends DialogPane
     @FXML
     private TextField filterTextField;
 
-    private Creature selectedCreature;
+    private ObjectProperty<Creature> selectedCreature = new SimpleObjectProperty<>();
     private Dialog<Creature> parentDialog;
 
     public NpcDialogPane(final Dialog<Creature> parent)
@@ -100,10 +102,11 @@ public class NpcDialogPane extends DialogPane
             });
             this.creatureListView.setItems(filteredList);
         });
+        this.selectedCreature.bind(this.creatureListView.getSelectionModel().selectedItemProperty());
     }
 
     public Creature getSelectedCreature()
     {
-        return this.selectedCreature;
+        return this.selectedCreature.getValue();
     }
 }
