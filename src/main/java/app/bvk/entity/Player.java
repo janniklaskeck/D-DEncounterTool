@@ -2,10 +2,9 @@ package app.bvk.entity;
 
 public class Player extends Creature
 {
-
-    public Player(final String name, final String path)
+    public Player(final String name)
     {
-        super(name, path);
+        super(name, "");
     }
 
 }

@@ -2,11 +2,15 @@ package app.bvk.encounter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import app.bvk.utils.Utils;
+import app.bvk.encounter.dialog.EncounterNpcWindow;
+import app.bvk.encounter.dialog.EncounterPlayerWindow;
+import app.bvk.entity.Creature;
+import app.bvk.entity.Player;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -66,7 +70,6 @@ public class EncounterGui extends BorderPane
         {
             LOGGER.error("ERROR while loading encounter fxml", e);
         }
-
     }
 
     @FXML
@@ -133,14 +136,22 @@ public class EncounterGui extends BorderPane
 
     private void addNPC()
     {
-        Utils.newNPCWindow(this.getScene().getWindow(), this.encounter);
-        this.encounterList.setItems(this.encounter.getObsList());
+        final Optional<Creature> selectedCreature = new EncounterNpcWindow(this.getScene().getWindow()).showAndWait();
+        if (selectedCreature.isPresent())
+        {
+            this.encounter.addCreature(selectedCreature.get());
+            this.encounterList.setItems(this.encounter.getObsList());
+        }
     }
 
     private void addPlayer()
     {
-        Utils.newPlayerWindow(this.getScene().getWindow(), this.encounter);
-        this.encounterList.setItems(this.encounter.getObsList());
+        final Optional<Player> createdPlayer = new EncounterPlayerWindow(this.getScene().getWindow()).showAndWait();
+        if (createdPlayer.isPresent())
+        {
+            this.encounter.addCreature(createdPlayer.get());
+            this.encounterList.setItems(this.encounter.getObsList());
+        }
     }
 
     private void deleteSelected()

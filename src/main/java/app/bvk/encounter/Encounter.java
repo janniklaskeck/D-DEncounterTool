@@ -21,7 +21,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
 import app.bvk.entity.Creature;
-import app.bvk.library.CreatureLibrary;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -31,7 +30,7 @@ public class Encounter
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Encounter.class);
-    private ArrayList<Creature> creatureList;
+    private final ArrayList<Creature> creatureList = new ArrayList<>();
     private int currentIndex = 0;
     private File file;
     private StringProperty encounterNameProperty;
@@ -39,7 +38,6 @@ public class Encounter
     public Encounter(final String name)
     {
         this.encounterNameProperty = new SimpleStringProperty(name);
-        this.creatureList = new ArrayList<>();
     }
 
     public void reset()
@@ -50,31 +48,6 @@ public class Encounter
     public void addCreature(final Creature creature)
     {
         this.creatureList.add(creature);
-        for (final Creature c : this.getCreatureList())
-        {
-            c.setSelected(false);
-        }
-        if (this.getCreatureList().size() - 1 >= this.getCurrentIndex())
-        {
-            this.getCreatureList().get(this.getCurrentIndex()).setSelected(true);
-        }
-        else
-        {
-            this.getCreatureList().get(0).setSelected(true);
-            this.setCurrentIndex(0);
-        }
-    }
-
-    public void addCreature(final String name)
-    {
-        for (final Creature c : CreatureLibrary.getInstance().getCreatures())
-        {
-            if (c.getName().get().equals(name))
-            {
-                this.creatureList.add(new Creature(c));
-                break;
-            }
-        }
         for (final Creature c : this.getCreatureList())
         {
             c.setSelected(false);
@@ -235,7 +208,6 @@ public class Encounter
 
     public void readFromFile(final File file)
     {
-
         this.reset();
         try (FileInputStream fis = new FileInputStream(file);)
         {

@@ -15,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -23,11 +22,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 public class EncounterEntry extends GridPane
-{ // NOSONAR
+{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
 
-    private static final int MAXIMUMNUMBERS = 5;
+    private static final int MAXIMUM_NUMBERS = 5;
     private Creature creature;
     private FXMLLoader loader;
 
@@ -60,7 +59,14 @@ public class EncounterEntry extends GridPane
         {
             LOGGER.error("ERROR while loading encounterentry fxml", e);
         }
+    }
+
+    @FXML
+    public void initialize()
+    {
+        this.openImageButton.textProperty().bind(this.creature.getName());
         this.setupCreature();
+        this.addListeners();
     }
 
     private void setupCreature()
@@ -82,100 +88,71 @@ public class EncounterEntry extends GridPane
         this.healthTextField.setText(Integer.toString(this.creature.getHealth()));
         this.armorClassTextField.setText(Integer.toString(this.creature.getArmorClass()));
         this.statusTextArea.setText(this.creature.getNotes());
-
-        this.addListeners();
     }
 
     private void addListeners()
     {
-        this.initiativeTextField.textProperty().addListener((obs, oldValue, newValue) ->
-        {
-            float initiative = 0;
-            try
-            {
-                initiative = Float.parseFloat(newValue);
-            }
-            catch (final Exception e)
-            {
-                initiative = 0;
-                LOGGER.error("ERROR while parsing initiative, set to 0", e);
-            }
-            this.creature.setInitiative(initiative);
-            if (newValue.length() > MAXIMUMNUMBERS)
-            {
-                this.initiativeTextField.setText(this.initiativeTextField.getText(0, MAXIMUMNUMBERS));
-            }
-        });
-        this.healthTextField.focusedProperty().addListener((obs, oldValue, newValue) ->
-        {
-            if (!newValue)
-            {
-                int health = 0;
-                try
-                {
-                    health = Integer.parseInt(this.healthTextField.getText());
-                }
-                catch (final Exception e)
-                {
-                    health = 0;
-                    LOGGER.error("ERROR while parsing health, set to 0", e);
-                }
-                this.creature.setHealth(health);
-            }
-
-        });
-        this.healthTextField.setOnKeyPressed(key ->
-        {
-            if (key.getCode().equals(KeyCode.ENTER))
-            {
-                int health = 0;
-                try
-                {
-                    health = Integer.parseInt(this.healthTextField.getText());
-                }
-                catch (final Exception e)
-                {
-                    health = 0;
-                    LOGGER.error("ERROR while parsing health, set to 0", e);
-                }
-                this.creature.setHealth(health);
-
-            }
-        });
-        this.healthTextField.textProperty().addListener((obs, oldValue, newValue) ->
-        {
-            if (newValue.length() > MAXIMUMNUMBERS)
-            {
-                this.healthTextField.setText(this.healthTextField.getText(0, MAXIMUMNUMBERS));
-            }
-        });
-
-        this.armorClassTextField.textProperty().addListener((obs, oldValue, newValue) ->
-        {
-            int armorClass = 0;
-            try
-            {
-                armorClass = Integer.parseInt(newValue);
-            }
-            catch (final Exception e)
-            {
-                armorClass = 0;
-                LOGGER.error("ERROR while parsing armorclass, set to 0", e);
-            }
-            this.creature.setArmorClass(armorClass);
-            if (newValue.length() > MAXIMUMNUMBERS)
-            {
-                this.armorClassTextField.setText(this.armorClassTextField.getText(0, MAXIMUMNUMBERS));
-            }
-        });
-
+        this.armorClassTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseArmorClass(newValue));
         this.statusTextArea.textProperty().addListener((obs, oldValue, newValue) -> this.creature.setNotes(newValue));
+        this.initiativeTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseInitiative(newValue));
+        this.healthTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseHealth(newValue));
     }
 
-    @FXML
-    public void initialize()
+    private void parseHealth(final String healthString)
     {
-        this.openImageButton.textProperty().bind(this.creature.getName());
+        int health = 0;
+        try
+        {
+            health = Integer.parseInt(healthString);
+        }
+        catch (final NumberFormatException e)
+        {
+            health = 0;
+            LOGGER.error("ERROR while parsing health, set to 0", e);
+        }
+        this.creature.setHealth(health);
+        if (healthString.length() > MAXIMUM_NUMBERS)
+        {
+            this.healthTextField.setText(this.healthTextField.getText(0, MAXIMUM_NUMBERS));
+        }
+    }
+
+    private void parseInitiative(final String initiativeString)
+    {
+        float initiative = 0;
+        try
+        {
+            initiative = Float.parseFloat(initiativeString);
+        }
+        catch (final NumberFormatException e)
+        {
+            initiative = 0;
+            LOGGER.error("ERROR while parsing initiative, set to 0", e);
+        }
+        this.creature.setInitiative(initiative);
+        if (initiativeString.length() > MAXIMUM_NUMBERS)
+        {
+            this.initiativeTextField.setText(this.initiativeTextField.getText(0, MAXIMUM_NUMBERS));
+        }
+    }
+
+    private void parseArmorClass(final String armorClassString)
+    {
+        int armorClass = 0;
+        try
+        {
+            armorClass = Integer.parseInt(armorClassString);
+        }
+        catch (final NumberFormatException e)
+        {
+            armorClass = 0;
+            LOGGER.error("ERROR while parsing armorclass, set to 0", e);
+        }
+        this.creature.setArmorClass(armorClass);
+        if (armorClassString.length() > MAXIMUM_NUMBERS)
+        {
+            this.armorClassTextField.setText(this.armorClassTextField.getText(0, MAXIMUM_NUMBERS));
+        }
     }
 
     public Creature getCreature()

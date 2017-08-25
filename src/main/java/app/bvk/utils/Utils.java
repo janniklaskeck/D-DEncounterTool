@@ -4,22 +4,16 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import app.bvk.encounter.Encounter;
 import app.bvk.entity.Creature;
-import app.bvk.entity.Player;
 import app.bvk.gui.MainGUI;
 import app.bvk.library.CreatureLibrary;
 import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileInputStream;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -28,7 +22,6 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -179,112 +172,4 @@ public class Utils
         }
     }
 
-    public static void newPlayerWindow(final Window ownerWindow, final Encounter encounter)
-    {
-        final Dialog<String> d = new Dialog<>();
-        final Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(ICON);
-        d.initOwner(ownerWindow);
-        d.initModality(Modality.WINDOW_MODAL);
-        d.setTitle(ENTERPLAYERNAMESTRING);
-        d.setResizable(false);
-        final Label name = new Label(NAMESTRING);
-        final TextField tf = new TextField();
-
-        final GridPane grid = new GridPane();
-        grid.add(name, 0, 0);
-        grid.add(tf, 1, 0);
-        d.getDialogPane().setContent(grid);
-        final ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
-        final ButtonType cancelButton = new ButtonType(CANCELSTRING, ButtonData.CANCEL_CLOSE);
-        d.getDialogPane().getButtonTypes().add(okButton);
-        d.getDialogPane().getButtonTypes().add(cancelButton);
-        d.setResultConverter(param ->
-        {
-            if (param == okButton)
-            {
-                return tf.getText();
-            }
-            if (param == cancelButton)
-            {
-                return null;
-            }
-            return null;
-        });
-
-        final Optional<String> a = d.showAndWait();
-        if (a.isPresent())
-        {
-            encounter.addCreature(new Player(tf.getText(), ""));
-        }
-    }
-
-    public static void newNPCWindow(final Window ownerWindow, final Encounter encounter)
-    {
-        final Dialog<String> d = new Dialog<>();
-        final Stage stage = (Stage) d.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(ICON);
-        d.initOwner(ownerWindow);
-        d.initModality(Modality.WINDOW_MODAL);
-        d.setTitle(ENTERPLAYERNAMESTRING);
-        d.setResizable(false);
-        final Label name = new Label("Filter: ");
-        final TextField filterTF = new TextField();
-        final ListView<String> lv = new ListView<>();
-        lv.setOnMouseClicked(event ->
-        {
-            if (event.getClickCount() == 2)
-            {
-                d.resultProperty().set(lv.getSelectionModel().getSelectedItem());
-            }
-        });
-        final ArrayList<String> names = new ArrayList<>();
-        for (final Creature le : CreatureLibrary.getInstance().getCreatures())
-        {
-            names.add(le.getName().get());
-        }
-        final ObservableList<String> ol = FXCollections.observableArrayList(names);
-        lv.setItems(ol);
-        final FilteredList<String> fData = new FilteredList<>(ol, p -> true);
-        filterTF.textProperty().addListener((obs, oldValue, newValue) ->
-        {
-            fData.setPredicate(t ->
-            {
-                final boolean isEmpty = newValue == null || newValue.isEmpty();
-                final boolean nameMatch = t.toLowerCase().contains(newValue.toLowerCase());
-                return isEmpty || nameMatch;
-            });
-            lv.setItems(fData);
-        });
-
-        final GridPane grid = new GridPane();
-        grid.add(name, 0, 0);
-        grid.add(filterTF, 1, 0);
-        grid.add(lv, 0, 1, 2, 1);
-        d.getDialogPane().setContent(grid);
-
-        final ButtonType okButton = new ButtonType("Save", ButtonData.OK_DONE);
-        final ButtonType cancelButton = new ButtonType(CANCELSTRING, ButtonData.CANCEL_CLOSE);
-        d.getDialogPane().getButtonTypes().add(okButton);
-        d.getDialogPane().getButtonTypes().add(cancelButton);
-        d.setResultConverter(param ->
-        {
-            if (param == okButton)
-            {
-                return lv.getSelectionModel().getSelectedItem();
-            }
-            if (param == cancelButton)
-            {
-                return null;
-            }
-            return null;
-
-        });
-
-        final Optional<String> a = d.showAndWait();
-        if (a.isPresent())
-        {
-            encounter.addCreature(a.get());
-        }
-    }
 }

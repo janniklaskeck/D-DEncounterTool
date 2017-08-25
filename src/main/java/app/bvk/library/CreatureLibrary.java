@@ -190,6 +190,7 @@ public final class CreatureLibrary
     public void addCreature(final Creature creature)
     {
         this.creatureList.add(creature);
+        this.saveCreatures();
     }
 
     public Path getLibraryFilePath()
