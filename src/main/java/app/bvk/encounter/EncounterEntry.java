@@ -17,11 +17,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
-public class EncounterEntry extends GridPane
+public class EncounterEntry extends BorderPane
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
