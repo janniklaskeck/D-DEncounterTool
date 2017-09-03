@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 public class MainGUI extends Application
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
+    private static final double MIN_WIDTH = 1280D;
+    private static final double MIN_HEIGHT = 600D;
 
     @Override
     public void start(final Stage primaryStage) throws Exception
@@ -27,6 +29,8 @@ public class MainGUI extends Application
             CreatureLibrary.getInstance().saveCreatures();
             Platform.exit();
         });
+        primaryStage.setMinWidth(MIN_WIDTH);
+        primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.getIcons().add(Utils.ICON);
         primaryStage.setTitle("D&D Encounter Tool v2.0");
         primaryStage.setScene(scene);

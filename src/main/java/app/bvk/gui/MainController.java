@@ -1,4 +1,4 @@
-package app.bvk.controller;
+package app.bvk.gui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import app.bvk.encounter.EncounterGui;
 import app.bvk.library.LibraryGui;
 import app.bvk.settings.SettingsGui;
+import app.bvk.utilities.UtilitiesPane;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
@@ -24,12 +25,15 @@ public class MainController
     @FXML
     private Tab encounterTab;
 
+    public static final UtilitiesPane pane = new UtilitiesPane();
+
     @FXML
     public void initialize()
     {
         this.settingsTab.setContent(new SettingsGui());
         this.libraryTab.setContent(new LibraryGui());
         this.encounterTab.setContent(new EncounterGui());
+        this.rootBorderPane.setRight(pane);
 
         LOGGER.debug("Main GUI initialized.");
     }

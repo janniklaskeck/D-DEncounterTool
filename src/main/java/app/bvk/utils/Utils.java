@@ -25,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -74,10 +75,12 @@ public class Utils
         {
             img = creature.getImage();
         }
+        final Pane pane = new Pane();
         final VBox vbox = new VBox();
+        pane.getChildren().add(vbox);
 
-        final Scene myDialogScene = new Scene(vbox);
-        final WrappedImageView iv = new WrappedImageView(myDialogScene, creature.getImage());
+        final Scene myDialogScene = new Scene(pane);
+        final ZoomableImageView iv = new ZoomableImageView(pane, creature.getImage());
         vbox.getChildren().add(iv);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(10));

@@ -7,28 +7,27 @@ import org.slf4j.LoggerFactory;
 
 import app.bvk.entity.Creature;
 import app.bvk.entity.Player;
-import app.bvk.gui.MainGUI;
+import app.bvk.gui.MainController;
 import app.bvk.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
 public class EncounterEntry extends BorderPane
 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EncounterEntry.class);
 
     private static final int MAXIMUM_NUMBERS = 5;
     private Creature creature;
-    private FXMLLoader loader;
 
     @FXML
     private TextField initiativeTextField;
@@ -40,7 +39,10 @@ public class EncounterEntry extends BorderPane
     private TextField armorClassTextField;
 
     @FXML
-    private TextArea statusTextArea;
+    private TextField noteTextField;
+
+    @FXML
+    private HBox noteHBox;
 
     @FXML
     private Button openImageButton;
@@ -48,12 +50,12 @@ public class EncounterEntry extends BorderPane
     public EncounterEntry(final Creature creature)
     {
         this.creature = creature;
-        this.loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EncounterEntryGui.fxml"));
-        this.loader.setRoot(this);
-        this.loader.setController(this);
+        final FXMLLoader loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EncounterEntryGui.fxml"));
+        loader.setRoot(this);
+        loader.setController(this);
         try
         {
-            this.loader.load();
+            loader.load();
         }
         catch (final IOException e)
         {
@@ -81,19 +83,23 @@ public class EncounterEntry extends BorderPane
         }
         else
         {
-            this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature()));
+            this.openImageButton.setOnAction(event ->
+            {
+                Utils.showImageFrame(this.getCreature());
+                MainController.pane.updateCreaturePreview(this.creature);
+            });
         }
 
         this.initiativeTextField.setText(Float.toString(this.creature.getInitiative()));
         this.healthTextField.setText(Integer.toString(this.creature.getHealth()));
         this.armorClassTextField.setText(Integer.toString(this.creature.getArmorClass()));
-        this.statusTextArea.setText(this.creature.getNotes());
+        this.noteTextField.setText(this.creature.getNotes());
     }
 
     private void addListeners()
     {
         this.armorClassTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseArmorClass(newValue));
-        this.statusTextArea.textProperty().addListener((obs, oldValue, newValue) -> this.creature.setNotes(newValue));
+        this.noteTextField.textProperty().addListener((obs, oldValue, newValue) -> this.creature.setNotes(newValue));
         this.initiativeTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseInitiative(newValue));
         this.healthTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseHealth(newValue));
     }

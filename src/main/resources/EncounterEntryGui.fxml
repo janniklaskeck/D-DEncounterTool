@@ -1,76 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+<fx:root maxWidth="1.7976931348623157E308" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <right>
+      <HBox fx:id="noteHBox" alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="openImageButton" mnemonicParsing="false" text="Open Image" wrapText="true">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-            <VBox>
-               <children>
-                  <HBox>
-                     <children>
-                        <Label alignment="TOP_CENTER" text="Ini." textAlignment="CENTER">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="initiativeTextField" prefColumnCount="4" />
-                     </children>
-                  </HBox>
-                  <HBox>
-                     <children>
-                        <Label alignment="CENTER" text="HP">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="healthTextField" prefColumnCount="4" />
-                     </children>
-                  </HBox>
-                  <HBox>
-                     <children>
-                        <Label alignment="CENTER" text="AC">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="armorClassTextField" prefColumnCount="4" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-   </left>
-   <center>
-      <HBox BorderPane.alignment="CENTER">
-         <children>
-            <Label text="Notes">
+            <Label alignment="CENTER" text="Notes">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextArea fx:id="statusTextArea" maxWidth="1.7976931348623157E308" prefRowCount="4">
-               <HBox.margin>
-                  <Insets bottom="2.0" left="3.0" right="3.0" top="2.0" />
-               </HBox.margin>
-            </TextArea>
+            <TextField fx:id="noteTextField" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefColumnCount="32" promptText="Enter Notes" />
+         </children>
+      </HBox>
+   </right>
+   <center>
+      <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER">
+               <children>
+                  <Label alignment="TOP_CENTER" text="Ini." textAlignment="CENTER">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="initiativeTextField" prefColumnCount="3" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <Label alignment="CENTER" text="AC">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="armorClassTextField" prefColumnCount="3" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <Label alignment="CENTER" text="HP">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="healthTextField" prefColumnCount="4" />
+                  <Label text="/">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField prefColumnCount="4" />
+               </children>
+            </HBox>
          </children>
       </HBox>
    </center>
+   <left>
+      <Button fx:id="openImageButton" mnemonicParsing="false" text="Open Image" wrapText="true" BorderPane.alignment="CENTER" />
+   </left>
 </fx:root>

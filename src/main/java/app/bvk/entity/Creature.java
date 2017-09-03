@@ -1,5 +1,6 @@
 package app.bvk.entity;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
+import app.bvk.gui.MainGUI;
+import app.bvk.library.CreatureLibrary;
 import de.schlichtherle.truezip.file.TFile;
+import de.schlichtherle.truezip.file.TFileInputStream;
 import de.schlichtherle.truezip.file.TFileWriter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -261,6 +265,20 @@ public class Creature
 
     public Image getImage()
     {
+        if (this.image == null)
+        {
+            final File creatureImageFile = CreatureLibrary.getInstance().getLibraryFilePath().resolve(this.getImagePath()).toFile();
+            try (final TFileInputStream is = new TFileInputStream(new TFile(creatureImageFile));)
+            {
+                this.image = new Image(is);
+                is.close();
+            }
+            catch (final IOException e)
+            {
+                LOGGER.error("ERROR while loading image, using icon instead", e);
+                this.image = new Image(MainGUI.class.getResourceAsStream("icon.png"));
+            }
+        }
         return this.image;
     }
 

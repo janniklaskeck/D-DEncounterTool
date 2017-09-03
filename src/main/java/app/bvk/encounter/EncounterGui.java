@@ -91,7 +91,6 @@ public class EncounterGui extends BorderPane
         this.nextButton.setOnAction(event -> this.nextTurn());
         this.sortButton.setOnAction(event -> this.sortEncounter());
         this.addPlayerButton.setOnAction(event -> this.addPlayer());
-
     }
 
     private void initEncounter()

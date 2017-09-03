@@ -60,6 +60,6 @@
       </VBox>
    </top>
    <center>
-      <ListView fx:id="encounterList" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER" />
+      <ListView fx:id="encounterList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER" />
    </center>
 </fx:root>

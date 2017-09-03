@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
 import app.bvk.entity.Creature;
+import app.bvk.gui.MainController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -47,7 +48,7 @@ public class Encounter
 
     public void addCreature(final Creature creature)
     {
-        this.creatureList.add(creature);
+        this.creatureList.add(new Creature(creature));
         for (final Creature c : this.getCreatureList())
         {
             c.setSelected(false);
@@ -124,6 +125,7 @@ public class Encounter
             c.setSelected(false);
         }
         this.getCreatureList().get(this.getCurrentIndex()).setSelected(true);
+        MainController.pane.updateCreaturePreview(this.getCreatureList().get(this.getCurrentIndex()));
     }
 
     public void setNextIndex()
