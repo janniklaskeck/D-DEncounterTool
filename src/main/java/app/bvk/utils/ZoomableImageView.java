@@ -23,7 +23,7 @@ public class ZoomableImageView extends ImageView
         final double height = image.getHeight();
 
         this.setPreserveRatio(true);
-        this.reset(width / 2, height / 2);
+        this.reset(width, height);
 
         final ObjectProperty<Point2D> mouseDown = new SimpleObjectProperty<>();
 
@@ -68,11 +68,6 @@ public class ZoomableImageView extends ImageView
             final double newMinX = this.clamp(mouse.getX() - (mouse.getX() - viewport.getMinX()) * scale, 0, width - newWidth);
             final double newMinY = this.clamp(mouse.getY() - (mouse.getY() - viewport.getMinY()) * scale, 0, height - newHeight);
             this.setViewport(new Rectangle2D(newMinX, newMinY, newWidth, newHeight));
-            LOGGER.debug("minScale: {}, maxScale: {}, scale: {}", minScale, maxScale, scale);
-            LOGGER.debug("mouse: {}", mouse);
-            LOGGER.debug("newWidth: {}, newHeight: {}, newMinX: {}, newMinY: {}", newWidth, newHeight, newMinX, newMinY);
-            LOGGER.debug("img width: {}", image.getWidth());
-            LOGGER.debug("img height: {}", image.getHeight());
         });
 
         this.setOnMouseClicked(e ->
@@ -83,8 +78,16 @@ public class ZoomableImageView extends ImageView
             }
         });
 
-        this.fitWidthProperty().bind(container.widthProperty());
+        if (container.getWidth() >= width)
+        {
+            this.setFitWidth(width);
+        }
+        else
+        {
+            this.fitWidthProperty().bind(container.widthProperty());
+        }
         this.fitHeightProperty().bind(container.heightProperty());
+        LOGGER.debug("Image View created for Image with Size {}x{}.", width, height);
     }
 
     // reset to the top left:

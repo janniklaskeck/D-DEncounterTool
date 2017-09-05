@@ -14,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -46,6 +47,9 @@ public class UtilitiesPane extends BorderPane
     @FXML
     private BorderPane creatureBorderPane;
 
+    @FXML
+    private Accordion utilitiesAccordion;
+
     public UtilitiesPane()
     {
         final FXMLLoader loader = new FXMLLoader(this.getClass().getClassLoader().getResource("UtilitiesGui.fxml"));
@@ -66,6 +70,7 @@ public class UtilitiesPane extends BorderPane
     {
         this.setupChoiceBox();
         this.setupButtons();
+        this.utilitiesAccordion.setExpandedPane(this.utilitiesAccordion.getPanes().get(1));
     }
 
     public void updateCreaturePreview(final Creature creature)

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import app.bvk.entity.Creature;
 import app.bvk.entity.Player;
 import app.bvk.gui.MainController;
-import app.bvk.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -85,7 +84,7 @@ public class EncounterEntry extends BorderPane
         {
             this.openImageButton.setOnAction(event ->
             {
-                Utils.showImageFrame(this.getCreature());
+                // Utils.showImageFrame(this.getCreature());
                 MainController.pane.updateCreaturePreview(this.creature);
             });
         }

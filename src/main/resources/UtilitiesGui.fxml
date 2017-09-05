@@ -22,9 +22,9 @@
       </Label>
    </top>
    <center>
-      <Accordion BorderPane.alignment="CENTER">
+      <Accordion fx:id="utilitiesAccordion" BorderPane.alignment="CENTER">
          <panes>
-            <TitledPane animated="false" text="Dice">
+            <TitledPane text="Dice">
                <content>
                   <BorderPane>
                      <center>
@@ -115,9 +115,9 @@
                   </BorderPane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" text="Creature Info">
+            <TitledPane text="Creature Info">
                <content>
-                  <BorderPane fx:id="creatureBorderPane" maxWidth="380.0" minWidth="380.0" prefWidth="380.0">
+                  <BorderPane fx:id="creatureBorderPane" maxHeight="1.7976931348623157E308" maxWidth="380.0" minHeight="-Infinity" minWidth="380.0" prefWidth="380.0">
                      <center>
                         <Label text="No creature selected" BorderPane.alignment="CENTER" />
                      </center>
