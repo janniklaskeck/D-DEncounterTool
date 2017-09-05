@@ -86,7 +86,7 @@ public class ZoomableImageView extends ImageView
         {
             this.fitWidthProperty().bind(container.widthProperty());
         }
-        this.fitHeightProperty().bind(container.heightProperty());
+        this.fitHeightProperty().set(container.getHeight());
         LOGGER.debug("Image View created for Image with Size {}x{}.", width, height);
     }
 
