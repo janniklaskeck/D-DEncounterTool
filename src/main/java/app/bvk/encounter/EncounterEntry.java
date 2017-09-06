@@ -6,12 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import app.bvk.entity.Creature;
-import app.bvk.entity.Player;
-import app.bvk.gui.MainController;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -44,7 +44,10 @@ public class EncounterEntry extends BorderPane
     private HBox noteHBox;
 
     @FXML
-    private Button openImageButton;
+    private Label creatureNameLabel;
+
+    private BooleanProperty creatureSelected = new SimpleBooleanProperty();
+    private Background defaultBackground;
 
     public EncounterEntry(final Creature creature)
     {
@@ -65,7 +68,8 @@ public class EncounterEntry extends BorderPane
     @FXML
     public void initialize()
     {
-        this.openImageButton.textProperty().bind(this.creature.getName());
+        this.defaultBackground = this.getBackground();
+        this.creatureNameLabel.textProperty().bind(this.creature.nameProperty());
         this.setupCreature();
         this.addListeners();
     }
@@ -76,19 +80,6 @@ public class EncounterEntry extends BorderPane
         {
             this.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
         }
-        if (this.creature.getClass().equals(Player.class))
-        {
-            this.openImageButton.setDisable(true);
-        }
-        else
-        {
-            this.openImageButton.setOnAction(event ->
-            {
-                // Utils.showImageFrame(this.getCreature());
-                MainController.pane.updateCreaturePreview(this.creature);
-            });
-        }
-
         this.initiativeTextField.setText(Float.toString(this.creature.getInitiative()));
         this.healthTextField.setText(Integer.toString(this.creature.getHealth()));
         this.armorClassTextField.setText(Integer.toString(this.creature.getArmorClass()));
@@ -101,6 +92,18 @@ public class EncounterEntry extends BorderPane
         this.noteTextField.textProperty().addListener((obs, oldValue, newValue) -> this.creature.setNotes(newValue));
         this.initiativeTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseInitiative(newValue));
         this.healthTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseHealth(newValue));
+        this.creatureSelected.bind(this.creature.selectedProperty());
+        this.creatureSelected.addListener((obs, oldValue, newValue) ->
+        {
+            if (newValue)
+            {
+                this.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+            }
+            else
+            {
+                this.setBackground(this.defaultBackground);
+            }
+        });
     }
 
     private void parseHealth(final String healthString)

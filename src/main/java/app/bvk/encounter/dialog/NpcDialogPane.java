@@ -78,7 +78,7 @@ public class NpcDialogPane extends DialogPane
                 }
                 else
                 {
-                    this.setText(creature.getName().getValue());
+                    this.setText(creature.nameProperty().getValue());
                 }
             }
         });
@@ -97,7 +97,7 @@ public class NpcDialogPane extends DialogPane
             filteredList.setPredicate(creature ->
             {
                 final boolean isEmpty = newValue == null || newValue.isEmpty();
-                final boolean nameMatch = creature.getName().getValue().toLowerCase().contains(newValue.toLowerCase());
+                final boolean nameMatch = creature.nameProperty().getValue().toLowerCase().contains(newValue.toLowerCase());
                 return isEmpty || nameMatch;
             });
             this.creatureListView.setItems(filteredList);

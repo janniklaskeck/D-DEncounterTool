@@ -77,7 +77,7 @@ public class LibraryGui extends BorderPane
             filteredData.setPredicate(libraryEntry ->
             {
                 final boolean isEmpty = newValue == null || newValue.isEmpty();
-                final String creatureName = libraryEntry.getCreature().getName().get().toLowerCase();
+                final String creatureName = libraryEntry.getCreature().nameProperty().get().toLowerCase();
                 final String filterValue = newValue.toLowerCase();
                 final boolean nameMatch = creatureName.contains(filterValue);
                 return isEmpty || nameMatch;

@@ -16,7 +16,7 @@ public class MainGUI extends Application
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainGUI.class);
     private static final double MIN_WIDTH = 1280D;
-    private static final double MIN_HEIGHT = 600D;
+    private static final double MIN_HEIGHT = 720D;
 
     @Override
     public void start(final Stage primaryStage) throws Exception

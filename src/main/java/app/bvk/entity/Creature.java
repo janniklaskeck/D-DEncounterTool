@@ -20,6 +20,8 @@ import app.bvk.library.CreatureLibrary;
 import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileInputStream;
 import de.schlichtherle.truezip.file.TFileWriter;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
@@ -28,41 +30,14 @@ public class Creature
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Creature.class);
-    private StringProperty name;
+    private final StringProperty name = new SimpleStringProperty("unnamed");
     private String imagePath;
     private Image image = null;
     private float initiative = 0;
     private int health = 0;
     private int armorClass = 0;
     private String notes = "";
-    private boolean isSelected = false;
-
-    private static final String IMAGEPATH_KEY = "imagePath";
-    private static final String INITIATIVE_KEY = "initiative";
-    private static final String HEALTH_KEY = "health";
-    private static final String NOTES_KEY = "statusNotes";
-    private static final String NAME_KEY = "name";
-    private static final String ARMOR_CLASS = "ac";
-    private static final String STRENGTH_KEY = "str";
-    private static final String DEXTERITY_KEY = "dex";
-    private static final String CONSTITUTION_KEY = "con";
-    private static final String WISDOM_KEY = "wis";
-    private static final String INTELLIGENCE_KEY = "int";
-    private static final String CHARISMA_KEY = "cha";
-
-    private static final String MOVESPEED_GROUND_KEY = "moveSpeedGround";
-    private static final String MOVESPEED_AIR_KEY = "moveSpeedAir";
-    private static final String MOVESPEED_WATER_KEY = "moveSpeedWater";
-
-    private static final String SAVING_THROWS_KEY = "savingThrows";
-    private static final String SKILLS_KEY = "skills";
-    private static final String IMMUNITIES_KEY = "immunties";
-    private static final String SENSES_KEY = "senses";
-    private static final String LANGUAGES_KEY = "languages";
-    private static final String CHALLENGE_RATING_KEY = "challengeRating";
-    private static final String EXPERIENCE_KEY = "experience";
-    private static final String PROPERTIES_KEY = "properties";
-    private static final String ACTIONS_KEY = "actions";
+    private final BooleanProperty isSelected = new SimpleBooleanProperty();
 
     private int strength = 0;
     private int dexterity = 0;
@@ -87,19 +62,19 @@ public class Creature
 
     public Creature(final String name, final String path)
     {
-        this.name = new SimpleStringProperty(name);
+        this.name.setValue(name);
         this.imagePath = path;
     }
 
-    public Creature(final Creature c)
+    public Creature(final Creature creature)
     {
-        this.name = c.getName();
-        this.imagePath = c.getImagePath();
-        this.image = c.getImage();
-        this.initiative = c.getInitiative();
-        this.health = c.getHealth();
-        this.armorClass = c.getArmorClass();
-        this.notes = c.getNotes();
+        this.name.setValue(creature.nameProperty().getValue());
+        this.imagePath = creature.getImagePath();
+        this.image = creature.getImage();
+        this.initiative = creature.getInitiative();
+        this.health = creature.getHealth();
+        this.armorClass = creature.getArmorClass();
+        this.notes = creature.getNotes();
     }
 
     public Creature(final JsonObject jo)
@@ -107,59 +82,59 @@ public class Creature
         this.loadFromJson(jo);
     }
 
-    private void loadFromJson(final JsonObject json)
+    public void loadFromJson(final JsonObject json)
     {
-        this.name = new SimpleStringProperty(json.get(NAME_KEY).toString().replace("\"", ""));
-        this.imagePath = json.get(IMAGEPATH_KEY).toString().replace("\"", "");
-        this.initiative = json.get(INITIATIVE_KEY).getAsFloat();
-        this.health = json.get(HEALTH_KEY).getAsInt();
-        this.setArmorClass(json.get(ARMOR_CLASS).getAsInt());
-        this.notes = json.get(NOTES_KEY).getAsString().replace("\"", "");
+        this.name.setValue(json.get(CreatureStrings.NAME_KEY).toString().replace("\"", ""));
+        this.imagePath = json.get(CreatureStrings.IMAGEPATH_KEY).toString().replace("\"", "");
+        this.initiative = json.get(CreatureStrings.INITIATIVE_KEY).getAsFloat();
+        this.health = json.get(CreatureStrings.HEALTH_KEY).getAsInt();
+        this.setArmorClass(json.get(CreatureStrings.ARMOR_CLASS).getAsInt());
+        this.notes = json.get(CreatureStrings.NOTES_KEY).getAsString().replace("\"", "");
 
-        this.setStrength(json.get(STRENGTH_KEY).getAsInt());
-        this.setDexterity(json.get(DEXTERITY_KEY).getAsInt());
-        this.setConstitution(json.get(CONSTITUTION_KEY).getAsInt());
-        this.setWisdom(json.get(WISDOM_KEY).getAsInt());
-        this.setIntelligence(json.get(INTELLIGENCE_KEY).getAsInt());
-        this.setCharisma(json.get(CHARISMA_KEY).getAsInt());
+        this.setStrength(json.get(CreatureStrings.STRENGTH_KEY).getAsInt());
+        this.setDexterity(json.get(CreatureStrings.DEXTERITY_KEY).getAsInt());
+        this.setConstitution(json.get(CreatureStrings.CONSTITUTION_KEY).getAsInt());
+        this.setWisdom(json.get(CreatureStrings.WISDOM_KEY).getAsInt());
+        this.setIntelligence(json.get(CreatureStrings.INTELLIGENCE_KEY).getAsInt());
+        this.setCharisma(json.get(CreatureStrings.CHARISMA_KEY).getAsInt());
 
-        this.setMoveSpeedGround(json.get(MOVESPEED_GROUND_KEY).getAsInt());
-        this.setMoveSpeedAir(json.get(MOVESPEED_AIR_KEY).getAsInt());
-        this.setMoveSpeedWater(json.get(MOVESPEED_WATER_KEY).getAsInt());
-        for (final JsonElement savingThrow : json.get(SAVING_THROWS_KEY).getAsJsonArray())
+        this.setMoveSpeedGround(json.get(CreatureStrings.MOVESPEED_GROUND_KEY).getAsInt());
+        this.setMoveSpeedAir(json.get(CreatureStrings.MOVESPEED_AIR_KEY).getAsInt());
+        this.setMoveSpeedWater(json.get(CreatureStrings.MOVESPEED_WATER_KEY).getAsInt());
+        for (final JsonElement savingThrow : json.get(CreatureStrings.SAVING_THROWS_KEY).getAsJsonArray())
         {
             for (final Entry<String, JsonElement> entry : savingThrow.getAsJsonObject().entrySet())
             {
                 this.getSavingThrows().put(entry.getKey(), entry.getValue().getAsInt());
             }
         }
-        for (final JsonElement skill : json.get(SKILLS_KEY).getAsJsonArray())
+        for (final JsonElement skill : json.get(CreatureStrings.SKILLS_KEY).getAsJsonArray())
         {
             for (final Entry<String, JsonElement> entry : skill.getAsJsonObject().entrySet())
             {
                 this.getSkills().put(entry.getKey(), entry.getValue().getAsInt());
             }
         }
-        this.setImmunities(json.get(IMMUNITIES_KEY).getAsString());
-        this.setSenses(json.get(SENSES_KEY).getAsString());
+        this.setImmunities(json.get(CreatureStrings.IMMUNITIES_KEY).getAsString());
+        this.setSenses(json.get(CreatureStrings.SENSES_KEY).getAsString());
 
         this.setLanguages(this.languages);
-        this.setChallengeRating(json.get(CHALLENGE_RATING_KEY).getAsInt());
-        this.setExperience(json.get(EXPERIENCE_KEY).getAsInt());
+        this.setChallengeRating(json.get(CreatureStrings.CHALLENGE_RATING_KEY).getAsInt());
+        this.setExperience(json.get(CreatureStrings.EXPERIENCE_KEY).getAsInt());
 
-        for (final JsonElement lang : json.get(LANGUAGES_KEY).getAsJsonArray())
+        for (final JsonElement lang : json.get(CreatureStrings.LANGUAGES_KEY).getAsJsonArray())
         {
             this.getLanguages().add(lang.getAsString());
         }
 
-        for (final JsonElement property : json.get(PROPERTIES_KEY).getAsJsonArray())
+        for (final JsonElement property : json.get(CreatureStrings.PROPERTIES_KEY).getAsJsonArray())
         {
             for (final Entry<String, JsonElement> entry : property.getAsJsonObject().entrySet())
             {
                 this.getProperties().put(entry.getKey(), entry.getValue().getAsString());
             }
         }
-        for (final JsonElement action : json.get(ACTIONS_KEY).getAsJsonArray())
+        for (final JsonElement action : json.get(CreatureStrings.ACTIONS_KEY).getAsJsonArray())
         {
             for (final Entry<String, JsonElement> entry : action.getAsJsonObject().entrySet())
             {
@@ -174,24 +149,24 @@ public class Creature
         {
             jsonWriter.setIndent("  ");
             jsonWriter.beginObject();
-            jsonWriter.name(NAME_KEY).value(this.getName().get());
-            jsonWriter.name(IMAGEPATH_KEY).value(this.getImagePath());
-            jsonWriter.name(INITIATIVE_KEY).value(this.getInitiative());
-            jsonWriter.name(HEALTH_KEY).value(this.getHealth());
-            jsonWriter.name(NOTES_KEY).value(this.getNotes());
-            jsonWriter.name(STRENGTH_KEY).value(this.getStrength());
-            jsonWriter.name(DEXTERITY_KEY).value(this.getDexterity());
-            jsonWriter.name(CONSTITUTION_KEY).value(this.getConstitution());
-            jsonWriter.name(WISDOM_KEY).value(this.getWisdom());
-            jsonWriter.name(INTELLIGENCE_KEY).value(this.getIntelligence());
-            jsonWriter.name(CHARISMA_KEY).value(this.getCharisma());
-            jsonWriter.name(ARMOR_CLASS).value(this.getArmorClass());
+            jsonWriter.name(CreatureStrings.NAME_KEY).value(this.nameProperty().get());
+            jsonWriter.name(CreatureStrings.IMAGEPATH_KEY).value(this.getImagePath());
+            jsonWriter.name(CreatureStrings.INITIATIVE_KEY).value(this.getInitiative());
+            jsonWriter.name(CreatureStrings.HEALTH_KEY).value(this.getHealth());
+            jsonWriter.name(CreatureStrings.NOTES_KEY).value(this.getNotes());
+            jsonWriter.name(CreatureStrings.STRENGTH_KEY).value(this.getStrength());
+            jsonWriter.name(CreatureStrings.DEXTERITY_KEY).value(this.getDexterity());
+            jsonWriter.name(CreatureStrings.CONSTITUTION_KEY).value(this.getConstitution());
+            jsonWriter.name(CreatureStrings.WISDOM_KEY).value(this.getWisdom());
+            jsonWriter.name(CreatureStrings.INTELLIGENCE_KEY).value(this.getIntelligence());
+            jsonWriter.name(CreatureStrings.CHARISMA_KEY).value(this.getCharisma());
+            jsonWriter.name(CreatureStrings.ARMOR_CLASS).value(this.getArmorClass());
 
-            jsonWriter.name(MOVESPEED_GROUND_KEY).value(this.getMoveSpeedGround());
-            jsonWriter.name(MOVESPEED_AIR_KEY).value(this.getMoveSpeedAir());
-            jsonWriter.name(MOVESPEED_WATER_KEY).value(this.getMoveSpeedWater());
+            jsonWriter.name(CreatureStrings.MOVESPEED_GROUND_KEY).value(this.getMoveSpeedGround());
+            jsonWriter.name(CreatureStrings.MOVESPEED_AIR_KEY).value(this.getMoveSpeedAir());
+            jsonWriter.name(CreatureStrings.MOVESPEED_WATER_KEY).value(this.getMoveSpeedWater());
 
-            jsonWriter.name(SAVING_THROWS_KEY).beginArray();
+            jsonWriter.name(CreatureStrings.SAVING_THROWS_KEY).beginArray();
             for (final Map.Entry<String, Integer> savingThrow : this.getSavingThrows().entrySet())
             {
                 jsonWriter.beginObject();
@@ -199,7 +174,7 @@ public class Creature
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
-            jsonWriter.name(SKILLS_KEY).beginArray();
+            jsonWriter.name(CreatureStrings.SKILLS_KEY).beginArray();
             for (final Map.Entry<String, Integer> skill : this.getSkills().entrySet())
             {
                 jsonWriter.beginObject();
@@ -207,17 +182,17 @@ public class Creature
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
-            jsonWriter.name(IMMUNITIES_KEY).value(this.getImmunities());
-            jsonWriter.name(SENSES_KEY).value(this.getSenses());
-            jsonWriter.name(LANGUAGES_KEY).beginArray();
+            jsonWriter.name(CreatureStrings.IMMUNITIES_KEY).value(this.getImmunities());
+            jsonWriter.name(CreatureStrings.SENSES_KEY).value(this.getSenses());
+            jsonWriter.name(CreatureStrings.LANGUAGES_KEY).beginArray();
             for (final String lang : this.getLanguages())
             {
                 jsonWriter.value(lang);
             }
             jsonWriter.endArray();
-            jsonWriter.name(CHALLENGE_RATING_KEY).value(this.getChallengeRating());
-            jsonWriter.name(EXPERIENCE_KEY).value(this.getExperience());
-            jsonWriter.name(PROPERTIES_KEY).beginArray();
+            jsonWriter.name(CreatureStrings.CHALLENGE_RATING_KEY).value(this.getChallengeRating());
+            jsonWriter.name(CreatureStrings.EXPERIENCE_KEY).value(this.getExperience());
+            jsonWriter.name(CreatureStrings.PROPERTIES_KEY).beginArray();
             for (final Map.Entry<String, String> prop : this.getProperties().entrySet())
             {
                 jsonWriter.beginObject();
@@ -225,7 +200,7 @@ public class Creature
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
-            jsonWriter.name(ACTIONS_KEY).beginArray();
+            jsonWriter.name(CreatureStrings.ACTIONS_KEY).beginArray();
             for (final Map.Entry<String, String> action : this.getActions().entrySet())
             {
                 jsonWriter.beginObject();
@@ -243,14 +218,9 @@ public class Creature
         }
     }
 
-    public StringProperty getName()
+    public StringProperty nameProperty()
     {
         return this.name;
-    }
-
-    public void setName(final StringProperty name)
-    {
-        this.name = name;
     }
 
     public String getImagePath()
@@ -329,12 +299,17 @@ public class Creature
 
     public boolean isSelected()
     {
-        return this.isSelected;
+        return this.isSelected.getValue();
     }
 
     public void setSelected(final boolean isSelected)
     {
-        this.isSelected = isSelected;
+        this.isSelected.setValue(isSelected);
+    }
+
+    public BooleanProperty selectedProperty()
+    {
+        return this.isSelected;
     }
 
     public int getStrength()
@@ -515,10 +490,5 @@ public class Creature
     public void setLanguages(final List<String> languages)
     {
         this.languages = languages;
-    }
-
-    public void load(final JsonObject creatureData)
-    {
-        this.loadFromJson(creatureData);
     }
 }

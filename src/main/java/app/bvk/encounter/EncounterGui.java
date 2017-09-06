@@ -2,6 +2,7 @@ package app.bvk.encounter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -96,16 +97,14 @@ public class EncounterGui extends BorderPane
     private void initEncounter()
     {
         this.encounter = new Encounter("unnamed");
-
-        this.encounterNameTextField.setText(this.encounter.getEncounterNameProperty().get());
-        this.encounterNameTextField.textProperty().bindBidirectional(this.encounter.getEncounterNameProperty());
-        this.encounterNameTextField.textProperty().addListener((obs, oldValue, newValue) -> this.encounter.setEncounterName(newValue));
+        this.encounterNameTextField.textProperty().bindBidirectional(this.encounter.nameProperty());
+        this.encounterNameTextField.textProperty().addListener((obs, oldValue, newValue) -> this.encounter.nameProperty().setValue(newValue));
     }
 
     private void newEncounter()
     {
         this.encounter.reset();
-        this.encounterList.setItems(this.encounter.getObsList());
+        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
     }
 
     private void loadEncounter()
@@ -116,9 +115,9 @@ public class EncounterGui extends BorderPane
         final File file = fc.showOpenDialog(this.getScene().getWindow());
         if (file != null)
         {
-            this.encounter.readFromFile(file);
+            this.encounter = EncounterUtils.loadEncounterFromFile(Paths.get(file.getAbsolutePath()));
         }
-        this.encounterList.setItems(this.encounter.getObsList());
+        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
     }
 
     private void saveEncounter()
@@ -129,7 +128,7 @@ public class EncounterGui extends BorderPane
         final File file = fc.showSaveDialog(this.getScene().getWindow());
         if (file != null)
         {
-            this.encounter.saveToFile(file);
+            EncounterUtils.saveEncounterToFile(Paths.get(file.getAbsolutePath()), this.encounter);
         }
     }
 
@@ -139,7 +138,7 @@ public class EncounterGui extends BorderPane
         if (selectedCreature.isPresent())
         {
             this.encounter.addCreature(selectedCreature.get());
-            this.encounterList.setItems(this.encounter.getObsList());
+            this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
         }
     }
 
@@ -149,7 +148,7 @@ public class EncounterGui extends BorderPane
         if (createdPlayer.isPresent())
         {
             this.encounter.addCreature(createdPlayer.get());
-            this.encounterList.setItems(this.encounter.getObsList());
+            this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
         }
     }
 
@@ -157,8 +156,8 @@ public class EncounterGui extends BorderPane
     {
         if (!this.encounterList.getSelectionModel().isEmpty() && !this.encounter.getCreatureList().isEmpty())
         {
-            this.encounter.remove(this.encounterList.getSelectionModel().getSelectedIndex());
-            this.encounterList.setItems(this.encounter.getObsList());
+            this.encounter.removeCreature(this.encounterList.getSelectionModel().getSelectedIndex());
+            this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
         }
     }
 
@@ -166,28 +165,28 @@ public class EncounterGui extends BorderPane
     {
         if (!this.encounterList.getSelectionModel().isEmpty())
         {
-            this.encounter.copy(this.encounterList.getSelectionModel().getSelectedIndex());
-            this.encounterList.setItems(this.encounter.getObsList());
+            this.encounter.copyCreature(this.encounterList.getSelectionModel().getSelectedIndex());
+            this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
         }
     }
 
     private void sortEncounter()
     {
         this.encounter.sort();
-        this.encounterList.setItems(this.encounter.getObsList());
+        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
     }
 
     private void nextTurn()
     {
-        this.encounter.setNextIndex();
-        this.encounterList.setItems(this.encounter.getObsList());
-        this.encounterList.scrollTo(this.encounter.getCurrentIndex());
+        this.encounter.selectNext();
+        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
+        this.encounterList.scrollTo(this.encounter.getIndexOfSelectedCreature());
     }
 
     private void previousTurn()
     {
-        this.encounter.setLastIndex();
-        this.encounterList.setItems(this.encounter.getObsList());
-        this.encounterList.scrollTo(this.encounter.getCurrentIndex());
+        this.encounter.selectPrevious();
+        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
+        this.encounterList.scrollTo(this.encounter.getIndexOfSelectedCreature());
     }
 }

@@ -25,6 +25,7 @@ public class MainController
     @FXML
     private Tab encounterTab;
 
+    // TODO improve access
     public static final UtilitiesPane pane = new UtilitiesPane();
 
     @FXML

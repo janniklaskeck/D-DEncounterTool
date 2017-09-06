@@ -1,266 +1,169 @@
 package app.bvk.encounter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonWriter;
-
 import app.bvk.entity.Creature;
 import app.bvk.gui.MainController;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 public class Encounter
 {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Encounter.class);
-    private final ArrayList<Creature> creatureList = new ArrayList<>();
-    private int currentIndex = 0;
-    private File file;
-    private StringProperty encounterNameProperty;
+    private final ObservableList<Creature> creatureList = FXCollections.observableArrayList();
+    private final StringProperty encounterNameProperty = new SimpleStringProperty("unnamed");
+    private final ObjectProperty<Creature> currentSelectedCreature = new SimpleObjectProperty<>();
+    private Path autoSaveFilePath;
 
     public Encounter(final String name)
     {
-        this.encounterNameProperty = new SimpleStringProperty(name);
+        this.encounterNameProperty.setValue(name);
+        this.creatureList.addListener((ListChangeListener<Creature>) change ->
+        {
+            if (this.creatureList.size() == 1)
+            {
+                final Creature onlyCreature = this.creatureList.get(0);
+                this.currentSelectedCreature.setValue(onlyCreature);
+            }
+        });
+        this.currentSelectedCreature.addListener((obs, oldValue, newValue) ->
+        {
+            if (oldValue != null)
+            {
+                this.deselectCreature(oldValue);
+                LOGGER.trace("Deselect Creature {}.", oldValue.nameProperty().getValue());
+            }
+            if (newValue != null)
+            {
+                this.selectCreature(newValue);
+                LOGGER.trace("Select Creature {}.", newValue.nameProperty().getValue());
+            }
+        });
     }
 
     public void reset()
     {
         this.creatureList.clear();
+        this.currentSelectedCreature.set(null);
+        LOGGER.debug("Reset Encounter {}.", this.encounterNameProperty.getValue());
     }
 
     public void addCreature(final Creature creature)
     {
         this.creatureList.add(new Creature(creature));
-        for (final Creature c : this.getCreatureList())
-        {
-            c.setSelected(false);
-        }
-        if (this.getCreatureList().size() - 1 >= this.getCurrentIndex())
-        {
-            this.getCreatureList().get(this.getCurrentIndex()).setSelected(true);
-        }
-        else
-        {
-            this.getCreatureList().get(0).setSelected(true);
-            this.setCurrentIndex(0);
-        }
+        LOGGER.debug("Add Creature {} to Encounter.", creature.nameProperty().getValue());
     }
 
-    public void copy(final int index)
+    public void removeCreature(final int index)
     {
-        this.getCreatureList().add(new Creature(this.getCreatureList().get(index)));
+        final Creature removedCreature = this.creatureList.remove(index);
+        LOGGER.debug("Removed Creature {} from encounter.", removedCreature.nameProperty().getValue());
     }
 
-    public List<Creature> getCreatureList()
+    public void copyCreature(final int index)
     {
-        return this.creatureList;
+        final Creature creatureToCopy = this.creatureList.get(index);
+        final Creature copiedCreature = new Creature(creatureToCopy);
+        this.addCreature(copiedCreature);
+        LOGGER.debug("Copied Creature {}.", creatureToCopy.nameProperty());
     }
 
-    public ObservableList<EncounterEntry> getObsList()
+    private void deselectCreature(final Creature creature)
     {
-        final ArrayList<EncounterEntry> eeList = new ArrayList<>();
-        for (final Creature c : this.getCreatureList())
-        {
-            eeList.add(new EncounterEntry(c));
-        }
-        return FXCollections.observableArrayList(eeList);
+        creature.setSelected(false);
     }
 
-    private void updateIndex()
+    private void selectCreature(final Creature creature)
     {
-        for (int i = 0; i < this.getCreatureList().size(); i++)
-        {
-            if (this.getCreatureList().get(i).isSelected())
-            {
-                this.setCurrentIndex(i);
-            }
-        }
+        creature.setSelected(true);
+        MainController.pane.updateCreaturePreview(creature);
     }
 
     public void sort()
     {
-        this.getCreatureList().sort((o1, o2) ->
+        this.creatureList.sort((creature1, creature2) ->
         {
-            if (o1.getInitiative() < o2.getInitiative())
+            if (creature1.getInitiative() < creature2.getInitiative())
             {
                 return 1;
             }
-            else if (o1.getInitiative() > o2.getInitiative())
+            else if (creature1.getInitiative() > creature2.getInitiative())
             {
                 return -1;
             }
             return 0;
         });
-        this.updateIndex();
     }
 
-    public int getCurrentIndex()
+    public void selectNext()
     {
-        return this.currentIndex;
+        final int currentIndex = this.getIndexOfSelectedCreature();
+        if (currentIndex < 0)
+        {
+            LOGGER.warn("No Creature currently selected!");
+            return;
+        }
+        int nextIndex = currentIndex + 1;
+        if (nextIndex > this.creatureList.size() - 1)
+        {
+            nextIndex = 0;
+        }
+        this.currentSelectedCreature.setValue(this.creatureList.get(nextIndex));
     }
 
-    public void setCurrentIndex(final int currentIndex)
+    public void selectPrevious()
     {
-        this.currentIndex = currentIndex;
-        for (final Creature c : this.getCreatureList())
+        final int currentIndex = this.getIndexOfSelectedCreature();
+        if (currentIndex < 0)
         {
-            c.setSelected(false);
+            LOGGER.warn("No Creature currently selected!");
+            return;
         }
-        this.getCreatureList().get(this.getCurrentIndex()).setSelected(true);
-        MainController.pane.updateCreaturePreview(this.getCreatureList().get(this.getCurrentIndex()));
+        int previousIndex = currentIndex - 1;
+        if (previousIndex < 0)
+        {
+            previousIndex = this.creatureList.size() - 1;
+        }
+        this.currentSelectedCreature.setValue(this.creatureList.get(previousIndex));
     }
 
-    public void setNextIndex()
+    public int getIndexOfSelectedCreature()
     {
-        if (this.currentIndex + 1 > this.creatureList.size() - 1)
+        for (int index = 0; index < this.creatureList.size(); index++)
         {
-            this.currentIndex = 0;
-        }
-        else
-        {
-            this.currentIndex++;
-        }
-        this.setCurrentIndex(this.currentIndex);
-    }
-
-    public void setLastIndex()
-    {
-        if (this.currentIndex - 1 < 0)
-        {
-            this.currentIndex = this.creatureList.size() - 1;
-        }
-        else
-        {
-            this.currentIndex--;
-        }
-        this.setCurrentIndex(this.currentIndex);
-    }
-
-    public void saveToFile(final File file)
-    {
-
-        try (JsonWriter jsonWriter = new JsonWriter(new FileWriter(file));)
-        {
-            jsonWriter.setIndent("  ");
-            jsonWriter.beginArray();
-            jsonWriter.beginObject();
-            jsonWriter.name("encounterName").value("".equals(this.encounterNameProperty.get()) ? "Unnamed Encounter" : this.encounterNameProperty.get());
-            jsonWriter.endObject();
-            jsonWriter.beginArray();
-            for (final Creature c : this.getCreatureList())
+            if (this.creatureList.get(index) == this.currentSelectedCreature.getValue())
             {
-                jsonWriter.beginObject();
-                jsonWriter.name("name").value(c.getName().get());
-                jsonWriter.name("imagePath").value(c.getImagePath());
-                jsonWriter.name("initiative").value(c.getInitiative());
-                jsonWriter.name("health").value(c.getHealth());
-                jsonWriter.name("armorClass").value(c.getArmorClass());
-                jsonWriter.name("statusNotes").value(c.getNotes());
-                jsonWriter.endObject();
-            }
-            jsonWriter.endArray();
-            jsonWriter.endArray();
-            jsonWriter.close();
-        }
-        catch (final Exception e)
-        {
-            LOGGER.error("ERROR while save encounter to file", e);
-        }
-    }
-
-    public void autoSave()
-    {
-        if (this.file != null)
-        {
-            final boolean deletionSuccessful = this.file.delete();
-            LOGGER.debug("Deletion of auto save file was successful? {}", deletionSuccessful);
-        }
-        final String date = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        this.file = new File(System.getProperty("user.dir") + "\\saves\\" + this.encounterNameProperty.get() + "-" + date.replace(":", ".") + ".ddesav");
-        this.file.getParentFile().mkdirs();
-        try
-        {
-            final boolean creationSuccessful = this.file.createNewFile();
-            LOGGER.debug("Creation of autosave file was successful? {}", creationSuccessful);
-        }
-        catch (final IOException e)
-        {
-            LOGGER.error("ERROR while performing autosave", e);
-        }
-        this.saveToFile(this.file);
-    }
-
-    public void readFromFile(final File file)
-    {
-        this.reset();
-        try (FileInputStream fis = new FileInputStream(file);)
-        {
-            final InputStreamReader isr = new InputStreamReader(fis);
-            final BufferedReader bufferedReader = new BufferedReader(isr);
-            final StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null)
-            {
-                sb.append(line);
-            }
-            bufferedReader.close();
-            final Gson g = new Gson();
-            final JsonArray jArray = g.fromJson(sb.toString(), JsonArray.class);
-            this.setEncounterName(jArray.get(0).getAsJsonObject().get("encounterName").getAsString());
-
-            final JsonArray creatureArray = jArray.get(1).getAsJsonArray();
-            for (final JsonElement je : creatureArray)
-            {
-                final JsonObject jo = je.getAsJsonObject();
-                final Creature c = new Creature(jo);
-                this.getCreatureList().add(c);
+                return index;
             }
         }
-        catch (final IOException e)
-        {
-            LOGGER.error("ERROR while reading encounter save file", e);
-        }
-        this.setCurrentIndex(0);
+        return -1;
     }
 
-    public void setEncounterName(final String encounterName)
-    {
-        this.getEncounterNameProperty().set(encounterName);
-    }
-
-    public void remove(final int selectedIndex)
-    {
-        this.getCreatureList().remove(selectedIndex);
-        if (selectedIndex == this.currentIndex && !this.getCreatureList().isEmpty())
-        {
-            for (final Creature c : this.getCreatureList())
-            {
-                c.setSelected(false);
-            }
-            this.getCreatureList().get(this.getCurrentIndex()).setSelected(true);
-        }
-    }
-
-    public StringProperty getEncounterNameProperty()
+    public StringProperty nameProperty()
     {
         return this.encounterNameProperty;
+    }
+
+    public ObservableList<Creature> getCreatureList()
+    {
+        return this.creatureList;
+    }
+
+    public Path getAutoSavePath()
+    {
+        return this.autoSaveFilePath;
+    }
+
+    public void setAutoSavePath(final Path autoSaveFilePath)
+    {
+        this.autoSaveFilePath = autoSaveFilePath;
     }
 }
