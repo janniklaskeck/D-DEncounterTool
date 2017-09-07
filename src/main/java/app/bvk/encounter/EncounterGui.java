@@ -76,7 +76,7 @@ public class EncounterGui extends BorderPane
     @FXML
     private void initialize()
     {
-        this.initEncounter();
+        this.newEncounter();
         this.setupButtons();
     }
 
@@ -90,21 +90,20 @@ public class EncounterGui extends BorderPane
         this.previousButton.setOnAction(event -> this.previousTurn());
         this.copyButton.setOnAction(event -> this.copySelected());
         this.nextButton.setOnAction(event -> this.nextTurn());
-        this.sortButton.setOnAction(event -> this.sortEncounter());
+        this.sortButton.setOnAction(event -> this.encounter.sort());
         this.addPlayerButton.setOnAction(event -> this.addPlayer());
-    }
-
-    private void initEncounter()
-    {
-        this.encounter = new Encounter("unnamed");
-        this.encounterNameTextField.textProperty().bindBidirectional(this.encounter.nameProperty());
-        this.encounterNameTextField.textProperty().addListener((obs, oldValue, newValue) -> this.encounter.nameProperty().setValue(newValue));
     }
 
     private void newEncounter()
     {
+        if (this.encounter == null)
+        {
+            this.encounter = new Encounter("unnamed");
+            this.encounterNameTextField.textProperty().bindBidirectional(this.encounter.nameProperty());
+            this.encounterNameTextField.textProperty().addListener((obs, oldValue, newValue) -> this.encounter.nameProperty().setValue(newValue));
+        }
         this.encounter.reset();
-        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
+        this.encounterList.itemsProperty().bind(this.encounter.listProperty());
     }
 
     private void loadEncounter()
@@ -117,7 +116,6 @@ public class EncounterGui extends BorderPane
         {
             this.encounter = EncounterUtils.loadEncounterFromFile(Paths.get(file.getAbsolutePath()));
         }
-        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
     }
 
     private void saveEncounter()
@@ -137,8 +135,7 @@ public class EncounterGui extends BorderPane
         final Optional<Creature> selectedCreature = new EncounterNpcWindow(this.getScene().getWindow()).showAndWait();
         if (selectedCreature.isPresent())
         {
-            this.encounter.addCreature(selectedCreature.get());
-            this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
+            this.encounter.addCreatureEntry(selectedCreature.get());
         }
     }
 
@@ -147,8 +144,7 @@ public class EncounterGui extends BorderPane
         final Optional<Player> createdPlayer = new EncounterPlayerWindow(this.getScene().getWindow()).showAndWait();
         if (createdPlayer.isPresent())
         {
-            this.encounter.addCreature(createdPlayer.get());
-            this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
+            this.encounter.addCreatureEntry(createdPlayer.get());
         }
     }
 
@@ -157,7 +153,6 @@ public class EncounterGui extends BorderPane
         if (!this.encounterList.getSelectionModel().isEmpty() && !this.encounter.getCreatureList().isEmpty())
         {
             this.encounter.removeCreature(this.encounterList.getSelectionModel().getSelectedIndex());
-            this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
         }
     }
 
@@ -166,27 +161,18 @@ public class EncounterGui extends BorderPane
         if (!this.encounterList.getSelectionModel().isEmpty())
         {
             this.encounter.copyCreature(this.encounterList.getSelectionModel().getSelectedIndex());
-            this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
         }
-    }
-
-    private void sortEncounter()
-    {
-        this.encounter.sort();
-        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
     }
 
     private void nextTurn()
     {
         this.encounter.selectNext();
-        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
         this.encounterList.scrollTo(this.encounter.getIndexOfSelectedCreature());
     }
 
     private void previousTurn()
     {
         this.encounter.selectPrevious();
-        this.encounterList.setItems(EncounterUtils.generateEncounterEntryList(this.encounter));
         this.encounterList.scrollTo(this.encounter.getIndexOfSelectedCreature());
     }
 }

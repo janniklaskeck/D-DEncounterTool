@@ -51,7 +51,7 @@ public class EncounterEntry extends BorderPane
 
     public EncounterEntry(final Creature creature)
     {
-        this.creature = creature;
+        this.creature = new Creature(creature);
         final FXMLLoader loader = new FXMLLoader(this.getClass().getClassLoader().getResource("EncounterEntryGui.fxml"));
         loader.setRoot(this);
         loader.setController(this);
@@ -69,17 +69,13 @@ public class EncounterEntry extends BorderPane
     public void initialize()
     {
         this.defaultBackground = this.getBackground();
-        this.creatureNameLabel.textProperty().bind(this.creature.nameProperty());
+        this.creatureNameLabel.textProperty().setValue(this.creature.getName());
         this.setupCreature();
         this.addListeners();
     }
 
     private void setupCreature()
     {
-        if (this.creature.isSelected())
-        {
-            this.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
-        }
         this.initiativeTextField.setText(Float.toString(this.creature.getInitiative()));
         this.healthTextField.setText(Integer.toString(this.creature.getHealth()));
         this.armorClassTextField.setText(Integer.toString(this.creature.getArmorClass()));
@@ -92,7 +88,6 @@ public class EncounterEntry extends BorderPane
         this.noteTextField.textProperty().addListener((obs, oldValue, newValue) -> this.creature.setNotes(newValue));
         this.initiativeTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseInitiative(newValue));
         this.healthTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseHealth(newValue));
-        this.creatureSelected.bind(this.creature.selectedProperty());
         this.creatureSelected.addListener((obs, oldValue, newValue) ->
         {
             if (newValue)
@@ -163,9 +158,13 @@ public class EncounterEntry extends BorderPane
         }
     }
 
+    public BooleanProperty selectedProperty()
+    {
+        return this.creatureSelected;
+    }
+
     public Creature getCreature()
     {
         return this.creature;
     }
-
 }

@@ -21,8 +21,6 @@ import com.google.gson.stream.JsonWriter;
 
 import app.bvk.entity.Creature;
 import app.bvk.entity.CreatureStrings;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 public class EncounterUtils
 {
@@ -43,10 +41,11 @@ public class EncounterUtils
             jsonWriter.name("encounterName").value(encounterName);
             jsonWriter.endObject();
             jsonWriter.beginArray();
-            for (final Creature creature : encounterToSave.getCreatureList())
+            for (final EncounterEntry creatureEntry : encounterToSave.getCreatureList())
             {
+                final Creature creature = creatureEntry.getCreature();
                 jsonWriter.beginObject();
-                jsonWriter.name(CreatureStrings.NAME_KEY).value(creature.nameProperty().get());
+                jsonWriter.name(CreatureStrings.NAME_KEY).value(creature.getName());
                 jsonWriter.name(CreatureStrings.IMAGEPATH_KEY).value(creature.getImagePath());
                 jsonWriter.name(CreatureStrings.INITIATIVE_KEY).value(creature.getInitiative());
                 jsonWriter.name(CreatureStrings.HEALTH_KEY).value(creature.getHealth());
@@ -89,7 +88,7 @@ public class EncounterUtils
             {
                 final JsonObject jo = je.getAsJsonObject();
                 final Creature creature = new Creature(jo);
-                newEncounter.addCreature(creature);
+                newEncounter.addCreatureEntry(creature);
             }
         }
         catch (final IOException e)
@@ -123,15 +122,4 @@ public class EncounterUtils
         saveEncounterToFile(filePath, encounterToSave);
         return true;
     }
-
-    public static ObservableList<EncounterEntry> generateEncounterEntryList(final Encounter encounter)
-    {
-        final ObservableList<EncounterEntry> entryList = FXCollections.observableArrayList();
-        for (final Creature creature : encounter.getCreatureList())
-        {
-            entryList.add(new EncounterEntry(creature));
-        }
-        return entryList;
-    }
-
 }

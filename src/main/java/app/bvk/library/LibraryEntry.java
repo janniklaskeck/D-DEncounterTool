@@ -54,7 +54,7 @@ public class LibraryEntry extends BorderPane
     @FXML
     protected void initialize()
     {
-        this.nameText.setText(this.creature.nameProperty().get());
+        this.nameText.setText(this.creature.getName());
         this.openImageButton.setOnAction(event -> Utils.showImageFrame(this.getCreature()));
         this.openStatsButton.setOnAction(event -> new EditorWindow());
     }

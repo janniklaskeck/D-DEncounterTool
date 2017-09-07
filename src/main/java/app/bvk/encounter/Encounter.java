@@ -18,19 +18,20 @@ import javafx.collections.ObservableList;
 public class Encounter
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Encounter.class);
-    private final ObservableList<Creature> creatureList = FXCollections.observableArrayList();
+    private final ObservableList<EncounterEntry> creatureEntryList = FXCollections.observableArrayList();
+    private final ObjectProperty<ObservableList<EncounterEntry>> listProperty = new SimpleObjectProperty<>(this.creatureEntryList);
     private final StringProperty encounterNameProperty = new SimpleStringProperty("unnamed");
-    private final ObjectProperty<Creature> currentSelectedCreature = new SimpleObjectProperty<>();
+    private final ObjectProperty<EncounterEntry> currentSelectedCreature = new SimpleObjectProperty<>();
     private Path autoSaveFilePath;
 
     public Encounter(final String name)
     {
         this.encounterNameProperty.setValue(name);
-        this.creatureList.addListener((ListChangeListener<Creature>) change ->
+        this.creatureEntryList.addListener((ListChangeListener<EncounterEntry>) change ->
         {
-            if (this.creatureList.size() == 1)
+            if (this.creatureEntryList.size() == 1)
             {
-                final Creature onlyCreature = this.creatureList.get(0);
+                final EncounterEntry onlyCreature = this.creatureEntryList.get(0);
                 this.currentSelectedCreature.setValue(onlyCreature);
             }
         });
@@ -39,58 +40,66 @@ public class Encounter
             if (oldValue != null)
             {
                 this.deselectCreature(oldValue);
-                LOGGER.trace("Deselect Creature {}.", oldValue.nameProperty().getValue());
+                LOGGER.trace("Deselect Creature {}.", oldValue.getCreature().getName());
             }
             if (newValue != null)
             {
                 this.selectCreature(newValue);
-                LOGGER.trace("Select Creature {}.", newValue.nameProperty().getValue());
+                LOGGER.trace("Select Creature {}.", newValue.getCreature().getName());
             }
         });
     }
 
     public void reset()
     {
-        this.creatureList.clear();
+        this.creatureEntryList.clear();
         this.currentSelectedCreature.set(null);
         LOGGER.debug("Reset Encounter {}.", this.encounterNameProperty.getValue());
     }
 
-    public void addCreature(final Creature creature)
+    public void addCreatureEntry(final EncounterEntry entry)
     {
-        this.creatureList.add(new Creature(creature));
-        LOGGER.debug("Add Creature {} to Encounter.", creature.nameProperty().getValue());
+        this.creatureEntryList.add(entry);
+        LOGGER.debug("Add Creature {} to Encounter.", entry.getCreature().getName());
+    }
+
+    public void addCreatureEntry(final Creature creature)
+    {
+        this.creatureEntryList.add(new EncounterEntry(creature));
+        LOGGER.debug("Add Creature {} to Encounter.", creature.getName());
     }
 
     public void removeCreature(final int index)
     {
-        final Creature removedCreature = this.creatureList.remove(index);
-        LOGGER.debug("Removed Creature {} from encounter.", removedCreature.nameProperty().getValue());
+        final EncounterEntry removedCreature = this.creatureEntryList.remove(index);
+        LOGGER.debug("Removed Creature {} from encounter.", removedCreature.getCreature().getName());
     }
 
     public void copyCreature(final int index)
     {
-        final Creature creatureToCopy = this.creatureList.get(index);
-        final Creature copiedCreature = new Creature(creatureToCopy);
-        this.addCreature(copiedCreature);
-        LOGGER.debug("Copied Creature {}.", creatureToCopy.nameProperty());
+        final EncounterEntry creatureToCopy = this.creatureEntryList.get(index);
+        final EncounterEntry copiedCreatureEntry = new EncounterEntry(creatureToCopy.getCreature());
+        this.addCreatureEntry(copiedCreatureEntry);
+        LOGGER.debug("Copied Creature {}.", creatureToCopy.getCreature().getName());
     }
 
-    private void deselectCreature(final Creature creature)
+    private void deselectCreature(final EncounterEntry entry)
     {
-        creature.setSelected(false);
+        entry.selectedProperty().setValue(false);
     }
 
-    private void selectCreature(final Creature creature)
+    private void selectCreature(final EncounterEntry entry)
     {
-        creature.setSelected(true);
-        MainController.pane.updateCreaturePreview(creature);
+        entry.selectedProperty().setValue(true);
+        MainController.pane.updateCreaturePreview(entry.getCreature());
     }
 
     public void sort()
     {
-        this.creatureList.sort((creature1, creature2) ->
+        this.creatureEntryList.sort((entry1, entry2) ->
         {
+            final Creature creature1 = entry1.getCreature();
+            final Creature creature2 = entry2.getCreature();
             if (creature1.getInitiative() < creature2.getInitiative())
             {
                 return 1;
@@ -112,11 +121,11 @@ public class Encounter
             return;
         }
         int nextIndex = currentIndex + 1;
-        if (nextIndex > this.creatureList.size() - 1)
+        if (nextIndex > this.creatureEntryList.size() - 1)
         {
             nextIndex = 0;
         }
-        this.currentSelectedCreature.setValue(this.creatureList.get(nextIndex));
+        this.currentSelectedCreature.setValue(this.creatureEntryList.get(nextIndex));
     }
 
     public void selectPrevious()
@@ -130,16 +139,16 @@ public class Encounter
         int previousIndex = currentIndex - 1;
         if (previousIndex < 0)
         {
-            previousIndex = this.creatureList.size() - 1;
+            previousIndex = this.creatureEntryList.size() - 1;
         }
-        this.currentSelectedCreature.setValue(this.creatureList.get(previousIndex));
+        this.currentSelectedCreature.setValue(this.creatureEntryList.get(previousIndex));
     }
 
     public int getIndexOfSelectedCreature()
     {
-        for (int index = 0; index < this.creatureList.size(); index++)
+        for (int index = 0; index < this.creatureEntryList.size(); index++)
         {
-            if (this.creatureList.get(index) == this.currentSelectedCreature.getValue())
+            if (this.creatureEntryList.get(index) == this.currentSelectedCreature.getValue())
             {
                 return index;
             }
@@ -152,9 +161,14 @@ public class Encounter
         return this.encounterNameProperty;
     }
 
-    public ObservableList<Creature> getCreatureList()
+    public ObjectProperty<ObservableList<EncounterEntry>> listProperty()
     {
-        return this.creatureList;
+        return this.listProperty;
+    }
+
+    public ObservableList<EncounterEntry> getCreatureList()
+    {
+        return this.creatureEntryList;
     }
 
     public Path getAutoSavePath()

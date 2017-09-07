@@ -92,7 +92,7 @@ public final class CreatureLibrary
             final String fileContent = reader.lines().parallel().collect(Collectors.joining("\n"));
             final JsonObject creatureData = JSON_PARSER.parse(fileContent).getAsJsonObject();
             final Monster monster = new Monster(creatureData);
-            final Creature creature = this.getCreature(monster.nameProperty().getValue());
+            final Creature creature = this.getCreature(monster.getName());
             if (creature == null)
             {
                 this.creatureList.add(monster);
@@ -146,7 +146,7 @@ public final class CreatureLibrary
 
         for (final Creature creature : this.creatureList)
         {
-            final TFile creatureFile = new TFile(new TPath(zipFile).resolve(String.format("%s.json", creature.nameProperty().getValue())).toFile());
+            final TFile creatureFile = new TFile(new TPath(zipFile).resolve(String.format("%s.json", creature.getName())).toFile());
             if (!creatureFile.exists())
             {
                 boolean jsonCreationSuccessful = false;
@@ -158,7 +158,7 @@ public final class CreatureLibrary
                 {
                     LOGGER.error("Could not create new creature json file!", e);
                 }
-                LOGGER.trace("Could create creature json for creature {}? {}", creature.nameProperty(), jsonCreationSuccessful);
+                LOGGER.trace("Could create creature json for creature {}? {}", creature.getName(), jsonCreationSuccessful);
             }
             creature.writeJsonToFile(creatureFile);
         }
@@ -173,8 +173,7 @@ public final class CreatureLibrary
      */
     public Creature getCreature(final String name)
     {
-        final Optional<Creature> creatureOptional = this.creatureList.stream().filter(creature -> creature.nameProperty().getValue().equalsIgnoreCase(name))
-                .findFirst();
+        final Optional<Creature> creatureOptional = this.creatureList.stream().filter(creature -> creature.getName().equalsIgnoreCase(name)).findFirst();
         if (creatureOptional.isPresent())
         {
             return creatureOptional.get();
