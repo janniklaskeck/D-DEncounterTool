@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import app.bvk.entity.Creature;
@@ -90,17 +90,9 @@ public final class CreatureLibrary
         try (final BufferedReader reader = new BufferedReader(new TFileReader(file));)
         {
             final String fileContent = reader.lines().parallel().collect(Collectors.joining("\n"));
-            final JsonObject creatureData = JSON_PARSER.parse(fileContent).getAsJsonObject();
-            final Monster monster = new Monster(creatureData);
-            final Creature creature = this.getCreature(monster.getName());
-            if (creature == null)
-            {
-                this.creatureList.add(monster);
-            }
-            else
-            {
-                creature.loadFromJson(creatureData);
-            }
+            final JsonElement creatureData = JSON_PARSER.parse(fileContent);
+            final Creature creature = new Creature(creatureData);
+            this.creatureList.add(creature);
         }
         catch (final IOException e)
         {

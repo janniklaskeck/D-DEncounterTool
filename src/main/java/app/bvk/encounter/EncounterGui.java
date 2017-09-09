@@ -83,12 +83,12 @@ public class EncounterGui extends BorderPane
     private void setupButtons()
     {
         this.addNpcButton.setOnAction(event -> this.addNPC());
-        this.deleteButton.setOnAction(event -> this.deleteSelected());
+        this.deleteButton.setOnAction(event -> this.encounter.removeCreature(this.encounterList.getSelectionModel().getSelectedIndex()));
         this.newEncounterButton.setOnAction(event -> this.newEncounter());
         this.loadEncounterButton.setOnAction(event -> this.loadEncounter());
         this.saveEncounterButton.setOnAction(event -> this.saveEncounter());
         this.previousButton.setOnAction(event -> this.previousTurn());
-        this.copyButton.setOnAction(event -> this.copySelected());
+        this.copyButton.setOnAction(event -> this.encounter.copyCreature(this.encounterList.getSelectionModel().getSelectedIndex()));
         this.nextButton.setOnAction(event -> this.nextTurn());
         this.sortButton.setOnAction(event -> this.encounter.sort());
         this.addPlayerButton.setOnAction(event -> this.addPlayer());
@@ -145,22 +145,6 @@ public class EncounterGui extends BorderPane
         if (createdPlayer.isPresent())
         {
             this.encounter.addCreatureEntry(createdPlayer.get());
-        }
-    }
-
-    private void deleteSelected()
-    {
-        if (!this.encounterList.getSelectionModel().isEmpty() && !this.encounter.getCreatureList().isEmpty())
-        {
-            this.encounter.removeCreature(this.encounterList.getSelectionModel().getSelectedIndex());
-        }
-    }
-
-    private void copySelected()
-    {
-        if (!this.encounterList.getSelectionModel().isEmpty())
-        {
-            this.encounter.copyCreature(this.encounterList.getSelectionModel().getSelectedIndex());
         }
     }
 

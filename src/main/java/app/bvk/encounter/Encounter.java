@@ -71,6 +71,10 @@ public class Encounter
 
     public void removeCreature(final int index)
     {
+        if (index < 0 || index >= this.creatureEntryList.size())
+        {
+            return;
+        }
         final EncounterEntry removedCreature = this.creatureEntryList.remove(index);
         LOGGER.debug("Removed Creature {} from encounter.", removedCreature.getCreature().getName());
     }

@@ -20,7 +20,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
 import app.bvk.entity.Creature;
-import app.bvk.entity.CreatureStrings;
 
 public class EncounterUtils
 {
@@ -44,14 +43,7 @@ public class EncounterUtils
             for (final EncounterEntry creatureEntry : encounterToSave.getCreatureList())
             {
                 final Creature creature = creatureEntry.getCreature();
-                jsonWriter.beginObject();
-                jsonWriter.name(CreatureStrings.NAME_KEY).value(creature.getName());
-                jsonWriter.name(CreatureStrings.IMAGEPATH_KEY).value(creature.getImagePath());
-                jsonWriter.name(CreatureStrings.INITIATIVE_KEY).value(creature.getInitiative());
-                jsonWriter.name(CreatureStrings.HEALTH_KEY).value(creature.getHealth());
-                jsonWriter.name(CreatureStrings.ARMOR_CLASS).value(creature.getArmorClass());
-                jsonWriter.name(CreatureStrings.NOTES_KEY).value(creature.getNotes());
-                jsonWriter.endObject();
+                jsonWriter.jsonValue(creature.getAsJson());
             }
             jsonWriter.endArray();
             jsonWriter.endArray();

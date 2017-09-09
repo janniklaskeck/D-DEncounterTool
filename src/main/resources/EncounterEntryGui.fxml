@@ -51,13 +51,13 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="healthTextField" prefColumnCount="4" />
+                  <TextField fx:id="currentHealthTextField" prefColumnCount="4" />
                   <Label text="/">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <TextField prefColumnCount="4" />
+                  <TextField fx:id="maxHealthTextField" prefColumnCount="4" />
                </children>
             </HBox>
          </children>

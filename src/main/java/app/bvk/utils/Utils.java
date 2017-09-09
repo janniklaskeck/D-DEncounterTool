@@ -3,17 +3,13 @@ package app.bvk.utils;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.IOException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import app.bvk.entity.Creature;
-import app.bvk.gui.MainGUI;
 import app.bvk.library.CreatureLibrary;
-import de.schlichtherle.truezip.file.TFile;
-import de.schlichtherle.truezip.file.TFileInputStream;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -55,26 +51,7 @@ public class Utils
         final Stage imgFrame = new Stage();
         imgFrame.getIcons().add(ICON);
         imgFrame.initModality(Modality.WINDOW_MODAL);
-
-        if (creature.getImage() == null)
-        {
-            final File creatureImageFile = CreatureLibrary.getInstance().getLibraryFilePath().resolve(creature.getImagePath()).toFile();
-            try (final TFileInputStream is = new TFileInputStream(new TFile(creatureImageFile));)
-            {
-                img = new Image(is);
-            }
-            catch (final IOException e)
-            {
-                LOGGER.error("ERROR while loading image, using icon instead", e);
-                img = new Image(MainGUI.class.getResourceAsStream("icon.png"));
-            }
-
-            creature.setImage(img);
-        }
-        else
-        {
-            img = creature.getImage();
-        }
+        img = creature.getImage();
         final Pane pane = new Pane();
         final VBox vbox = new VBox();
         pane.getChildren().add(vbox);

@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+
 import app.bvk.entity.Creature;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,7 +24,6 @@ import javafx.scene.paint.Color;
 
 public class EncounterEntry extends BorderPane
 {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(EncounterEntry.class);
 
     private static final int MAXIMUM_NUMBERS = 5;
@@ -32,7 +33,10 @@ public class EncounterEntry extends BorderPane
     private TextField initiativeTextField;
 
     @FXML
-    private TextField healthTextField;
+    private TextField currentHealthTextField;
+
+    @FXML
+    private TextField maxHealthTextField;
 
     @FXML
     private TextField armorClassTextField;
@@ -63,6 +67,7 @@ public class EncounterEntry extends BorderPane
         {
             LOGGER.error("ERROR while loading encounterentry fxml", e);
         }
+        System.out.println(new Gson().toJson(creature));
     }
 
     @FXML
@@ -77,7 +82,8 @@ public class EncounterEntry extends BorderPane
     private void setupCreature()
     {
         this.initiativeTextField.setText(Float.toString(this.creature.getInitiative()));
-        this.healthTextField.setText(Integer.toString(this.creature.getHealth()));
+        this.currentHealthTextField.setText(Integer.toString(this.creature.getHealth().getCurrentHealth()));
+        this.maxHealthTextField.setText(Integer.toString(this.creature.getHealth().getMaxHealth()));
         this.armorClassTextField.setText(Integer.toString(this.creature.getArmorClass()));
         this.noteTextField.setText(this.creature.getNotes());
     }
@@ -87,7 +93,8 @@ public class EncounterEntry extends BorderPane
         this.armorClassTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseArmorClass(newValue));
         this.noteTextField.textProperty().addListener((obs, oldValue, newValue) -> this.creature.setNotes(newValue));
         this.initiativeTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseInitiative(newValue));
-        this.healthTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseHealth(newValue));
+        this.currentHealthTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseCurrentHealth(newValue));
+        this.maxHealthTextField.textProperty().addListener((obs, oldValue, newValue) -> this.parseMaxHealth(newValue));
         this.creatureSelected.addListener((obs, oldValue, newValue) ->
         {
             if (newValue)
@@ -101,7 +108,7 @@ public class EncounterEntry extends BorderPane
         });
     }
 
-    private void parseHealth(final String healthString)
+    private void parseMaxHealth(final String healthString)
     {
         int health = 0;
         try
@@ -113,10 +120,29 @@ public class EncounterEntry extends BorderPane
             health = 0;
             LOGGER.error("ERROR while parsing health, set to 0", e);
         }
-        this.creature.setHealth(health);
+        this.creature.getHealth().setMaxHealth(health);
         if (healthString.length() > MAXIMUM_NUMBERS)
         {
-            this.healthTextField.setText(this.healthTextField.getText(0, MAXIMUM_NUMBERS));
+            this.currentHealthTextField.setText(this.currentHealthTextField.getText(0, MAXIMUM_NUMBERS));
+        }
+    }
+
+    private void parseCurrentHealth(final String healthString)
+    {
+        int health = 0;
+        try
+        {
+            health = Integer.parseInt(healthString);
+        }
+        catch (final NumberFormatException e)
+        {
+            health = 0;
+            LOGGER.error("ERROR while parsing health, set to 0", e);
+        }
+        this.creature.getHealth().setCurrentHealth(health);
+        if (healthString.length() > MAXIMUM_NUMBERS)
+        {
+            this.currentHealthTextField.setText(this.currentHealthTextField.getText(0, MAXIMUM_NUMBERS));
         }
     }
 
@@ -132,11 +158,11 @@ public class EncounterEntry extends BorderPane
             initiative = 0;
             LOGGER.error("ERROR while parsing initiative, set to 0", e);
         }
-        this.creature.setInitiative(initiative);
-        if (initiativeString.length() > MAXIMUM_NUMBERS)
+        if (Math.abs(initiative) < 1000.0f)
         {
-            this.initiativeTextField.setText(this.initiativeTextField.getText(0, MAXIMUM_NUMBERS));
+            this.creature.setRolledInitiative(initiative);
         }
+        this.initiativeTextField.setText(Float.toString(this.creature.getInitiative()));
     }
 
     private void parseArmorClass(final String armorClassString)
