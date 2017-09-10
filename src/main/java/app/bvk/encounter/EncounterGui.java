@@ -101,9 +101,11 @@ public class EncounterGui extends BorderPane
             this.encounter = new Encounter("unnamed");
             this.encounterNameTextField.textProperty().bindBidirectional(this.encounter.nameProperty());
             this.encounterNameTextField.textProperty().addListener((obs, oldValue, newValue) -> this.encounter.nameProperty().setValue(newValue));
+            LOGGER.debug("Creating entirely new Encounter!");
         }
         this.encounter.reset();
         this.encounterList.itemsProperty().bind(this.encounter.listProperty());
+        LOGGER.debug("Resetting Encounter.");
     }
 
     private void loadEncounter()
@@ -114,7 +116,7 @@ public class EncounterGui extends BorderPane
         final File file = fc.showOpenDialog(this.getScene().getWindow());
         if (file != null)
         {
-            this.encounter = EncounterUtils.loadEncounterFromFile(Paths.get(file.getAbsolutePath()));
+            this.encounter.loadEncounter(EncounterUtils.loadEncounterFromFile(Paths.get(file.getAbsolutePath())));
         }
     }
 

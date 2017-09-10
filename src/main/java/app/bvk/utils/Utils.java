@@ -2,7 +2,11 @@ package app.bvk.utils;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -10,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import app.bvk.entity.Creature;
 import app.bvk.library.CreatureLibrary;
+import de.schlichtherle.truezip.file.TFileInputStream;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -43,6 +48,27 @@ public class Utils
     private Utils()
     {
 
+    }
+
+    public static String readTextFromFile(final Path filePath)
+    {
+        final StringBuilder builder = new StringBuilder();
+        try (TFileInputStream fileInputStream = new TFileInputStream(filePath.toFile());
+                final InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+                final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);)
+        {
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {
+                builder.append(line);
+            }
+            bufferedReader.close();
+        }
+        catch (final IOException e)
+        {
+            LOGGER.error("ERROR while reading encounter save file", e);
+        }
+        return builder.toString();
     }
 
     public static void showImageFrame(final Creature creature)

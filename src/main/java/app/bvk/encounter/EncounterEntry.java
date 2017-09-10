@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-
 import app.bvk.entity.Creature;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -67,7 +65,6 @@ public class EncounterEntry extends BorderPane
         {
             LOGGER.error("ERROR while loading encounterentry fxml", e);
         }
-        System.out.println(new Gson().toJson(creature));
     }
 
     @FXML

@@ -50,6 +50,14 @@ public class Encounter
         });
     }
 
+    public void loadEncounter(final Encounter encounterToLoad)
+    {
+        this.encounterNameProperty.set(encounterToLoad.nameProperty().get());
+        this.creatureEntryList.setAll(encounterToLoad.creatureEntryList);
+        final int creatureIndex = encounterToLoad.getIndexOfSelectedCreature();
+        this.currentSelectedCreature.set(this.creatureEntryList.get(creatureIndex));
+    }
+
     public void reset()
     {
         this.creatureEntryList.clear();
@@ -116,6 +124,14 @@ public class Encounter
         });
     }
 
+    public void selectIndex(final int index)
+    {
+        if (index >= 0 && index < this.creatureEntryList.size() && !this.creatureEntryList.isEmpty())
+        {
+            this.selectCreature(this.creatureEntryList.get(index));
+        }
+    }
+
     public void selectNext()
     {
         final int currentIndex = this.getIndexOfSelectedCreature();
@@ -152,7 +168,7 @@ public class Encounter
     {
         for (int index = 0; index < this.creatureEntryList.size(); index++)
         {
-            if (this.creatureEntryList.get(index) == this.currentSelectedCreature.getValue())
+            if (this.creatureEntryList.get(index).equals(this.currentSelectedCreature.getValue()))
             {
                 return index;
             }
